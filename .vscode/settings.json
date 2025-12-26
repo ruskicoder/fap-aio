@@ -1,0 +1,17 @@
+{
+  "css.lint.unknownProperties": "ignore",
+  "files.exclude": {
+    "**/*.html": false
+  },
+  "search.exclude": {
+    "**/fap-pagesource.html": true,
+    "**/fap-transcript-source.html": true,
+    "**/fap-schedule-source.html": true,
+    "**/fap-moveout-source.html": true
+
+  },
+  "css.validate": true,
+  "html.validate.styles": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

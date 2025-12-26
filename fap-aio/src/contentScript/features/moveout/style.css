@@ -1,0 +1,133 @@
+/* Ensure FAP date info remains visible */
+#ctl00_mainContent_lblDateInfo {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: inherit !important;
+  font-size: 14px;
+  padding: 10px 0;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+progress {
+  border-radius: 8px;
+  width: 80%;
+  height: 20px;
+  border: 2px solid rgba(32, 32, 32, 0.747);
+}
+
+progress::-webkit-progress-bar {
+  background-color: rgb(255, 255, 255);
+  border-radius: 7px;
+}
+
+progress::-webkit-progress-value {
+  background-color: rgb(21, 255, 0);
+  border-radius: 7px;
+  animation: skeletonLoading 2s linear infinite;
+}
+
+progress::-moz-progress-bar {
+  background-color: rgb(255, 255, 255);
+  border-radius: 7px;
+}
+
+@keyframes skeletonLoading {
+  0% {
+    background-color: rgb(21, 255, 0);
+    opacity: 0.5;
+  }
+  100% {
+    background-color: rgb(226, 120, 96);
+    opacity: 1;
+  }
+}
+
+.rotate {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Notification / decorative message styles */
+.notification-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background: #22c55e;
+  color: white;
+  box-shadow: 0 10px 30px rgba(6, 182, 212, 0.12);
+}
+
+.notification-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  background: white;
+  border-radius: 9999px;
+}
+
+@keyframes pingSlow {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(2);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-ping-slow {
+  animation: pingSlow 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes slideLoop {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.slide-loop {
+  display: inline-block;
+  animation: slideLoop 3s ease-in-out infinite;
+}
+
+#fap-moveout-root {
+  width: 100%;
+}
+
+/* Ensure iframe details element expands fully */
+#fap-moveout-root details[open] {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+#fap-moveout-root #myframe {
+  width: 100% !important;
+  height: 50vh !important;
+  min-height: 400px !important;
+  display: block;
+  border: 1px solid #ccc;
+}

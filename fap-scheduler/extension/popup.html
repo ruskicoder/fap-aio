@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>FPTU Scheduler</title>
+  <link rel="stylesheet" href="popup.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <div class="popup-wrapper">
+    <header class="popup-header">
+      <h1>📅 FPTU Scheduler</h1>
+      <div class="popup-controls">
+        <button id="settingsButton" class="control-btn" title="Cài đặt hiển thị">Lọc</button>
+      </div>
+    </header>
+
+    <!-- Main navigation tabs for Exam vs Weekly -->
+    <div class="main-tab-navigation">
+      <button id="examMainTab" class="main-tab-btn active">📝 Lịch thi</button>
+      <button id="weeklyMainTab" class="main-tab-btn">📚 Lịch học</button>
+    </div>
+
+    <!-- Exam Schedule Section -->
+    <section id="examSection" class="main-section active">
+      <div class="section-header">
+        <button id="syncButton" class="sync-btn" title="Đồng bộ lịch thi">🔄 Đồng bộ lịch thi</button>
+      </div>
+      
+      <div class="tab-navigation">
+        <button id="upcomingTab" class="tab-btn active">📅 Chưa thi</button>
+        <button id="completedTab" class="tab-btn">✅ Đã thi</button>
+      </div>
+      
+      <div class="popup-list">
+        <div class="loading exam-loading">Hãy đồng bộ lịch thi...</div>
+        
+        <div id="upcomingExams" class="tab-content active">
+          <!-- Upcoming exams will be populated here -->
+        </div>
+        
+        <div id="completedExams" class="tab-content">
+          <!-- Completed exams will be populated here -->
+        </div>
+      </div>
+      
+      <div class="popup-actions">
+        <button id="exportBtn" class="export-button" title="Tải xuống file .ics">
+          <span class="button-icon">📅</span>
+          <span class="button-text">Tải xuống lịch thi</span>
+          <span class="button-format">.ics</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Weekly Schedule Section -->
+    <section id="weeklySection" class="main-section">
+      <div class="section-header weekly-header">
+        <button id="syncWeeklyButton" class="sync-btn" title="Đồng bộ lịch học tuần hiện tại">🔄 Tuần này</button>
+        <button id="syncSemesterButton" class="sync-btn sync-semester-btn" title="Đồng bộ toàn bộ lịch học kỳ">📆 Cả học kỳ</button>
+      </div>
+      <div id="semesterSyncProgress" class="semester-progress" style="display: none;">
+        <div class="progress-info">
+          <span id="semesterLabel">Spring25</span>
+          <span id="progressText">0/0 tuần</span>
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+      
+      <div class="tab-navigation">
+        <button id="thisWeekTab" class="tab-btn active">📅 Tuần này</button>
+        <button id="allClassesTab" class="tab-btn">📚 Tất cả</button>
+      </div>
+      
+      <div class="popup-list">
+        <div class="loading weekly-loading">Hãy đồng bộ lịch học...</div>
+        
+        <div id="thisWeekClasses" class="tab-content active">
+          <!-- This week's classes will be populated here -->
+        </div>
+        
+        <div id="allClasses" class="tab-content">
+          <!-- All classes will be populated here -->
+        </div>
+      </div>
+      
+      <div class="popup-actions">
+        <button id="exportWeeklyBtn" class="export-button" title="Tải xuống file .ics">
+          <span class="button-icon">📚</span>
+          <span class="button-text">Tải xuống lịch học</span>
+          <span class="button-format">.ics</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Filter Modal -->
+    <div id="filterModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Lọc lịch thi</h3>
+          <button id="closeFilter" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="filter-group">
+            <label class="filter-item">
+              <input type="checkbox" id="filterFE" checked>
+              <span>FE (Final Exam)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filterPE" checked>
+              <span>PE (Practical Exam)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter2NDFE" checked>
+              <span>2NDFE (Second Final Exam)</span>
+            </label>
+            <label class="filter-item">
+              <input type="checkbox" id="filter2NDPE" checked>
+              <span>2NDPE (Second Practical Exam)</span>
+            </label>
+          </div>
+          <div class="filter-actions">
+            <button id="selectAll" class="filter-btn">Chọn tất cả</button>
+            <button id="deselectAll" class="filter-btn">Bỏ chọn tất cả</button>
+            <button id="applyFilter" class="filter-btn apply-btn">Áp dụng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="popup-footer">
+      <p>I 💛 FPTU • <a href="https://yunkhngn.github.io/fptu-examination/" id="docsLink" target="_blank">📖 Hướng dẫn</a> • <a href="https://github.com/yunkhngn/fptu-examination" target="_blank">GitHub</a></p>
+    </footer>
+
+    <script src="sanitize-utils.js"></script>
+    <script src="popup.js"></script>
+  </div>
+</body>
+</html>

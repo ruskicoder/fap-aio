@@ -1,0 +1,883 @@
+:root {
+    --accent: #F36B16;
+    --black: #000000;
+    --text-light: #E0E0E0;
+    --text-medium: #BDBDBD;
+    --text-dark: #212121;
+    --grey-dark: #1A1A1A;
+    --grey-medium: #0f0905;
+    --grey-light: #301403;
+    --grey-darker: #150901;
+    --border-color: #333333;
+    --white: #FFFFFF;
+    --red: #F44336;
+    /* Material Design Red */
+    --green: #4CAF50;
+    /* Material Design Green */
+    font-size: 16px;
+    /* Base font size for rem calculation */
+}
+
+body {
+    background: var(--black) !important;
+    color: var(--text-light) !important;
+    font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    line-height: 1.6 !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-light) !important;
+    margin-top: 0 !important;
+}
+
+h1 span {
+    color: var(--text-light);
+}
+
+p {
+    color: var(--text-medium);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+#cssTable tbody tr {
+    background-color: var(--grey-medium);
+    color: var(--white);
+}
+
+a {
+    color: var(--accent) !important;
+    text-decoration: none !important;
+    padding: 0.125rem 0.3125rem;
+    border-radius: 0.1875rem;
+    transition: color 0.2s ease, background-color 0.2s ease !important;
+}
+
+a:hover,
+a:focus {
+    color: var(--black) !important;
+    background-color: var(--accent) !important;
+    text-decoration: none !important;
+}
+
+.breadcrumb {
+    background-color: var(--black) !important;
+    padding-left: 0 !important;
+    margin-bottom: 1rem !important;
+    display: block !important;
+    visibility: visible !important;
+    padding: 0.625rem 0 !important;
+}
+
+.breadcrumb::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Back button styling */
+.fap-back-button {
+    float: left !important;
+    margin-right: 1rem !important;
+    padding: 0.3125rem 0.75rem !important;
+    background-color: var(--grey-medium) !important;
+    color: var(--text-light) !important;
+    border-radius: 0.25rem !important;
+    border: 0.0625rem solid var(--border-color) !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    line-height: 1.4 !important;
+}
+
+.fap-back-button:hover {
+    background-color: var(--accent) !important;
+    color: var(--black) !important;
+    border-color: var(--accent) !important;
+}
+
+#ctl00_mainContent_img1 {
+    background: transparent;
+}
+
+#ctl00_lblNavigation b {
+    color: var(--text-light);
+    font-size: 1.125rem;
+    /* ~18px */
+}
+
+#ctl00_divUser {
+    padding-top: 0.625rem;
+    /* 10px */
+    float: right !important;
+    margin-right: 1rem !important;
+}
+
+#ctl00_divUser::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.row > .col-md-6 > .col-md-12 {
+    visibility: hidden;
+    height: 0;
+    /* Collapse the space it occupies */
+    overflow: hidden;
+    /* Prevent content spill */
+    padding: 0;
+    /* Remove padding */
+    margin: 0;
+    /* Remove margin */
+}
+
+/* Title link styling */
+h1 a, h2 a {
+    color: var(--text-light) !important;
+    text-decoration: none !important;
+    padding: 0 !important;
+    display: inline-block !important;
+    transition: color 0.2s ease !important;
+}
+
+h1 a:hover, h2 a:hover {
+    color: var(--accent) !important;
+    background-color: transparent !important;
+}
+
+#ctl00_lblNavigation,
+#chat-widget-container div {
+    visibility: hidden;
+    display: none;
+    /* Also hide it from layout flow */
+}
+
+
+#ctl00_lblLogIn,
+#ctl00_lblCampusName,
+a.label-success,
+span.label-success {
+    background-color: var(--grey-medium);
+    color: var(--text-light);
+    padding: 0.3125rem 0.625rem;
+    /* 5px 10px */
+    border-radius: 0.25rem;
+    /* 4px */
+    text-shadow: none;
+    box-shadow: none;
+    border: 0.0625rem solid var(--border-color);
+    /* 1px */
+    display: inline-block;
+    margin-left: 0.3125rem;
+    /* 5px */
+}
+
+#ctl00_divUser a.label-success:hover {
+    background-color: var(--accent);
+    color: var(--black);
+    border-color: var(--accent);
+}
+
+/* Schedule buttons - View Materials, Meet URL, and Edunext */
+a.label-warning,
+a.label-default,
+a.label-primary[href*="edunext"],
+.label-warning,
+.label-default {
+    background-color: transparent !important;
+    color: var(--accent) !important;
+    border: 2px solid var(--accent) !important;
+    padding: 0.3125rem 0.625rem !important;
+    border-radius: 0.25rem !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    display: inline-block !important;
+    margin: 0.125rem !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+a.label-warning:hover,
+a.label-default:hover,
+a.label-primary[href*="edunext"]:hover,
+.label-warning:hover,
+.label-default:hover {
+    background-color: var(--accent) !important;
+    color: var(--black) !important;
+    border-color: var(--accent) !important;
+}
+
+#ctl00_lblLogIn span {
+    color: var(--accent);
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    display: inline;
+    /* margin: 0; Removed as it doesn't apply to display: inline */
+}
+#ctl00_lblLogIn span:hover {
+    text-decoration: underline;
+}
+
+.container {
+    width: 95% !important;
+    max-width: 1920px !important;
+    min-width: 320px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+.col-md-6 h1 {
+    color: var(--text-light);
+    font-weight: bold;
+    margin-top: 0;
+}
+
+.box {
+    background-color: var(--grey-dark) !important;
+    border: 0.0625rem solid var(--border-color) !important;
+    /* 1px */
+    padding: 0.9375rem !important;
+    /* 15px */
+    margin-bottom: 1.25rem !important;
+    /* 20px */
+    border-radius: 0.3125rem !important;
+    /* 5px */
+}
+
+.box h3 {
+    margin-top: 0;
+    padding-bottom: 0.625rem;
+    /* 10px */
+    border-bottom: 0.0625rem solid var(--border-color);
+    /* 1px */
+    margin-bottom: 0.9375rem;
+    /* 15px */
+    color: var(--accent);
+}
+
+.blueTitle,
+.orangeTitle {
+    background: none;
+    color: var(--accent);
+}
+
+.table .table {
+    background-color: var(--grey-light);
+}
+
+b {
+    color: var(--text-light);
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+ul {
+    padding-left: 1.25rem;
+    /* 20px */
+    list-style: disc;
+    /* Ensure bullets are visible */
+}
+
+li {
+    margin-bottom: 0.5rem;
+    /* 8px */
+    color: var(--text-medium);
+}
+
+li a {
+    padding: 0.0625rem 0.1875rem;
+    /* 1px 3px */
+}
+
+/* General table reset - no borders by default for layout tables */
+table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    width: 100%;
+    margin-top: 0.625rem;
+    background-color: var(--grey-medium) !important;
+}
+
+/* Schedule-specific responsive table styling - only for schedule page */
+/* Target the table containing the divContent div (invalid HTML structure) */
+body:has(#ctl00_mainContent_divContent) table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+}
+
+body:has(#ctl00_mainContent_divContent) table thead th,
+body:has(#ctl00_mainContent_divContent) table tbody td {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+}
+
+/* First column (Slot) has fixed 80px width */
+body:has(#ctl00_mainContent_divContent) table tbody td:first-child {
+    width: 80px !important;
+    max-width: 80px !important;
+    min-width: 80px !important;
+}
+
+/* Other columns split remaining width equally */
+body:has(#ctl00_mainContent_divContent) table tbody td:not(:first-child) {
+    width: calc((100% - 80px) / 7) !important;
+}
+
+body:has(#ctl00_mainContent_divContent) table tbody td p {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    margin: 0.25rem 0 !important;
+    max-width: 100%;
+}
+
+/* Data tables with Bootstrap classes get borders */
+.table {
+    border: 1px solid var(--border-color) !important;
+    margin-bottom: 1rem !important;
+}
+
+.table-bordered,
+.table-hover {
+    border-collapse: collapse !important;
+}
+
+.table thead {
+    background-color: var(--grey-medium) !important;
+}
+
+.table thead th {
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--grey-medium) !important;
+    color: var(--text-light) !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    padding: 0.75rem !important;
+}
+
+.table tbody td {
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--grey-medium) !important;
+    color: var(--text-light) !important;
+    padding: 0.625rem 0.9375rem !important;
+}
+
+/* Specific styling for bordered tables */
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid var(--border-color) !important;
+}
+
+/* Hover effect for table-hover */
+.table-hover tbody tr:hover {
+    background-color: var(--grey-dark) !important;
+}
+
+/* Alternate row colors for better readability */
+.table tbody tr:nth-child(even) td {
+    background-color: var(--grey-darker) !important;
+}
+
+.table tbody tr:nth-child(odd) td {
+    background-color: var(--grey-medium) !important;
+}
+
+caption {
+    color: var(--text-medium);
+    padding-bottom: 0.625rem;
+    caption-side: top;
+    text-align: left;
+}
+
+/* Style schedule notice text prominently */
+#ctl00_mainContent_ghichuHCM p.auto-style2,
+#ctl00_mainContent_ghichuHCM .auto-style2 {
+    font-size: 1.5rem !important;
+    color: var(--accent) !important;
+    border: 2px solid var(--accent) !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 0.375rem !important;
+    background-color: rgba(243, 107, 22, 0.1) !important;
+    font-weight: bold !important;
+    display: inline-block !important;
+    margin: 0.5rem 0 !important;
+}
+
+#ctl00_mainContent_ghichuHCM p.auto-style2 b,
+#ctl00_mainContent_ghichuHCM .auto-style2 b {
+    color: var(--accent) !important;
+}
+
+/* Table header auto-style2 - keep normal table cell display */
+thead th.auto-style2,
+table tr td.auto-style2 {
+    display: table-cell !important;
+    font-size: 14pt !important;
+    color: var(--text-light) !important;
+    background-color: var(--grey-medium) !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 0.625rem !important;
+}
+
+.row{
+    background-color: var(--black) !important;
+}
+
+/* Default th/td styling (for layout tables without .table class) */
+th,
+td {
+    padding: 0.625rem 0.9375rem !important;
+    background-color: var(--grey-medium) !important;
+    color: var(--text-light) !important;
+    vertical-align: top !important;
+}
+
+/* Override for layout tables that should have minimal styling */
+table:not(.table) th,
+table:not(.table) td {
+    border: none !important;
+    padding: 0.3rem 0.5rem !important;
+}
+
+input[type=submit] {
+    border: 0.0625rem solid var(--border-color);
+    background-color: var(--grey-medium);
+    color: var(--text-light);
+    border-radius: 0.25rem;
+}
+
+input[type=submit]:hover {
+    border: 0.0625rem solid var(--border-color);
+    background-color: var(--grey-light);
+    color: var(--accent);
+    
+}
+
+thead th,
+.auto-style2 {
+    background-color: var(--grey-medium);
+    color: var(--text-light);
+    font-weight: bold;
+    text-align: center;
+}
+
+td span,
+td div,
+td p {
+    color: var(--text-light) !important;
+    /* Ensure override */
+    background-color: transparent !important;
+    font-size: inherit !important;
+}
+
+td span[style*="color:black"],
+td div[style*="color:black"],
+td p[style*="color:black"] {
+    color: var(--text-light) !important;
+}
+
+td span[style*="color:#2F5597"] {
+    color: var(--accent) !important;
+}
+
+td p[style*="background-color: #009900;"] {
+    background-color: var(--accent) !important;
+    padding: 0.3125rem;
+    /* 5px */
+    border-radius: 0.1875rem;
+    /* 3px */
+}
+td p[style*="background-color: #009900;"] span {
+    color: var(--black) !important;
+}
+
+.btn {
+    background-color: var(--accent) !important;
+    color: var(--black) !important;
+    border: none !important;
+    padding: 0.5rem 0.9375rem !important;
+    /* 8px 15px */
+    border-radius: 0.25rem !important;
+    /* 4px */
+    cursor: pointer !important;
+    transition: background-color 0.2s ease !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    display: inline-block !important;
+    text-decoration: none !important;
+    text-align: center !important;
+    margin: 0.3125rem !important;
+    /* 5px */
+    line-height: normal !important;
+    /* Ensure button text aligns */
+}
+
+.btn:hover,
+.btn:focus {
+    background-color: #d15a13;
+    color: var(--black);
+}
+
+.btn-warning {
+    background-color: var(--accent);
+    color: var(--black);
+}
+.btn-warning:hover {
+    background-color: #d15a13;
+    color: var(--black);
+}
+.btn-success {
+    background-color: var(--accent);
+    color: var(--black);
+}
+.btn-success:hover {
+    background-color: #d15a13;
+    color: var(--black);
+}
+.btn-danger {
+    background-color: var(--grey-light);
+    color: var(--text-light);
+}
+.btn-danger:hover {
+    background-color: var(--grey-medium);
+    color: var(--text-light);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select,
+textarea {
+    background-color: var(--grey-medium) !important;
+    color: var(--text-light) !important;
+    border: 0.0625rem solid var(--border-color) !important;
+    /* 1px */
+    padding: 0.5rem 0.625rem !important;
+    /* 8px 10px */
+    border-radius: 0.25rem !important;
+    /* 4px */
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 0.625rem !important;
+    /* 10px */
+    font-size: 1rem !important;
+    /* Ensure form elements scale */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.125rem rgba(243, 107, 22, 0.3);
+    /* 2px */
+}
+
+input[type="submit"],
+button {
+    /* Inherit .btn styles */
+}
+
+#ctl00_mainContent_btCancel,
+#ctl00_mainContent_btSave {
+    /* Inherit .btn styles */
+}
+
+#ctl00_mainContent_divHocphi span,
+#ctl00_mainContent_lblAccount {
+    color: var(--accent);
+    font-weight: bold;
+}
+#ctl00_mainContent_divHocphi {
+    background-color: var(--grey-dark);
+    border: 0.0625rem solid var(--accent);
+    /* 1px */
+    padding: 0.9375rem;
+    /* 15px */
+    border-radius: 0.3125rem;
+    /* 5px */
+    margin-bottom: 1.25rem;
+    /* 20px */
+    color: var(--text-medium);
+}
+#ctl00_mainContent_lblAccount b {
+    color: var(--text-light);
+}
+
+.listBoxWrapper {
+    /* Styling context */
+}
+
+.listBoxWrapper b {
+    color: var(--text-light);
+}
+
+.modal {
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    position: fixed;
+    inset: 0;
+    /* Replaces top/left/right/bottom: 0 */
+    z-index: 1050;
+    overflow-y: auto;
+}
+.modal.show {
+    display: block;
+}
+
+.modal-dialog {
+    margin: 3.125rem auto;
+    /* 50px */
+    max-width: 500px;
+    /* Example constraint */
+    width: 90%;
+    /* Responsive width */
+}
+
+.modal-content {
+    background-color: var(--grey-dark);
+    border: 0.0625rem solid var(--border-color);
+    /* 1px */
+    border-radius: 0.375rem;
+    /* 6px */
+    color: var(--text-light);
+}
+
+.modal-header {
+    border-bottom: 0.0625rem solid var(--border-color);
+    /* 1px */
+    padding: 0.9375rem;
+    /* 15px */
+}
+
+.modal-header .modal-title {
+    color: var(--accent);
+    margin: 0;
+    /* Reset default margin */
+    line-height: 1.4;
+    /* Adjust line height */
+}
+
+.modal-header .close {
+    color: var(--text-light);
+    opacity: 0.8;
+    text-shadow: none;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    padding: 0;
+    /* Remove padding */
+    float: right;
+    /* Position correctly */
+    cursor: pointer;
+}
+.modal-header .close:hover {
+    color: var(--text-light);
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 0.9375rem;
+    /* 15px */
+    color: var(--text-medium);
+}
+
+.modal-footer {
+    border-top: 0.0625rem solid var(--border-color);
+    /* 1px */
+    padding: 0.9375rem;
+    /* 15px */
+    text-align: right;
+}
+.modal-footer center {
+    text-align: right;
+    margin-right: 0;
+}
+
+#cssTable {
+    border: none !important;
+    margin-top: 1.25rem;
+    /* 20px */
+    background-color: var(--grey-dark);
+    padding: 0.9375rem;
+    /* 15px */
+    border-radius: 0.3125rem;
+    /* 5px */
+}
+#cssTable td {
+    border: none;
+    background: transparent;
+    padding: 0.3125rem 0;
+    /* 5px 0 */
+}
+#cssTable p {
+    color: var(--text-medium);
+    text-align: center;
+    width: 100%;
+    margin-bottom: 0;
+}
+#cssTable a {
+    color: var(--accent);
+}
+#cssTable a:hover {
+    color: var(--black);
+    background-color: var(--accent);
+}
+
+#ctl00_divSupporthcm {
+    color: var(--text-medium);
+    margin-bottom: 0.625rem;
+    /* 10px */
+    padding-bottom: 0.625rem;
+    /* 10px */
+    border-bottom: 0.0625rem solid var(--border-color);
+    /* 1px */
+}
+#ctl00_divSupporthcm strong {
+    color: var(--text-light);
+}
+#ctl00_divSupporthcm a,
+#ctl00_divSupporthcm a span {
+    color: var(--accent) !important;
+    background: none !important;
+}
+#ctl00_divSupporthcm a:hover,
+#ctl00_divSupporthcm a:hover span {
+    text-decoration: underline !important;
+    background-color: transparent !important;
+    /* Ensure no background on hover */
+    color: var(--accent) !important;
+    /* Keep color on hover */
+}
+
+img[src*="New_icons_10.gif"] {
+    filter: invert(47%) sepia(93%) saturate(1457%) hue-rotate(359deg) brightness(97%) contrast(93%);
+    /* Generated filter for --accent */
+    margin-left: 0.3125rem;
+    /* 5px */
+    vertical-align: middle;
+    width: 1em;
+    /* Scale with text */
+    height: 1em;
+    /* Scale with text */
+}
+
+/* Semester color cycle (10 colors, sequential order) - Fall2023 is position 0 */
+/* Color 1: #4e1445 */
+table td.Fall2023, table td.Summer2020, table td.Spring2027, table td.Fall2030, table td.Summer2034, table td.Spring2038,
+table th.Fall2023, table th.Summer2020, table th.Spring2027, table th.Fall2030, table th.Summer2034, table th.Spring2038 { 
+    background-color: #4e1445 !important; 
+}
+/* Color 2: #2a144e */
+table td.Spring2024, table td.Fall2020, table td.Summer2027, table td.Spring2031, table td.Fall2034, table td.Summer2038,
+table th.Spring2024, table th.Fall2020, table th.Summer2027, table th.Spring2031, table th.Fall2034, table th.Summer2038 { 
+    background-color: #2a144e !important; 
+}
+/* Color 3: #17144e */
+table td.Summer2024, table td.Spring2021, table td.Fall2027, table td.Summer2031, table td.Spring2035, table td.Fall2038,
+table th.Summer2024, table th.Spring2021, table th.Fall2027, table th.Summer2031, table th.Spring2035, table th.Fall2038 { 
+    background-color: #17144e !important; 
+}
+/* Color 4: #143c4e */
+table td.Fall2024, table td.Summer2021, table td.Spring2028, table td.Fall2031, table td.Summer2035, table td.Spring2039,
+table th.Fall2024, table th.Summer2021, table th.Spring2028, table th.Fall2031, table th.Summer2035, table th.Spring2039 { 
+    background-color: #143c4e !important; 
+}
+/* Color 5: #144e40 */
+table td.Spring2025, table td.Fall2021, table td.Summer2028, table td.Spring2032, table td.Fall2035, table td.Summer2039,
+table th.Spring2025, table th.Fall2021, table th.Summer2028, table th.Spring2032, table th.Fall2035, table th.Summer2039 { 
+    background-color: #144e40 !important; 
+}
+/* Color 6: #144e15 */
+table td.Summer2025, table td.Spring2022, table td.Fall2028, table td.Summer2032, table td.Spring2036, table td.Fall2039,
+table th.Summer2025, table th.Spring2022, table th.Fall2028, table th.Summer2032, table th.Spring2036, table th.Fall2039 { 
+    background-color: #144e15 !important; 
+}
+/* Color 7: #4e4d14 */
+table td.Fall2025, table td.Summer2022, table td.Spring2029, table td.Fall2032, table td.Summer2036, table td.Spring2040,
+table th.Fall2025, table th.Summer2022, table th.Spring2029, table th.Fall2032, table th.Summer2036, table th.Spring2040 { 
+    background-color: #4e4d14 !important; 
+}
+/* Color 8: #4e3314 */
+table td.Spring2026, table td.Fall2022, table td.Summer2029, table td.Spring2033, table td.Fall2036, table td.Summer2040,
+table th.Spring2026, table th.Fall2022, table th.Summer2029, table th.Spring2033, table th.Fall2036, table th.Summer2040 { 
+    background-color: #4e3314 !important; 
+}
+/* Color 9: #4e1614 */
+table td.Summer2026, table td.Spring2023, table td.Fall2029, table td.Summer2033, table td.Spring2037, table td.Fall2040,
+table th.Summer2026, table th.Spring2023, table th.Fall2029, table th.Summer2033, table th.Spring2037, table th.Fall2040 { 
+    background-color: #4e1614 !important; 
+}
+/* Color 10: #4e1438 */
+table td.Fall2026, table td.Summer2023, table td.Spring2030, table td.Fall2033, table td.Summer2037,
+table th.Fall2026, table th.Summer2023, table th.Spring2030, table th.Fall2033, table th.Summer2037 { 
+    background-color: #4e1438 !important; 
+}
+/* Earlier semesters (2019-2020) */
+table td.Fall2019, table td.Spring2020,
+table th.Fall2019, table th.Spring2020 { 
+    background-color: #4e3314 !important; 
+}
+
+/* Status highlighting */
+table td span.status-passed,
+table th span.status-passed {
+    background-color: #144e15 !important;
+    color: var(--text-light) !important;
+    padding: 0.3125rem 0.625rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+table td span.status-not-passed,
+table th span.status-not-passed {
+    background-color: #4e1614 !important;
+    color: var(--text-light) !important;
+    padding: 0.3125rem 0.625rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* GPA color coding */
+.gpa-failed {
+    color: #ff4444 !important;
+}
+.gpa-average {
+    color: #ff9244 !important;
+}
+.gpa-good {
+    color: #44aaff !important;
+}
+.gpa-verygood {
+    color: #44ff44 !important;
+}
+.gpa-excellent {
+    color: #ff44ff !important;
+}
+
+a.__cf_email__,
+span.__cf_email__ {
+    color: var(--accent) !important;
+}
+a.__cf_email__:hover {
+    color: var(--black) !important;
+    background-color: var(--accent) !important;
+}

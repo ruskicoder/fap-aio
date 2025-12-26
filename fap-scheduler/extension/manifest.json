@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "FPTU Scheduler",
+  "description": "Modern Chrome extension for FPT University students to export exam and weekly schedules from FAP system to .ics calendar files.",
+  "version": "2.5.0",
+  "permissions": [],
+  "host_permissions": [
+    "https://fap.fpt.edu.vn/*"
+  ],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://fap.fpt.edu.vn/Exam/ScheduleExams.aspx",
+        "https://fap.fpt.edu.vn/Report/ScheduleOfWeek.aspx"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
