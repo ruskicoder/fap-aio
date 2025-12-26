@@ -1,7 +1,7 @@
 import React from "react";
 import { weekdays, slots } from "../constants/classData";
 import { textToColor } from "../utils";
-import { parseHTML, query, getText } from "../../../../../../userscript/fap-aio/src/userscript/utils/dom-parser";
+import { parseHTML, query, getText } from "../../../shared/dom-parser";
 import { storage } from "../../../shared/storage";
 
 interface TimetableProps {

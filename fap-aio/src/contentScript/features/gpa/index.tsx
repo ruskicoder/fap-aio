@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './style.css';
+import { dom } from '../../shared/dom';
 
 function findTranscriptTable(): HTMLTableElement | null {
   // Exactly like fap-gpa: get table from MainContentID
@@ -60,6 +61,12 @@ function mountGPACalculator(transcriptTable: HTMLTableElement) {
   // Mount React app
   const root = ReactDOM.createRoot(container);
   root.render(React.createElement(App));
+
+  // Apply semester colors to the transcript table
+  const gradeDiv = document.getElementById('ctl00_mainContent_divGrade');
+  if (gradeDiv) {
+    dom.applySemesterColors(gradeDiv);
+  }
 
   console.info('[FAP-AIO] GPA Calculator module initialized successfully');
 }

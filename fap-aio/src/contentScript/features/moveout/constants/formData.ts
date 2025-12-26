@@ -1,4 +1,4 @@
-import { parseHTML, query, getAttr } from "../../../../../../userscript/fap-aio/src/userscript/utils/dom-parser";
+import { parseHTML, query, getAttr } from "../../../shared/dom-parser";
 
 const url = "https://fap.fpt.edu.vn/FrontOffice/MoveSubject.aspx";
 

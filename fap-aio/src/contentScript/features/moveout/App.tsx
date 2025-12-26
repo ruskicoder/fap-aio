@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { parseHTML, query, queryAll, getText, getAttr } from "../../../../../userscript/fap-aio/src/userscript/utils/dom-parser";
+import { parseHTML, query, queryAll, getText, getAttr } from "../../shared/dom-parser";
 import { classData, slots, weekdays } from "./constants/classData";
 import { formGetter, secondFormGetter } from "./constants/formData";
 import { storage } from "../../shared/storage";
@@ -175,7 +175,7 @@ export default function App() {
       document.getElementById("ctl00_mainContent_lblOldGroup")?.innerText || ""
     );
     
-    queryAll("option", doc).forEach((option) => {
+    queryAll("option", doc).forEach((option: Element) => {
       const value = getAttr(option, "value");
       if (value) {
         secondId = value;
@@ -200,7 +200,7 @@ export default function App() {
 
       const classInfo = getText(query("#ctl00_mainContent_lblNewSlot", nextDoc));
       const selectOptions = queryAll("#ctl00_mainContent_dllCourse option", nextDoc);
-      const selectedOption = selectOptions.find(opt => opt.hasAttribute("selected"));
+      const selectedOption = selectOptions.find((opt: Element) => opt.hasAttribute("selected"));
       const className = selectedOption ? getText(selectedOption) : "";
       console.log("className", classInfo);
 

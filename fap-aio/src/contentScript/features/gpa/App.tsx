@@ -41,8 +41,10 @@ const App = () => {
       tabRootRef.current.render(
         <div className="gpa-tab-buttons">
           <button
+            type="button"
             className={`gpa-tab-btn ${showGPA ? 'active' : ''}`}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               setShowGPA((prev) => !prev);
               setShowEdit(false);
             }}
@@ -50,8 +52,10 @@ const App = () => {
             Show GPA
           </button>
           <button
+            type="button"
             className={`gpa-tab-btn ${showEdit ? 'active' : ''}`}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               setShowEdit((prev) => !prev);
               setShowGPA(false);
             }}

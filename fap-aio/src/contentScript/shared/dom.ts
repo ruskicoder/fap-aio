@@ -135,5 +135,28 @@ export const dom = {
         span.classList.add('status-not-passed');
       }
     });
+  },
+
+  applySemesterColors: (container: Element | Document = document) => {
+    const semesterPattern = /^(Fall|Spring|Summer)(20\d{2})$/;
+    const tableCells = container.querySelectorAll('table td, table th');
+    
+    tableCells.forEach((cell) => {
+      const text = cell.textContent?.trim();
+      if (text && semesterPattern.test(text)) {
+        cell.classList.add(text);
+      }
+    });
+
+    // Apply status colors to spans containing Passed/Not Passed
+    const statusSpans = container.querySelectorAll('table td span, table th span');
+    statusSpans.forEach((span) => {
+      const text = span.textContent?.trim();
+      if (text === 'Passed') {
+        span.classList.add('status-passed');
+      } else if (text === 'Not Passed') {
+        span.classList.add('status-not-passed');
+      }
+    });
   }
 };

@@ -1,4 +1,4 @@
-import { parseHTML, query, queryAll, getText, getAttr } from "../../../../../userscript/fap-aio/src/userscript/utils/dom-parser";
+import { parseHTML, query, queryAll, getText, getAttr } from "../../shared/dom-parser";
 
 export function mapToObject(map: Map<string, Map<string, string[]>>) {
   const obj: any = {};
@@ -56,7 +56,7 @@ export const getClassKey = (isRegisterCourse: boolean = false): any => {
     id
   );
   
-  queryAll("option", doc).forEach((option) => {
+  queryAll("option", doc).forEach((option: Element) => {
     const value = getAttr(option, "value");
     if (value) {
       classes.set(getText(option), value);
@@ -106,7 +106,7 @@ export const getCurrentSubjects = async () => {
   
   const doc = parseHTML(response);
   const allRows = queryAll("#ctl00_mainContent_gvCourses tbody tr", doc);
-  const currentSubjects = allRows.slice(1).map((row) => {
+  const currentSubjects = allRows.slice(1).map((row: Element) => {
     return {
       classId: getText(query("td:nth-child(1)", row)),
       subject: getText(query("td:nth-child(2)", row)),
@@ -190,7 +190,7 @@ export const getCurrentStatus = async () => {
   const resDoc = parseHTML(res);
 
   const subjectRows = queryAll("#id tr", resDoc);
-  const subject = subjectRows.find((el) =>
+  const subject = subjectRows.find((el: Element) =>
     getText(query("td:nth-child(1)", el))
       .toLowerCase()
       .includes(classCode.toLowerCase())
@@ -199,7 +199,7 @@ export const getCurrentStatus = async () => {
   let result: any = {};
   if (subject) {
     // Process td:nth-child(2) links
-    queryAll('td:nth-child(2) a[href^="Groups.aspx"]', subject).forEach((el) => {
+    queryAll('td:nth-child(2) a[href^="Groups.aspx"]', subject).forEach((el: Element) => {
       const course = getText(el).trim();
       const nextSibling = el.nextSibling;
       if (nextSibling && nextSibling.nodeType === Node.TEXT_NODE) {
@@ -214,7 +214,7 @@ export const getCurrentStatus = async () => {
     });
     
     // Process td:nth-child(3) links
-    queryAll('td:nth-child(3) a[href^="Groups.aspx"]', subject).forEach((el) => {
+    queryAll('td:nth-child(3) a[href^="Groups.aspx"]', subject).forEach((el: Element) => {
       const course = getText(el).trim();
       const nextSibling = el.nextSibling;
       if (nextSibling && nextSibling.nodeType === Node.TEXT_NODE) {
@@ -239,7 +239,7 @@ export const getLecturerList = async () => {
   
   const doc = parseHTML(response);
   const lecturerList = queryAll("#ctl00_mainContent_ddlCampuses option", doc)
-    .map((option) => getText(option));
+    .map((option: Element) => getText(option));
     
   return lecturerList;
 };
@@ -254,7 +254,7 @@ export const handleDownload = () => {
   const doc = parseHTML(divStudents?.innerHTML || "");
   
   const result = queryAll("tbody tr", doc)
-    .map((row) => {
+    .map((row: Element) => {
       const td3 = getText(query("td:nth-child(3)", row));
       const td4 = getText(query("td:nth-child(4)", row)).trim();
       const td5 = getText(query("td:nth-child(5)", row)).trim();
