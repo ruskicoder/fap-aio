@@ -27,12 +27,118 @@ This design document outlines the technical architecture for converting the FAP-
 | Installation | .crx package via store | Click .user.js link, auto-install |
 | HTML Parsing | Cheerio (server-side library) | DOMParser + native DOM APIs |
 
+## Implementation Decisions & Clarifications
+
+Based on requirements analysis and technical discussions, the following implementation decisions have been finalized:
+
+### A. Adapter Design Patterns
+
+**A1. Storage Adapter - Automatic Key Prefixing**
+- The adapter automatically adds `fap-aio:` prefix to all keys
+- Features pass simple keys (e.g., `'gpaConfig'`), stored as `'fap-aio:gpaConfig'`
+- Maximizes compatibility and prevents key collisions
+
+**A2. HTTP Adapter - Auto-Detection**
+- Automatically detects response type based on Content-Type header
+- Returns parsed JSON objects when Content-Type includes 'application/json'
+- Returns raw text/HTML for other content types
+- Features can handle both without explicit type specification
+
+**A3. Error Handling Strategy**
+- Adapters log warnings but continue with fallbacks
+- Comprehensive logging for easy debugging
+- No exceptions thrown that would break userscript execution
+- Graceful degradation when GM APIs unavailable
+
+### B. Build System Architecture
+
+**B1. CSS Bundling Strategy**
+- Custom Vite plugin to transform CSS into JavaScript strings
+- Single output file constraint: `dist/fap-aio.user.js`
+- All CSS inlined as strings for GM_addStyle injection
+- No external CSS files or @resource directives
+
+**B2. TypeScript Path Aliases**
+- New alias: `@userscript/` for userscript-specific code
+- Prevents cross-contamination between extension and userscript builds
+- Userscript errors won't affect extension compilation
+- Clear separation of concerns
+
+**B3. Source Maps**
+- **Not included** in production builds
+- Reduces file size and maintains clean output
+- Debug via console logging instead
+
+### C. Feature Integration Patterns
+
+**C1. Import Strategy - Barrel File Re-exports**
+- Option 3 selected: Re-export through userscript barrel file
+- Maximizes code readability and maintainability
+- Centralized feature management
+- Example: `import { initGPA } from '@userscript/features'`
+
+**C2. Platform Compatibility**
+- Features verified to use universal methods (no chrome.* APIs)
+- Storage abstraction already in place (localStorage-based)
+- DOM parser utilities replace Cheerio
+- All features are platform-agnostic by design
+
+**C3. React Component Mounting**
+- **Shared mounting utility** in userscript utils
+- Lightweight, reusable across all features
+- Centralizes ReactDOM.createRoot logic
+- Provides error boundaries integration
+
+### D. Metadata Configuration
+
+**D1. CDN Version Strategy**
+- Major version lock for React: `@18` (e.g., react@18/umd/react.production.min.js)
+- Ensures security while maintaining compatibility
+- Auto-updates to latest stable 18.x minor/patch versions
+- Prevents breaking changes from major version bumps
+
+**D2. Update URL**
+- Included in initial build: `https://ruskicoder.github.io/fap-aio/fap-aio.user.js`
+- Will be functional after GitHub Pages setup
+- Enables automatic update detection immediately
+
+**D3. Favicon Embedding**
+- Base64-encoded favicon embedded directly in metadata
+- Source: `image.txt` (https://fptshop.com.vn/favicon.ico)
+- No external resource loading required
+
+### E. Testing & Validation Strategy
+
+**E1. Phase Testing Approach**
+- **Phase 1 (Adapters)**: Manual console tests in terminal (no test files)
+- **Phase 2 (Entry/Router)**: Verify loads without errors, routing logs correctly
+- **Phase 3 (Build)**: Validate output file, metadata format, import resolution
+- **Phase 4 (Features)**: Individual feature testing + end-user validation
+
+**E2. Test Data & Environment**
+- Testing performed on **live FAP site only**
+- Real-world data ensures accurate parsing validation
+- No mock data or local HTML fixtures
+
+**E3. Build Validation Checklist**
+- Metadata block properly formatted with all directives
+- No syntax errors (ESLint/TypeScript validation)
+- All imports resolved correctly
+- React/ReactDOM marked as external
+- File size optimized (not critical but minimize where possible)
+
 ### Critical Conversion Challenges
 
 The conversion faces several significant challenges that must be addressed:
 
-#### 1. **Cheerio Dependency Removal** (CRITICAL)
-**Problem**: The extension uses Cheerio (`cheerio` package) for HTML parsing, which is a Node.js/server-side library that:
+#### 1. **Cheerio Dependency Removal** (CRITICAL) ✅ **COMPLETED - Phase 0**
+**Status**: Successfully eliminated from codebase
+- No Cheerio imports remain in any feature modules
+- DOM parser utilities implemented in `src/contentScript/shared/dom-parser.ts`
+- All HTML parsing migrated to native browser APIs
+- Features verified to work identically without Cheerio
+
+**Problem**: The extension used Cheerio (`cheerio` package) for HTML parsing, which is a Node.js/server-side library that:
 - Requires Node.js built-in modules not available in browsers
 - Cannot run in browser context without massive polyfills (30-50KB)
 - Would bloat the userscript bundle significantly
