@@ -126,8 +126,26 @@ progress::-moz-progress-bar {
 
 #fap-moveout-root #myframe {
   width: 100% !important;
-  height: 50vh !important;
-  min-height: 400px !important;
+  height: 80vh !important;
+  min-height: 600px !important;
   display: block;
   border: 1px solid #ccc;
 }
+
+/* Action buttons */
+#fap-moveout-root button {
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: 2px solid #F36B16;
+  color: #F36B16;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#fap-moveout-root button:hover {
+  background: #F36B16;
+  color: black;
+}
+

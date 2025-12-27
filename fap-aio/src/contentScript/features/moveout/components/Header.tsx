@@ -20,26 +20,28 @@ const Header: React.FC<HeaderProps> = ({
           <>
             <a
               href="https://docs.google.com/spreadsheets/d/1CTlmTC4RgW4zk-A9VTkz4BGzjY2PMk5s/edit"
-              className="group hover:bg-green-600 font-bold px-4 py-2 text-white rounded-md bg-green-500 cursor-pointer gap-8 !no-underline hover:!text-white"
+              className="font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all cursor-pointer !no-underline"
               target="_blank"
             >
               Xem review GV
             </a>
-            <span
+            <button
+              type="button"
               onClick={refresh}
-              className="font-bold px-4 py-2 text-white rounded-md bg-green-500 cursor-pointer flex gap-8 hover:bg-green-600"
+              className="font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all cursor-pointer"
             >
               Làm mới
-            </span>
+            </button>
             {!isRegisterCourse && (
-              <div
+              <button
+                type="button"
                 onClick={handleStudentCount}
-                className="group hover:bg-green-600 font-bold px-4 py-2 text-white rounded-md bg-green-500 cursor-pointer gap-8"
+                className="font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all cursor-pointer"
                 id="studentCount"
                 title="(Có thể sẽ hơi lag)"
               >
-                <span className="">Lấy sĩ số</span>
-              </div>
+                Lấy sĩ số
+              </button>
             )}
             <span className="font-bold text-3xl" id="class-id">
               {document

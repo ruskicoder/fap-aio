@@ -34,6 +34,7 @@ export default defineManifest({
       matches: ['https://fap.fpt.edu.vn/*'],
       js: ['src/contentScript/index.ts'],
       run_at: 'document_start',
+      all_frames: true,
     },
   ],
   web_accessible_resources: [
