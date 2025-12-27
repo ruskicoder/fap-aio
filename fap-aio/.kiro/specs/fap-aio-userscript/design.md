@@ -97,37 +97,54 @@ Based on requirements analysis and technical discussions, the following implemen
 - Auto-updates to latest stable 18.x minor/patch versions
 - Prevents breaking changes from major version bumps
 
-**D2. Update URL**
-- Included in initial build: `https://ruskicoder.github.io/fap-aio/fap-aio.user.js`
-- Will be functional after GitHub Pages setup
-- Enables automatic update detection immediately
+**D2. Update URL Configuration**
+- Include @updateURL in initial builds: `https://ruskicoder.github.io/fap-aio/fap-aio.user.js`
+- Include @downloadURL pointing to same location
+- GitHub Pages deployment configured after Phase 3/4
+- Auto-update mechanism active from first deployment
 
 **D3. Favicon Embedding**
-- Base64-encoded favicon embedded directly in metadata
-- Source: `image.txt` (https://fptshop.com.vn/favicon.ico)
-- No external resource loading required
+- Favicon base64-encoded and embedded in @icon directive
+- Source: `userscript/fap-aio/image.txt` (FPTShop favicon URL)
+- No external icon resources required
+- Embedded directly in metadata block
 
-### E. Testing & Validation Strategy
+### E. Testing Strategy
 
-**E1. Phase Testing Approach**
-- **Phase 1 (Adapters)**: Manual console tests in terminal (no test files)
+**E1. Phase Validation Checkpoints**
+- **Phase 1 (Adapters)**: Manual console tests in terminal, no test files in codebase
 - **Phase 2 (Entry/Router)**: Verify loads without errors, routing logs correctly
-- **Phase 3 (Build)**: Validate output file, metadata format, import resolution
-- **Phase 4 (Features)**: Individual feature testing + end-user validation
+- **Phase 3 (Build)**: Validate metadata format, imports resolved, no syntax errors
+- **Phase 4 (Features)**: Each feature tested individually, then end-user integration testing
 
-**E2. Test Data & Environment**
-- Testing performed on **live FAP site only**
-- Real-world data ensures accurate parsing validation
-- No mock data or local HTML fixtures
+**E2. Test Environment**
+- **Live FAP site only** - no mock data or HTML fixtures
+- Testing in Tampermonkey on Opera GX browser
+- Assumes compatibility with other browsers/managers
 
-**E3. Build Validation Checklist**
-- Metadata block properly formatted with all directives
-- No syntax errors (ESLint/TypeScript validation)
+### E. Testing Strategy
+
+**E1. Phase Validation Checkpoints**
+- **Phase 1 (Adapters)**: Manual console tests in terminal, no test files in codebase
+- **Phase 2 (Entry/Router)**: Verify loads without errors, routing logs correctly
+- **Phase 3 (Build)**: Validate metadata format, imports resolved, no syntax errors
+- **Phase 4 (Features)**: Each feature tested individually, then end-user integration testing
+
+**E2. Test Environment**
+- **Live FAP site only** - no mock data or HTML fixtures
+- Testing in Tampermonkey on Opera GX browser
+- Assumes compatibility with other browsers/managers
+
+**E3. Build Output Validation**
+- Metadata block properly formatted
+- No syntax errors (linting optional)
 - All imports resolved correctly
 - React/ReactDOM marked as external
-- File size optimized (not critical but minimize where possible)
+- File size monitored but not critical
 
-### Critical Conversion Challenges
+---
+
+## Critical Conversion Challenges
 
 The conversion faces several significant challenges that must be addressed:
 
@@ -203,22 +220,23 @@ storage.set('key', value);
 ```
 userscript/fap-aio/                    # Userscript implementation root
 ├── src/
-│   ├── userscript/                   # Userscript-specific code
-│   │   ├── adapters/                # Platform adapters
-│   │   │   ├── storage.adapter.ts   # GM_setValue/GM_getValue wrapper
-│   │   │   ├── http.adapter.ts      # GM_xmlhttpRequest wrapper
-│   │   │   └── style.adapter.ts     # GM_addStyle wrapper
-│   │   ├── utils/                   # Userscript utilities
-│   │   │   └── dom-parser.ts        # Native DOM parser (Cheerio replacement)
-│   │   ├── main.ts                  # Entry point (IIFE wrapper)
-│   │   └── router.ts                # Feature routing
-│   └── (shared feature code from fap-aio/src/contentScript/features/)
+│   ├── adapters/                     # Platform adapters
+│   │   ├── storage.adapter.ts        # GM_setValue/GM_getValue wrapper (auto-prefix)
+│   │   ├── http.adapter.ts           # GM_xmlhttpRequest wrapper (auto-detect)
+│   │   └── style.adapter.ts          # GM_addStyle wrapper
+│   ├── utils/                        # Userscript utilities
+│   │   ├── dom-parser.ts             # Native DOM parser (Cheerio replacement)
+│   │   └── mount.ts                  # Shared React mounting utility
+│   ├── features/                     # Feature barrel file (re-exports)
+│   │   └── index.ts                  # Re-exports from extension features
+│   ├── main.ts                       # Entry point (IIFE wrapper)
+│   └── router.ts                     # Feature routing
 ├── scripts/
-│   └── generate-metadata.ts         # Metadata block generator
+│   └── generate-metadata.ts          # Metadata block generator
 ├── dist/
-│   └── fap-aio.user.js             # Built userscript
-├── vite.userscript.config.ts       # Vite build config
-└── package.json                     # Dependencies and scripts
+│   └── fap-aio.user.js              # Built userscript (SINGLE OUTPUT FILE)
+├── vite.userscript.config.ts        # Vite build config (@userscript alias)
+└── package.json                      # Dependencies and scripts
 ```
 
 ```mermaid
@@ -494,7 +512,7 @@ ${metadata.icon ? `// @icon         ${metadata.icon}` : ''}
 const metadata: UserscriptMetadata = {
   name: 'FAP-AIO',
   namespace: 'https://github.com/ruskicoder/fap-aio',
-  version: '1.0.0', // Read from package.json
+  version: '0.0.1', // Start at 0.0.1, increment to 1.0.0 for stable release
   description: 'All-in-One Enhancement for FPT University Academic Portal',
   author: 'ruskicoder',
   match: ['https://fap.fpt.edu.vn/*'],
@@ -507,6 +525,7 @@ const metadata: UserscriptMetadata = {
     'GM_info',
   ],
   require: [
+    // Major version lock (@18) for security + compatibility
     'https://unpkg.com/react@18/umd/react.production.min.js',
     'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
   ],
@@ -518,7 +537,7 @@ const metadata: UserscriptMetadata = {
   updateURL: 'https://ruskicoder.github.io/fap-aio/fap-aio.user.js',
   downloadURL: 'https://ruskicoder.github.io/fap-aio/fap-aio.user.js',
   homepageURL: 'https://github.com/ruskicoder/fap-aio',
-  icon: 'https://fap.fpt.edu.vn/favicon.ico',
+  icon: 'https://fptshop.com.vn/favicon.ico', // Embedded as base64 in build
 };
 ```
 
@@ -526,8 +545,10 @@ const metadata: UserscriptMetadata = {
 
 **Purpose**: Abstract storage operations to work with GM_setValue/GM_getValue or fallback to localStorage.
 
+**Design Decision**: Automatic key prefixing for maximum compatibility. Features pass simple keys (e.g., `'gpaConfig'`), adapter automatically adds `'fap-aio:'` prefix internally.
+
 ```typescript
-// src/userscript/adapters/storage.adapter.ts
+// src/adapters/storage.adapter.ts
 
 type StorageValue = string | number | boolean | object | null;
 
@@ -627,8 +648,10 @@ export const storage = new GMStorageAdapter();
 
 **Purpose**: Abstract HTTP requests to use GM_xmlhttpRequest with fetch fallback.
 
+**Design Decision**: Auto-detect response type based on Content-Type header. Returns parsed JSON when `Content-Type: application/json`, otherwise raw text/HTML. Features don't need to specify expected type.
+
 ```typescript
-// src/userscript/adapters/http.adapter.ts
+// src/adapters/http.adapter.ts
 
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
