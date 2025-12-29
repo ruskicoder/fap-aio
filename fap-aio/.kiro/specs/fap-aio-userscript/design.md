@@ -27,12 +27,135 @@ This design document outlines the technical architecture for converting the FAP-
 | Installation | .crx package via store | Click .user.js link, auto-install |
 | HTML Parsing | Cheerio (server-side library) | DOMParser + native DOM APIs |
 
-### Critical Conversion Challenges
+## Implementation Decisions & Clarifications
+
+Based on requirements analysis and technical discussions, the following implementation decisions have been finalized:
+
+### A. Adapter Design Patterns
+
+**A1. Storage Adapter - Automatic Key Prefixing**
+- The adapter automatically adds `fap-aio:` prefix to all keys
+- Features pass simple keys (e.g., `'gpaConfig'`), stored as `'fap-aio:gpaConfig'`
+- Maximizes compatibility and prevents key collisions
+
+**A2. HTTP Adapter - Auto-Detection**
+- Automatically detects response type based on Content-Type header
+- Returns parsed JSON objects when Content-Type includes 'application/json'
+- Returns raw text/HTML for other content types
+- Features can handle both without explicit type specification
+
+**A3. Error Handling Strategy**
+- Adapters log warnings but continue with fallbacks
+- Comprehensive logging for easy debugging
+- No exceptions thrown that would break userscript execution
+- Graceful degradation when GM APIs unavailable
+
+### B. Build System Architecture
+
+**B1. CSS Bundling Strategy**
+- Custom Vite plugin to transform CSS into JavaScript strings
+- Single output file constraint: `dist/fap-aio.user.js`
+- All CSS inlined as strings for GM_addStyle injection
+- No external CSS files or @resource directives
+
+**B2. TypeScript Path Aliases**
+- New alias: `@userscript/` for userscript-specific code
+- Prevents cross-contamination between extension and userscript builds
+- Userscript errors won't affect extension compilation
+- Clear separation of concerns
+
+**B3. Source Maps**
+- **Not included** in production builds
+- Reduces file size and maintains clean output
+- Debug via console logging instead
+
+### C. Feature Integration Patterns
+
+**C1. Import Strategy - Barrel File Re-exports**
+- Option 3 selected: Re-export through userscript barrel file
+- Maximizes code readability and maintainability
+- Centralized feature management
+- Example: `import { initGPA } from '@userscript/features'`
+
+**C2. Platform Compatibility**
+- Features verified to use universal methods (no chrome.* APIs)
+- Storage abstraction already in place (localStorage-based)
+- DOM parser utilities replace Cheerio
+- All features are platform-agnostic by design
+
+**C3. React Component Mounting**
+- **Shared mounting utility** in userscript utils
+- Lightweight, reusable across all features
+- Centralizes ReactDOM.createRoot logic
+- Provides error boundaries integration
+
+### D. Metadata Configuration
+
+**D1. CDN Version Strategy**
+- Major version lock for React: `@18` (e.g., react@18/umd/react.production.min.js)
+- Ensures security while maintaining compatibility
+- Auto-updates to latest stable 18.x minor/patch versions
+- Prevents breaking changes from major version bumps
+
+**D2. Update URL Configuration**
+- Include @updateURL in initial builds: `https://ruskicoder.github.io/fap-aio/fap-aio.user.js`
+- Include @downloadURL pointing to same location
+- GitHub Pages deployment configured after Phase 3/4
+- Auto-update mechanism active from first deployment
+
+**D3. Favicon Embedding**
+- Favicon base64-encoded and embedded in @icon directive
+- Source: `userscript/fap-aio/image.txt` (FPTShop favicon URL)
+- No external icon resources required
+- Embedded directly in metadata block
+
+### E. Testing Strategy
+
+**E1. Phase Validation Checkpoints**
+- **Phase 1 (Adapters)**: Manual console tests in terminal, no test files in codebase
+- **Phase 2 (Entry/Router)**: Verify loads without errors, routing logs correctly
+- **Phase 3 (Build)**: Validate metadata format, imports resolved, no syntax errors
+- **Phase 4 (Features)**: Each feature tested individually, then end-user integration testing
+
+**E2. Test Environment**
+- **Live FAP site only** - no mock data or HTML fixtures
+- Testing in Tampermonkey on Opera GX browser
+- Assumes compatibility with other browsers/managers
+
+### E. Testing Strategy
+
+**E1. Phase Validation Checkpoints**
+- **Phase 1 (Adapters)**: Manual console tests in terminal, no test files in codebase
+- **Phase 2 (Entry/Router)**: Verify loads without errors, routing logs correctly
+- **Phase 3 (Build)**: Validate metadata format, imports resolved, no syntax errors
+- **Phase 4 (Features)**: Each feature tested individually, then end-user integration testing
+
+**E2. Test Environment**
+- **Live FAP site only** - no mock data or HTML fixtures
+- Testing in Tampermonkey on Opera GX browser
+- Assumes compatibility with other browsers/managers
+
+**E3. Build Output Validation**
+- Metadata block properly formatted
+- No syntax errors (linting optional)
+- All imports resolved correctly
+- React/ReactDOM marked as external
+- File size monitored but not critical
+
+---
+
+## Critical Conversion Challenges
 
 The conversion faces several significant challenges that must be addressed:
 
-#### 1. **Cheerio Dependency Removal** (CRITICAL)
-**Problem**: The extension uses Cheerio (`cheerio` package) for HTML parsing, which is a Node.js/server-side library that:
+#### 1. **Cheerio Dependency Removal** (CRITICAL) ✅ **COMPLETED - Phase 0**
+**Status**: Successfully eliminated from codebase
+- No Cheerio imports remain in any feature modules
+- DOM parser utilities implemented in `src/contentScript/shared/dom-parser.ts`
+- All HTML parsing migrated to native browser APIs
+- Features verified to work identically without Cheerio
+
+**Problem**: The extension used Cheerio (`cheerio` package) for HTML parsing, which is a Node.js/server-side library that:
 - Requires Node.js built-in modules not available in browsers
 - Cannot run in browser context without massive polyfills (30-50KB)
 - Would bloat the userscript bundle significantly
@@ -91,89 +214,417 @@ storage.set('key', value);
 
 ## Architecture
 
+### **Build-Time Module Substitution Strategy**
+
+The userscript reuses extension features **without any code modifications** using build-time module replacement and runtime polyfills. This approach:
+- ✅ **Keeps extension unchanged** - No breaking changes to compilation
+- ✅ **Maximizes code compatibility** - Same interfaces, different implementations  
+- ✅ **Isolates failures** - Userscript breaks don't affect extension
+- ✅ **Single source of truth** - Extension features are authoritative
+
+**Core Principle**: Extension features are the source of truth. Userscript adapts to them via:
+1. **Build-time alias substitution** - Vite redirects imports to platform-specific implementations
+2. **Runtime polyfills** - Global fetch() replaced with GM_xmlhttpRequest wrapper
+3. **Interface facades** - Match extension storage interface exactly, use GM APIs internally
+
 ### High-Level Structure
 
 **Directory Structure**:
 ```
-userscript/fap-aio/                    # Userscript implementation root
+fap-aio/                                # Extension (UNCHANGED - source of truth)
 ├── src/
-│   ├── userscript/                   # Userscript-specific code
-│   │   ├── adapters/                # Platform adapters
-│   │   │   ├── storage.adapter.ts   # GM_setValue/GM_getValue wrapper
-│   │   │   ├── http.adapter.ts      # GM_xmlhttpRequest wrapper
-│   │   │   └── style.adapter.ts     # GM_addStyle wrapper
-│   │   ├── utils/                   # Userscript utilities
-│   │   │   └── dom-parser.ts        # Native DOM parser (Cheerio replacement)
-│   │   ├── main.ts                  # Entry point (IIFE wrapper)
-│   │   └── router.ts                # Feature routing
-│   └── (shared feature code from fap-aio/src/contentScript/features/)
-├── scripts/
-│   └── generate-metadata.ts         # Metadata block generator
+│   ├── contentScript/
+│   │   ├── features/                  # Feature implementations (UNCHANGED)
+│   │   │   ├── gpa/                   # Uses: storage from shared, fetch(), ReactDOM
+│   │   │   ├── moveout/               # Uses: storage from shared, fetch(), ReactDOM
+│   │   │   └── scheduler/             # Uses: storage from shared, fetch(), ReactDOM
+│   │   └── shared/
+│   │       └── storage.ts             # localStorage-based, StorageItem<T> wrapper, TTL support
+│   └── ...
+
+userscript/fap-aio/                    # Userscript implementation
+├── src/
+│   ├── adapters/                      # GM API wrappers (low-level)
+│   │   ├── storage.adapter.ts         # GM_setValue/localStorage fallback
+│   │   └── http.adapter.ts            # GM_xmlhttpRequest/fetch fallback
+│   │
+│   ├── facades/                       # Extension-compatible interfaces
+│   │   └── storage.facade.ts          # Matches extension storage.ts interface exactly
+│   │                                  # Uses: GMStorageAdapter internally
+│   │                                  # Methods: set<T>(key, value, ttlInMinutes?), get<T>, etc.
+│   │                                  # Format: StorageItem<T> = { value: T, expiry?: number }
+│   │
+│   ├── polyfills/                     # Runtime polyfills
+│   │   └── fetch.polyfill.ts          # fetch() → GM_xmlhttpRequest wrapper
+│   │                                  # Returns: Response-compatible object
+│   │
+│   ├── utils/                         # Userscript utilities
+│   │   └── mount.ts                   # Optional React mounting utility (not required)
+│   │
+│   ├── features/                      # Feature barrel file
+│   │   └── index.ts                   # Re-exports from extension features (unchanged)
+│   │
+│   ├── main.ts                        # Entry point (IIFE wrapper)
+│   │                                  # - Injects fetch polyfill FIRST
+│   │                                  # - Waits for React from CDN
+│   │                                  # - Initializes router
+│   │
+│   └── router.ts                      # Feature routing (no dependency injection)
+│                                      # Calls: initGPA(), initMoveOut(), initScheduler()
+│
+├── vite.userscript.config.ts         # Build-time alias configuration
+│                                      # Alias: @/contentScript/shared/storage → facades/storage.facade.ts
+│                                      # Alias: @ → ../../fap-aio/src (extension source)
+│
 ├── dist/
-│   └── fap-aio.user.js             # Built userscript
-├── vite.userscript.config.ts       # Vite build config
-└── package.json                     # Dependencies and scripts
+│   └── fap-aio.user.js               # Built userscript (SINGLE OUTPUT FILE)
+│                                      # Contains: facade (not extension storage)
+│
+└── package.json                       # Dependencies and scripts
 ```
+
+### **Build-Time Module Replacement (Vite Aliases)**
+
+Extension features import shared modules with hardcoded paths:
+```typescript
+// In extension features (GPA, MoveOut, Scheduler)
+import { storage } from '@/contentScript/shared/storage';
+```
+
+**Userscript Vite config redirects this import:**
+```typescript
+// vite.userscript.config.ts
+export default defineConfig({
+  resolve: {
+    alias: {
+      // CRITICAL: Redirect extension's storage to userscript facade
+      '@/contentScript/shared/storage': 
+        path.resolve(__dirname, './src/facades/storage.facade.ts'),
+      
+      // Extension features point to actual extension source
+      '@/contentScript/features': 
+        path.resolve(__dirname, '../../fap-aio/src/contentScript/features'),
+      
+      // Other extension imports work normally
+      '@': path.resolve(__dirname, '../../fap-aio/src')
+    }
+  },
+  
+  build: {
+    rollupOptions: {
+      external: ['react', 'react-dom'],
+      output: {
+        globals: {
+          'react': 'React',
+          'react-dom': 'ReactDOM'
+        }
+      }
+    }
+  }
+});
+```
+
+**Result**: When building userscript, ALL `import { storage } from '@/contentScript/shared/storage'` automatically resolve to the facade - **zero code changes to extension features**.
+
+### **Storage Facade - Matches Extension Interface Exactly**
+
+The facade provides 100% API compatibility with extension's storage module:
+
+```typescript
+// userscript/fap-aio/src/facades/storage.facade.ts
+import { GMStorageAdapter } from '../adapters/storage.adapter';
+
+const gmAdapter = new GMStorageAdapter();
+
+// Export with EXACT same interface as extension's storage.ts
+export const storage = {
+  // Match extension signature: set<T>(key, value, ttlInMinutes?)
+  set: <T>(key: string, value: T, ttlInMinutes?: number): void => {
+    const item = {
+      value,
+      expiry: ttlInMinutes ? Date.now() + ttlInMinutes * 60000 : undefined
+    };
+    gmAdapter.set(key, item); // Store with StorageItem<T> wrapper
+  },
+
+  // Match extension signature: get<T>(key): T | null
+  get: <T>(key: string): T | null => {
+    const item = gmAdapter.get<{ value: T; expiry?: number }>(key);
+    if (!item) return null;
+    
+    // Check expiry (same logic as extension)
+    if (item.expiry && Date.now() > item.expiry) {
+      gmAdapter.remove(key);
+      return null;
+    }
+    
+    return item.value; // Unwrap and return
+  },
+
+  // Match all other extension methods
+  getRaw: (key: string): string | null => {
+    return gmAdapter.get<string>(key);
+  },
+
+  setRaw: (key: string, value: string): void => {
+    gmAdapter.set(key, value);
+  },
+
+  remove: (key: string): void => {
+    gmAdapter.remove(key);
+  },
+
+  removeRaw: (key: string): void => {
+    gmAdapter.remove(key);
+  },
+
+  clear: (): void => {
+    gmAdapter.clear();
+  },
+
+  isExpired: (key: string): boolean => {
+    const item = gmAdapter.get<{ expiry?: number }>(key);
+    if (!item) return true;
+    return item.expiry ? Date.now() > item.expiry : false;
+  },
+
+  setExpiry: (key: string, durationMs: number): void => {
+    gmAdapter.set(key, (Date.now() + durationMs).toString());
+  },
+
+  getExpiry: (key: string): number | null => {
+    const value = gmAdapter.get<string>(key);
+    return value ? Number(value) : null;
+  }
+};
+```
+
+**Key Features:**
+- ✅ Matches extension interface: All methods have identical signatures
+- ✅ Uses StorageItem<T> wrapper: `{ value: T, expiry?: number }`
+- ✅ TTL support: Handles `ttlInMinutes` parameter exactly like extension
+- ✅ Expiry checking: Same expiry validation and auto-removal logic
+- ✅ GM storage: Uses GMStorageAdapter (GM_setValue) internally
+- ✅ Transparent: Extension features work without knowing they're using GM APIs
+
+### **Fetch Polyfill - Runtime Injection**
+
+Extension features use native `fetch()` directly (13 calls in MoveOut alone). Userscript replaces global fetch at runtime:
+
+```typescript
+// userscript/fap-aio/src/polyfills/fetch.polyfill.ts
+import { HTTPAdapter } from '../adapters/http.adapter';
+
+const httpAdapter = new HTTPAdapter();
+
+/**
+ * Polyfill fetch() using GM_xmlhttpRequest
+ * Matches native fetch API signature
+ */
+export function createFetchPolyfill(): typeof fetch {
+  return async function polyfillFetch(
+    url: string | URL,
+    init?: RequestInit
+  ): Promise<Response> {
+    const result = await httpAdapter.request({
+      method: (init?.method as any) || 'GET',
+      url: url.toString(),
+      headers: init?.headers,
+      data: init?.body
+    });
+
+    // Return Response-compatible object
+    return {
+      ok: result.status >= 200 && result.status < 300,
+      status: result.status,
+      statusText: result.statusText || '',
+      headers: new Headers(result.headers),
+      
+      async json() { return JSON.parse(result.data); },
+      async text() { return result.data; },
+      async blob() { return new Blob([result.data]); },
+      async arrayBuffer() { 
+        return new TextEncoder().encode(result.data).buffer; 
+      },
+      async formData() { 
+        throw new Error('formData not supported in polyfill'); 
+      },
+      
+      clone: () => this,
+      body: null,
+      bodyUsed: false,
+      redirected: false,
+      type: 'basic',
+      url: url.toString()
+    } as Response;
+  };
+}
+```
+
+**Main entry point injects polyfill BEFORE loading features:**
+
+```typescript
+// userscript/fap-aio/src/main.ts
+import { createFetchPolyfill } from './polyfills/fetch.polyfill';
+import { initRouter } from './router';
+
+(function() {
+  'use strict';
+  
+  // CRITICAL: Inject fetch polyfill BEFORE loading features
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = createFetchPolyfill();
+  
+  console.log('[FAP-AIO] Fetch polyfill injected, using GM_xmlhttpRequest');
+  
+  // Wait for React from CDN
+  function waitForReact(timeout = 5000): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const startTime = Date.now();
+      const check = () => {
+        if (window.React && window.ReactDOM) {
+          console.log('[FAP-AIO] React loaded from CDN');
+          resolve();
+        } else if (Date.now() - startTime > timeout) {
+          reject(new Error('React failed to load from CDN'));
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    });
+  }
+  
+  async function init() {
+    try {
+      await waitForReact();
+      initRouter(); // Features use polyfilled fetch automatically
+    } catch (error) {
+      console.error('[FAP-AIO] Initialization failed:', error);
+    }
+  }
+  
+  // Wait for DOM or run immediately
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+```
+
+### **Cross-Affection Isolation**
+
+| Scenario | Extension Impact | Userscript Impact | Isolation Level |
+|----------|------------------|-------------------|-----------------|
+| Extension storage interface changes | ✅ Must update facade | ❌ None | ✅ **Strong** |
+| Extension feature refactor | ✅ May need facade update | ❌ None | ✅ **Strong** |
+| Userscript adapter breaks | ❌ None | ✅ Facade/polyfill broken | ✅ **Perfect** |
+| Userscript build fails | ❌ None | ✅ Only userscript affected | ✅ **Perfect** |
+| Extension build fails | ✅ Extension broken | ❌ None (uses last working) | ✅ **Strong** |
+| Extension adds new storage method | ✅ Must add to facade | ❌ None | ✅ **Moderate** |
+| Extension changes storage data format | ✅ Must update facade wrapper | ❌ None | ✅ **Moderate** |
+
+**Verdict**: ✅ **Minimal cross-affection** - Userscript is a consumer that adapts to extension, not vice versa.
+
+### Architecture Diagram
 
 ```mermaid
 graph TB
-    subgraph "Tampermonkey Userscript"
-        META[Metadata Block<br/>@name, @grant, @match, @require]
-        MAIN[Main Entry Point<br/>IIFE Wrapper]
+    subgraph "Extension (Source of Truth - UNCHANGED)"
+        EXT_GPA[GPA Feature]
+        EXT_MO[MoveOut Feature]
+        EXT_SCHED[Scheduler Feature]
+        EXT_STORAGE[shared/storage.ts<br/>localStorage + StorageItem wrapper]
         
-        subgraph "Platform Adapter Layer"
-            STORAGE[Storage Adapter<br/>GM_setValue/localStorage]
-            HTTP[HTTP Adapter<br/>GM_xmlhttpRequest/fetch]
-            STYLE[Style Adapter<br/>GM_addStyle/createElement]
-        end
+        EXT_GPA --> |imports| EXT_STORAGE
+        EXT_MO --> |imports| EXT_STORAGE
+        EXT_SCHED --> |imports| EXT_STORAGE
         
-        subgraph "Feature Modules (Unchanged)"
-            GPA[GPA Calculator]
-            MOVEOUT[MoveOut Tool]
-            SCHED[Scheduler]
-            USERSTYLE[Userstyle Theme]
-        end
-        
-        ROUTER[URL Router]
-        
-        META --> MAIN
-        MAIN --> ROUTER
-        ROUTER --> GPA
-        ROUTER --> MOVEOUT
-        ROUTER --> SCHED
-        ROUTER --> USERSTYLE
-        
-        GPA --> STORAGE
-        GPA --> STYLE
-        MOVEOUT --> STORAGE
-        MOVEOUT --> HTTP
-        MOVEOUT --> STYLE
-        SCHED --> STORAGE
-        SCHED --> HTTP
-        SCHED --> STYLE
-        USERSTYLE --> STYLE
+        EXT_GPA --> |uses| FETCH[fetch API]
+        EXT_MO --> |uses| FETCH
+        EXT_SCHED --> |uses| FETCH
     end
     
-    CDN[CDN Resources<br/>React, ReactDOM] -.@require.-> MAIN
-    GITHUB[GitHub Pages<br/>Updates, Notifications] -.@connect.-> HTTP
+    subgraph "Userscript Build Process"
+        VITE[Vite Build]
+        ALIAS[Build-Time Alias<br/>@/contentScript/shared/storage<br/>→ facades/storage.facade.ts]
+        
+        VITE --> ALIAS
+    end
+    
+    subgraph "Userscript Runtime"
+        US_MAIN[main.ts<br/>Entry Point]
+        FETCH_POLY[fetch.polyfill.ts<br/>GM_xmlhttpRequest wrapper]
+        FACADE[storage.facade.ts<br/>Matches extension interface]
+        ADAPTER[storage.adapter.ts<br/>GM_setValue wrapper]
+        
+        US_MAIN --> |1. Inject first| FETCH_POLY
+        US_MAIN --> |2. Initialize| US_ROUTER[router.ts]
+        
+        FETCH_POLY --> |replaces| GLOBAL_FETCH[globalThis.fetch]
+        
+        US_ROUTER --> |calls| US_GPA[GPA Feature<br/>from extension]
+        US_ROUTER --> |calls| US_MO[MoveOut Feature<br/>from extension]
+        US_ROUTER --> |calls| US_SCHED[Scheduler Feature<br/>from extension]
+        
+        US_GPA --> |imports storage| FACADE
+        US_MO --> |imports storage| FACADE
+        US_SCHED --> |imports storage| FACADE
+        
+        FACADE --> |uses internally| ADAPTER
+        ADAPTER --> |calls| GM_API[GM_setValue<br/>GM_getValue]
+        
+        US_GPA --> |calls| GLOBAL_FETCH
+        US_MO --> |calls| GLOBAL_FETCH
+        US_SCHED --> |calls| GLOBAL_FETCH
+        
+        GLOBAL_FETCH --> |routes to| GM_XHR[GM_xmlhttpRequest]
+    end
+    
+    ALIAS -.build-time redirect.-> FACADE
+    EXT_GPA -.bundled into.-> US_GPA
+    EXT_MO -.bundled into.-> US_MO
+    EXT_SCHED -.bundled into.-> US_SCHED
 ```
 
-### Directory Structure for Build
+### Data Flow Examples
 
+**Example 1: Storage Operation**
 ```
-fap-aio/
-├── src/
-│   ├── userscript/
-│   │   ├── main.ts                    # Userscript entry point
-│   │   ├── metadata.ts                # Generates metadata block
-│   │   ├── adapters/
-│   │   │   ├── storage.adapter.ts     # GM_setValue/localStorage wrapper
-│   │   │   ├── http.adapter.ts        # GM_xmlhttpRequest/fetch wrapper
-│   │   │   └── style.adapter.ts       # GM_addStyle/createElement wrapper
-│   │   └── router.ts                  # URL-based feature routing
-│   │
-│   ├── contentScript/
-│   │   ├── features/                  # Reused from extension (minimal changes)
+Extension Feature Code:
+  import { storage } from '@/contentScript/shared/storage';
+  storage.set('gpaConfig', config, 60); // 60 min TTL
+  
+Build-Time (Vite):
+  Alias redirects import to: facades/storage.facade.ts
+  
+Runtime (Userscript):
+  1. facade.set('gpaConfig', config, 60)
+  2. Wraps: { value: config, expiry: Date.now() + 3600000 }
+  3. adapter.set('gpaConfig', wrapped)
+  4. GM_setValue('fap-aio:gpaConfig', JSON.stringify(wrapped))
+  
+Result: Data stored with TTL in GM storage, compatible format
+```
+
+**Example 2: Fetch Operation**
+```
+Extension Feature Code:
+  const response = await fetch('https://fap.fpt.edu.vn/data');
+  const data = await response.json();
+  
+Runtime (Userscript):
+  1. fetch polyfill intercepts call
+  2. httpAdapter.request({ method: 'GET', url: '...' })
+  3. GM_xmlhttpRequest makes actual request
+  4. Returns Response-compatible object
+  5. Feature calls .json() on returned object
+  
+Result: Same API as native fetch, using GM APIs internally
+```
+
+## Architecture
 │   │   │   ├── gpa/
 │   │   │   ├── moveout/
 │   │   │   ├── scheduler/
@@ -388,7 +839,7 @@ ${metadata.icon ? `// @icon         ${metadata.icon}` : ''}
 const metadata: UserscriptMetadata = {
   name: 'FAP-AIO',
   namespace: 'https://github.com/ruskicoder/fap-aio',
-  version: '1.0.0', // Read from package.json
+  version: '0.0.1', // Start at 0.0.1, increment to 1.0.0 for stable release
   description: 'All-in-One Enhancement for FPT University Academic Portal',
   author: 'ruskicoder',
   match: ['https://fap.fpt.edu.vn/*'],
@@ -401,6 +852,7 @@ const metadata: UserscriptMetadata = {
     'GM_info',
   ],
   require: [
+    // Major version lock (@18) for security + compatibility
     'https://unpkg.com/react@18/umd/react.production.min.js',
     'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
   ],
@@ -412,7 +864,7 @@ const metadata: UserscriptMetadata = {
   updateURL: 'https://ruskicoder.github.io/fap-aio/fap-aio.user.js',
   downloadURL: 'https://ruskicoder.github.io/fap-aio/fap-aio.user.js',
   homepageURL: 'https://github.com/ruskicoder/fap-aio',
-  icon: 'https://fap.fpt.edu.vn/favicon.ico',
+  icon: 'https://fptshop.com.vn/favicon.ico', // Embedded as base64 in build
 };
 ```
 
@@ -420,8 +872,10 @@ const metadata: UserscriptMetadata = {
 
 **Purpose**: Abstract storage operations to work with GM_setValue/GM_getValue or fallback to localStorage.
 
+**Design Decision**: Automatic key prefixing for maximum compatibility. Features pass simple keys (e.g., `'gpaConfig'`), adapter automatically adds `'fap-aio:'` prefix internally.
+
 ```typescript
-// src/userscript/adapters/storage.adapter.ts
+// src/adapters/storage.adapter.ts
 
 type StorageValue = string | number | boolean | object | null;
 
@@ -521,8 +975,10 @@ export const storage = new GMStorageAdapter();
 
 **Purpose**: Abstract HTTP requests to use GM_xmlhttpRequest with fetch fallback.
 
+**Design Decision**: Auto-detect response type based on Content-Type header. Returns parsed JSON when `Content-Type: application/json`, otherwise raw text/HTML. Features don't need to specify expected type.
+
 ```typescript
-// src/userscript/adapters/http.adapter.ts
+// src/adapters/http.adapter.ts
 
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';

@@ -30,11 +30,11 @@ The conversion prioritizes:
 1. WHEN the userscript is loaded THEN it SHALL include a complete metadata block with @name, @namespace, @version, @description, @author
 2. WHEN defining URL matching THEN the userscript SHALL use @match `https://fap.fpt.edu.vn/*` to inject on all FAP pages
 3. WHEN using GM APIs THEN the userscript SHALL declare all required @grant permissions (GM_setValue, GM_getValue, GM_deleteValue, GM_addStyle, GM_xmlhttpRequest)
-4. WHEN the script needs updates THEN it SHALL include @updateURL and @downloadURL pointing to the hosted raw file
-5. WHEN dependencies are needed THEN the userscript SHALL use @require to load React, ReactDOM, and other libraries from CDN
+4. WHEN the script needs updates THEN it SHALL include @updateURL and @downloadURL pointing to the hosted raw file (https://ruskicoder.github.io/fap-aio/fap-aio.user.js)
+5. WHEN dependencies are needed THEN the userscript SHALL use @require to load React@18 and ReactDOM@18 from CDN with major version lock
 6. WHEN defining execution timing THEN the userscript SHALL use @run-at document-start to inject styles early and prevent FOUC
-7. IF external resources are required THEN the userscript SHALL use @resource to define external files
-8. WHEN connecting to external services THEN the userscript SHALL use @connect to whitelist domains (e.g., ruskicoder.github.io for notifications)
+7. WHEN defining the icon THEN the userscript SHALL use @icon with base64-encoded favicon embedded directly in metadata (from image.txt)
+8. WHEN connecting to external services THEN the userscript SHALL use @connect to whitelist domains (fap.fpt.edu.vn, ruskicoder.github.io)
 
 ---
 
@@ -50,8 +50,8 @@ The conversion prioritizes:
 4. WHEN loading external libraries THEN the userscript SHALL verify React and ReactDOM are available before execution
 5. WHEN defining CSS THEN all styles SHALL be inlined within the .user.js file as strings
 6. WHEN the file is saved with .user.js extension THEN Tampermonkey SHALL recognize it as installable
-7. WHEN versioning THEN the userscript SHALL use semantic versioning (e.g., 1.0.0, 1.1.0, 2.0.0)
-8. WHEN bundling THEN the target size SHALL be optimized (< 400KB uncompressed, < 100KB gzipped) for reasonable load times
+7. WHEN versioning THEN the userscript SHALL use semantic versioning starting at 0.0.1 for initial development, incrementing to 1.0.0 for first stable release
+8. WHEN bundling THEN the build SHALL optimize file size while prioritizing functionality (file size not critical, but should be minimized where practical)
 
 ---
 
@@ -86,7 +86,8 @@ The conversion prioritizes:
 5. IF GM storage APIs are not available (Greasemonkey) THEN the userscript SHALL fallback to localStorage with appropriate error handling
 6. WHEN storing complex data THEN the userscript SHALL serialize to JSON before storing and deserialize when retrieving
 7. WHEN storage operations fail THEN the userscript SHALL handle errors gracefully and notify the user
-8. WHEN using namespaced keys THEN the userscript SHALL maintain the same key naming convention as the extension (fap-aio:*)
+8. WHEN using namespaced keys THEN the storage adapter SHALL automatically add 'fap-aio:' prefix to all keys for maximum compatibility
+9. WHEN features access storage THEN they SHALL pass simple key names (e.g., 'gpaConfig') and the adapter SHALL handle prefixing
 
 ---
 
@@ -297,6 +298,31 @@ The conversion prioritizes:
 3. WHEN GM APIs are unavailable THEN the userscript SHALL fallback gracefully and log warnings
 4. WHEN debugging THEN the userscript SHALL include a debug mode flag that enables verbose logging
 5. WHEN network requests fail THEN error messages SHALL indicate the specific operation that failed
+
+---
+
+### Requirement 17: Build-Time Module Substitution for Platform Abstraction
+
+**User Story:** As a developer, I want the userscript to reuse extension features without code modifications, so that I maintain a unified codebase with minimal cross-affection.
+
+#### Acceptance Criteria
+
+1. WHEN extension features import shared modules THEN the userscript build SHALL redirect those imports to platform-specific implementations via Vite aliases
+2. WHEN extension features import storage module THEN the userscript build SHALL substitute with a facade that matches the extension interface exactly
+3. WHEN the storage facade is used THEN it SHALL support all extension methods: set<T>(key, value, ttlInMinutes?), get<T>(key), getRaw, setRaw, remove, removeRaw, clear, isExpired, setExpiry, getExpiry
+4. WHEN the storage facade stores data THEN it SHALL use the StorageItem<T> wrapper format: { value: T, expiry?: number }
+5. WHEN TTL is provided THEN the storage facade SHALL calculate expiry timestamp and store it in the wrapper
+6. WHEN retrieving data THEN the storage facade SHALL check expiry, remove expired items, and unwrap the value
+7. WHEN extension features use fetch() THEN the userscript SHALL inject a fetch polyfill at runtime that uses GM_xmlhttpRequest
+8. WHEN the fetch polyfill is called THEN it SHALL return a Response-compatible object matching the native fetch API
+9. WHEN extension features use ReactDOM.createRoot() THEN they SHALL continue using it directly (no mount utility requirement)
+10. WHEN the userscript is built THEN Vite aliases SHALL redirect @/contentScript/shared/storage to the facade implementation
+11. WHEN extension code is modified THEN the userscript build SHALL use the updated code without breaking (extension is source of truth)
+12. WHEN userscript adapters break THEN the extension SHALL continue to build and function without issues (isolated failures)
+13. WHEN the facade interface changes THEN it SHALL match the extension's storage interface to maintain compatibility
+14. WHEN building THEN the output SHALL bundle the facade (not the extension's storage module)
+15. WHEN features are executed THEN they SHALL use GM_setValue/GM_getValue via the facade (not localStorage)
+16. WHEN fetch polyfill is injected THEN it SHALL be installed globally before any features load
 6. WHEN React errors occur THEN error boundaries SHALL catch and display them appropriately
 7. WHEN storage operations fail THEN the userscript SHALL retry or fallback to in-memory storage
 8. WHEN initialization fails THEN the userscript SHALL prevent duplicate retries and log the failure

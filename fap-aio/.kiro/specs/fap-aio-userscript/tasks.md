@@ -56,47 +56,46 @@
 
 ## Phase 1: Project Setup and Adapter Layer
 
-- [ ] 1. Create Userscript Directory Structure
+- [x] 1.1 Create Userscript Directory Structure
   - Userscript implementation is located at `userscript/fap-aio/` in repository root.
-  - Create `userscript/fap-aio/src/` directory with subdirectories for adapters and main entry point.
-  - Create `userscript/fap-aio/scripts/` directory for build utilities.
-  - Set up build configuration: `vite.userscript.config.ts` and `userscript.config.ts`.
-  - Create `userscript/fap-aio/dist/` output directory for compiled userscript.
-  - _Requirements: 2.1, 9.1, 9.2_
+  - Create `userscript/fap-aio/src/adapters/` directory for storage and HTTP adapters (low-level GM wrappers).
+  - Create `userscript/fap-aio/src/facades/` directory for extension-compatible interfaces.
+  - Create `userscript/fap-aio/src/polyfills/` directory for runtime polyfills (fetch).
+  - Create `userscript/fap-aio/src/utils/` directory for utilities (optional mount.ts).
+  - Create `userscript/fap-aio/src/features/` directory for barrel file (re-exports from extension).
+  - Create `userscript/fap-aio/scripts/` directory for build utilities (generate-metadata.ts).
+  - Set up build configuration: `vite.userscript.config.ts` with build-time aliases.
+  - Create `userscript/fap-aio/dist/` output directory for compiled userscript (single file).
+  - _Requirements: 2.1, 9.1, 9.2, 17.1_
 
-- [ ] 1.1 Implement Metadata Block Generator
-  - Create `userscript/fap-aio/scripts/generate-metadata.ts` with metadata interface definition.
-  - Implement `generateMetadataBlock()` function that formats all userscript directives.
-  - Define default metadata configuration with @name, @namespace, @version, @match, @grant, @require, @connect, @run-at, @updateURL, @downloadURL.
-  - Read version from package.json dynamically during build.
-  - Ensure proper formatting with `// ==UserScript==` and `// ==/UserScript==` delimiters.
-  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.8_
-
-- [ ] 1.2 Implement Storage Adapter
+- [x] 1.2 Implement Storage Adapter (Low-Level GM Wrapper)
   - Create `userscript/fap-aio/src/adapters/storage.adapter.ts` with StorageAdapter interface.
   - Implement GMStorageAdapter class that detects GM_setValue availability.
-  - Implement `get()` method with GM_getValue and localStorage fallback.
-  - Implement `set()` method with GM_setValue and localStorage fallback.
-  - Implement `remove()` method with GM_deleteValue and localStorage.removeItem.
+  - Implement automatic key prefixing: features pass 'gpaConfig', stored as 'fap-aio:gpaConfig'.
+  - Implement `get<T>(key): T | null` method with GM_getValue and localStorage fallback.
+  - Implement `set<T>(key, value): void` method with GM_setValue and localStorage fallback.
+  - Implement `remove(key)` method with GM_deleteValue and localStorage.removeItem.
   - Implement `clear()` method to remove all prefixed keys.
-  - Implement `isExpired()` method for cache expiration checks.
-  - Add error handling and console warnings for storage failures.
-  - Export singleton instance for use across features.
-  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8_
+  - Add comprehensive error logging but continue with fallbacks (no exceptions thrown).
+  - Export singleton instance for use by facade layer.
+  - NOTE: This adapter does NOT match extension interface - it's low-level only.
+  - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9_
 
-- [ ] 1.3 Implement HTTP Adapter
+- [x] 1.3 Implement HTTP Adapter (Low-Level GM Wrapper)
   - Create `userscript/fap-aio/src/adapters/http.adapter.ts` with request interfaces.
   - Implement HTTPAdapter class that detects GM_xmlhttpRequest availability.
+  - Implement auto-detection of response type based on Content-Type header.
   - Implement `gmRequest()` private method for GM_xmlhttpRequest calls.
   - Implement `fetchRequest()` private method as fallback using standard fetch.
   - Implement `request()` method that routes to GM or fetch based on availability.
   - Implement `get()` and `post()` convenience methods.
   - Implement header parsing from GM response format.
-  - Add error handling for network failures, timeouts, and parse errors.
-  - Export singleton instance for use across features.
-  - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8_
+  - Add comprehensive error logging for network failures, timeouts, parse errors.
+  - Fallback gracefully, continue userscript execution on errors.
+  - Export singleton instance for use by fetch polyfill.
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8_
 
-- [ ] 1.4 Implement Style Adapter
+- [x] 1.4 Implement Style Adapter
   - Create `userscript/fap-aio/src/adapters/style.adapter.ts` with StyleAdapter class.
   - Implement detection for GM_addStyle availability.
   - Implement `inject()` method that uses GM_addStyle or creates <style> elements.
@@ -104,117 +103,225 @@
   - Implement `remove()` method for cleaning up injected styles.
   - Add console warnings when falling back to non-GM methods.
   - Export singleton instance for use across features.
-  - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8_
+  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8_
+
+- [x] 1.5 Implement Storage Facade (Extension-Compatible Interface)
+  - Create `userscript/fap-aio/src/facades/storage.facade.ts` matching extension storage.ts interface EXACTLY.
+  - Import GMStorageAdapter from adapters layer.
+  - Implement `set<T>(key, value, ttlInMinutes?)` method matching extension signature.
+  - Wrap values in StorageItem<T> format: `{ value: T, expiry?: number }`.
+  - Calculate expiry timestamp from ttlInMinutes parameter if provided.
+  - Implement `get<T>(key): T | null` method with expiry checking.
+  - Retrieve StorageItem<T> from adapter, check expiry, unwrap value.
+  - Auto-remove expired items (same logic as extension).
+  - Implement all extension methods: getRaw, setRaw, remove, removeRaw, clear, isExpired, setExpiry, getExpiry.
+  - Export `storage` object with identical interface to extension's storage.ts.
+  - Verify signature compatibility: TypeScript types must match extension exactly.
+  - _Requirements: 17.2, 17.3, 17.4, 17.5, 17.6, 17.13, 17.14_
+
+- [x] 1.6 Implement Fetch Polyfill (Runtime Injection)
+  - Create `userscript/fap-aio/src/polyfills/fetch.polyfill.ts` for global fetch replacement.
+  - Import HTTPAdapter from adapters layer.
+  - Implement `createFetchPolyfill(): typeof fetch` function.
+  - Return async function matching native fetch signature: (url, init?) => Promise<Response>.
+  - Map fetch RequestInit to HTTPAdapter request format (method, headers, body).
+  - Call httpAdapter.request() using GM_xmlhttpRequest.
+  - Return Response-compatible object with all required properties.
+  - Implement Response methods: json(), text(), blob(), arrayBuffer().
+  - Implement Response properties: ok, status, statusText, headers, url, type, body, bodyUsed.
+  - Handle errors gracefully, log to console.
+  - Export createFetchPolyfill for injection in main.ts.
+  - _Requirements: 17.7, 17.8, 17.16_
+
+- [x] 1.7 Implement Metadata Block Generator
+  - Create `userscript/fap-aio/scripts/generate-metadata.ts` with metadata interface definition.
+  - Implement `generateMetadataBlock()` function that formats all userscript directives.
+  - Define metadata config: @name, @namespace, @version (0.0.1), @match, @grant, @require (react@18), @connect, @run-at, @updateURL, @downloadURL.
+  - Read version from package.json dynamically during build.
+  - Fetch and embed favicon as base64 from image.txt (https://fptshop.com.vn/favicon.ico).
+  - Include @icon directive with embedded base64 data.
+  - Ensure proper formatting with `// ==UserScript==` and `// ==/UserScript==` delimiters.
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.8_
+
+- [x] 1.8 Create Feature Barrel File (Re-exports)
+  - Create `userscript/fap-aio/src/features/index.ts` as barrel file.
+  - Import and re-export initGPA from '../../../../fap-aio/src/contentScript/features/gpa'.
+  - Import and re-export initMoveOut from '../../../../fap-aio/src/contentScript/features/moveout'.
+  - Import and re-export initScheduler from '../../../../fap-aio/src/contentScript/features/scheduler'.
+  - Import and re-export dom utilities from '../../../../fap-aio/src/contentScript/shared/dom'.
+  - Verify features are platform-agnostic (no chrome.* APIs used).
+  - Document that features use storage and fetch which will be substituted at build/runtime.
+  - _Requirements: Feature integration, code organization_
+
+- [x] 1.9 Create TypeScript Configuration and Package Setup
+  - Create `userscript/fap-aio/package.json` with dependencies (React@18 types, Vite, etc.).
+  - Create `userscript/fap-aio/tsconfig.json` with TypeScript compiler options.
+  - Create `userscript/fap-aio/tsconfig.node.json` for Node scripts (generate-metadata.ts).
+  - Add `src/types/tampermonkey.d.ts` with GM_* API declarations.
+  - Add React globals declarations (window.React, window.ReactDOM).
+  - Configure TypeScript paths to match Vite aliases (@ → extension src).
+  - _Requirements: TypeScript support, type safety_
+
+- [x] 1.10 Create .gitignore and Build Output Configuration
+  - Create `userscript/fap-aio/.gitignore` excluding dist/, node_modules/, *.user.js.
+  - Ensure dist/fap-aio.user.js is NOT committed to main branch.
+  - Document that gh-pages branch will contain built userscript for distribution.
+  - _Requirements: Version control hygiene_
 
 ## Phase 2: Main Entry Point and Routing
 
-- [ ] 2.1 Implement Main Entry Point
+- [x] 2.1 Implement Main Entry Point with Fetch Polyfill Injection
   - Create `userscript/fap-aio/src/main.ts` as the userscript entry file.
   - Wrap all code in IIFE (Immediately Invoked Function Expression) for scope isolation.
+  - Import `createFetchPolyfill` from './polyfills/fetch.polyfill'.
+  - CRITICAL: Inject fetch polyfill FIRST, before any other code executes.
+  - Replace globalThis.fetch with polyfilled version using GM_xmlhttpRequest.
+  - Log polyfill injection to console for debugging.
   - Implement duplicate initialization guard using window.__FAP_AIO_LOADED__.
-  - Implement `waitForReact()` function to wait for React and ReactDOM from CDN.
-  - Import userstyle.css and tailwind.css as inline strings.
+  - Implement `waitForReact()` function to wait for React and ReactDOM from CDN (react@18).
+  - Import userstyle.css and tailwind.css as inline strings via custom CSS plugin.
   - Implement `init()` async function that orchestrates initialization.
   - Inject global styles immediately using styleAdapter.
-  - Wait for React availability with 5-second timeout.
+  - Wait for React availability with 5-second timeout and comprehensive logging.
   - Call router after DOM ready or immediately if already loaded.
-  - Add comprehensive error handling and logging.
-  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 8.1, 8.2, 8.3, 8.7, 8.8_
+  - Add error handling that logs but doesn't break userscript execution.
+  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 9.1, 9.2, 9.3, 9.7, 9.8, 17.7, 17.8, 17.16_
 
-- [ ] 2.2 Implement Feature Router
-  - Create `userscript/fap-aio/src/router.ts` with routeToFeature function.
-  - Accept storage, http, and style adapters as parameters.
+- [x] 2.2 Implement Feature Router (No Dependency Injection)
+  - Create `userscript/fap-aio/src/router.ts` with initRouter function.
+  - Import features from barrel file: `import { initGPA, initMoveOut, initScheduler } from './features'`.
+  - NO dependency injection - router takes no parameters.
+  - Features use storage/fetch automatically via build-time aliasing and runtime polyfill.
   - Check window.location.href for URL patterns.
   - Call dom.enhanceUI() for all FAP pages (back button, title link).
-  - Route to initGPA() for StudentTranscript.aspx.
-  - Route to initMoveOut() for Courses.aspx and MoveSubject.aspx.
-  - Route to initScheduler() for ScheduleExams.aspx and ScheduleOfWeek.aspx.
-  - Add logging for which feature is being loaded.
-  - _Requirements: 8.4, 8.5, 8.6_
+  - Route to initGPA() for StudentTranscript.aspx (no parameters).
+  - Route to initMoveOut() for Courses.aspx and MoveSubject.aspx (no parameters).
+  - Route to initScheduler() for ScheduleExams.aspx and ScheduleOfWeek.aspx (no parameters).
+  - Add comprehensive logging for which feature is being loaded.
+  - Handle routing errors gracefully without breaking userscript.
+  - Export initRouter for use in main.ts.
+  - _Requirements: 9.4, 9.5, 9.6, 17.9_
 
 ## Phase 3: Build System Configuration
 
-- [ ] 3.1 Configure Vite for Userscript Build
-  - Create `vite.userscript.config.ts` extending base Vite config.
+- [x] 3.1 Configure Vite for Userscript Build with Build-Time Aliases
+  - Create `vite.userscript.config.ts` in userscript/fap-aio/ directory.
+  - CRITICAL: Configure build-time module substitution via resolve.alias.
+  - Alias '@/contentScript/shared/storage' → './src/facades/storage.facade.ts' (storage facade).
+  - Alias '@/contentScript/features' → '../../fap-aio/src/contentScript/features' (extension features).
+  - Alias '@' → '../../fap-aio/src' (extension source root).
   - Configure React plugin for JSX transformation.
-  - Set build.lib with entry point `src/userscript/main.ts`.
+  - Set build.lib with entry point `src/main.ts`.
   - Set output format to IIFE (Immediately Invoked Function Expression).
-  - Set output filename to `fap-aio.user.js`.
+  - Set output filename to `fap-aio.user.js` (SINGLE OUTPUT FILE).
   - Configure external dependencies: 'react' and 'react-dom'.
-  - Map externals to globals: React and ReactDOM (loaded via @require).
+  - Map externals to globals: React and ReactDOM (loaded via @require from CDN).
   - Disable 'use strict' in banner (handled by userscript metadata).
-  - Set minify to false for readability or 'terser' for production.
-  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7_
+  - Set minify to false for readability.
+  - No source maps.
+  - Verify aliases work: Build should bundle facade, NOT extension's storage.ts.
+  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 17.1, 17.10, 17.14_
 
-- [ ] 3.2 Implement Vite Plugin for Metadata Injection
-  - Create custom Vite plugin `userscript-metadata` in vite config.
+- [x] 3.2 Implement Vite Plugin for Metadata Injection
+  - Create custom Vite plugin `userscriptMetadataPlugin` in vite.userscript.config.ts.
   - Hook into `generateBundle` lifecycle.
   - Find the main entry chunk in the bundle.
-  - Read version from package.json.
-  - Call generateMetadataBlock() with configuration.
+  - Read version from package.json (start at 0.0.1).
+  - Call generateMetadataBlock() with configuration (React@18, updateURL, favicon).
   - Prepend metadata block to the beginning of the chunk code.
   - Validate metadata block formatting.
-  - _Requirements: 9.3, 9.8, 9.9_
+  - _Requirements: 10.3, 10.8, 10.9_
 
-- [ ] 3.3 Implement Vite Plugin for CSS to String Transformation
-  - Create custom Vite plugin `css-to-string` in vite config.
+- [x] 3.3 Implement Custom CSS Bundling Plugin
+  - Create custom Vite plugin `cssToStringPlugin` in vite.userscript.config.ts.
   - Hook into `transform` lifecycle.
-  - Detect CSS file imports with `?inline` or `.css` extension.
+  - Detect CSS file imports (userstyle.css, tailwind.css).
   - Transform CSS content into JavaScript string export.
-  - Return transformed code with `export default ${JSON.stringify(code)}`.
-  - _Requirements: 2.6, 9.9_
+  - Return transformed code with `export default \`...\`` (template literal for multiline).
+  - Ensure all CSS is inlined in single output file (no external files).
+  - _Requirements: 2.5, 2.6, 10.9_
 
-- [ ] 3.4 Create Build Scripts and NPM Commands
-  - Add `build:userscript` script to userscript/fap-aio/package.json: `vite build --config vite.userscript.config.ts`.
-  - Add `dev:userscript` script for development builds with watch mode.
-  - Update .gitignore to include `dist/` output directory.
-  - Create README section explaining userscript build process.
-  - _Requirements: 9.7_
+- [x] 3.4 Create Build Scripts and NPM Commands
+  - Create `userscript/fap-aio/package.json` if not exists.
+  - Add `build` script: `vite build --config vite.userscript.config.ts`.
+  - Add `dev` script for development builds with watch mode.
+  - Update .gitignore to include `dist/` output directory (not committed to git).
+  - Document build process in README.
+  - Manual console testing: Run build, check dist/fap-aio.user.js exists, validate metadata, no syntax errors.
+  - Verify bundle analysis: Grep for 'fap-aio:' (should appear from facade), 'GM_setValue' (should appear).
+  - Verify extension storage NOT bundled: Search for exact extension storage module path.
+  - _Requirements: 10.7_
 
-## Phase 4: Feature Module Adaptations
+## Phase 4: Feature Module Verification and Testing
 
-- [ ] 4.1 Update GPA Calculator for Userscript
-  - Review `src/contentScript/features/gpa/` for extension-specific code.
-  - Ensure storage operations use the storage adapter (already using shared storage from Phase 0.5).
-  - Verify DOM parsing utilities work correctly (already migrated from Cheerio in Phase 0.2).
-  - Test GPA calculation logic with real transcript data - verify identical results to extension.
-  - Test transcript table parsing with various course structures and grade formats.
-  - Ensure non-GPA exclusion list persists using storage adapter.
+NOTE: Features are UNCHANGED from extension. This phase verifies they work correctly with build-time aliasing and runtime polyfills.
+
+- [ ] 4.1 Verify GPA Calculator Works with Facade
+  - Build userscript and inspect bundle to confirm storage facade is used (not extension storage).
+  - Test GPA calculation logic with real transcript data on StudentTranscript.aspx.
+  - Verify storage operations use GM_setValue via facade (check in browser console/Tampermonkey dashboard).
+  - Confirm StorageItem<T> wrapper format is used: { value: data, expiry: timestamp }.
+  - Test TTL functionality: Set value with ttlInMinutes, verify auto-expiry works.
+  - Test non-GPA exclusion list persists across page reloads.
   - Verify UI injection into StudentTranscript page works without chrome APIs.
-  - Test edit/save/reset functionality matches extension behavior.
+  - Test edit/save/reset functionality matches extension behavior exactly.
   - Compare side-by-side: extension vs userscript for multiple transcripts.
-  - _Requirements: 3.9, 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7, 11.8_
+  - Verify DOM parsing utilities work correctly (already migrated from Cheerio in Phase 0.2).
+  - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8, 12.10, 17.3, 17.4, 17.5, 17.6, 17.11, 17.12, 17.14, 17.15_
 
-- [ ] 4.2 Update MoveOut Tool for Userscript
-  - Review `src/contentScript/features/moveout/` for network requests.
-  - Ensure DOM parsing utilities work correctly (already migrated from Cheerio in Phase 0.3).
-  - Replace fetch calls with http adapter for class data fetching.
-  - Replace fetch for GitHub Pages notifications with http adapter.
-  - Update form submission logic to use http.post() with GM_xmlhttpRequest.
-  - Ensure timetable caching uses storage adapter (already using shared storage from Phase 0.5).
-  - Test HTML response parsing from FAP Courses page matches extension behavior.
+- [ ] 4.2 Verify MoveOut Tool Works with Facade and Fetch Polyfill
+  - Build userscript and inspect bundle to confirm storage facade and fetch polyfill are present.
+  - Test on Courses.aspx and MoveSubject.aspx pages.
+  - Verify fetch() calls are intercepted by polyfill (log GM_xmlhttpRequest usage).
+  - Test class data fetching from FAP servers via polyfilled fetch.
+  - Test GitHub Pages notifications fetching via polyfilled fetch.
+  - Verify form submission logic works with polyfilled fetch POST requests.
+  - Test timetable caching uses GM storage via facade.
+  - Verify HTML response parsing from FAP Courses page matches extension behavior.
   - Test class slot extraction (lecturer, room, time) produces identical output.
   - Verify React components for timetable grid work without chrome APIs.
   - Test filter functionality and class switching work identically to extension.
   - Ensure RegisterCourse component works on Courses.aspx.
-  - _Requirements: 3.9, 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8_
+  - Verify DOM parsing utilities work correctly (already migrated from Cheerio in Phase 0.3).
+  - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.8, 13.9, 13.10, 13.11, 17.7, 17.8, 17.11, 17.12, 17.14, 17.15, 17.16_
 
-- [ ] 4.3 Update Scheduler for Userscript
-  - Review `src/contentScript/features/scheduler/` for network requests.
-  - Ensure storage operations use the storage adapter (already using shared storage from Phase 0.5).
-  - Verify ICS generation logic remains unchanged (no network dependencies).
+- [ ] 4.3 Verify Scheduler Works with Facade and Fetch Polyfill
+  - Build userscript and test on ScheduleExams.aspx and ScheduleOfWeek.aspx.
+  - Verify storage operations use GM storage via facade.
+  - Verify any fetch() calls (if present) use polyfill.
   - Test floating panel UI injection works without chrome APIs.
   - Verify panel dragging, minimizing, and closing functionality.
   - Test exam schedule parsing and rendering.
   - Test weekly schedule parsing with semester sync.
   - Ensure online/offline class categorization (ending with 'c') works.
   - Verify ICS file download triggers work in userscript context.
-  - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.8_
+  - Test ICS generation logic remains unchanged (no network dependencies).
+  - Verify semester sync with year changes and page reloads works correctly.
+  - Test state restoration from GM storage after page reload.
+  - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7, 14.8, 14.9, 14.10, 14.11, 17.11, 17.12, 17.14, 17.15_
 
 - [ ] 4.4 Verify Userstyle Injection
   - Ensure `src/styles/userstyle.css` is imported as inline string in main.ts.
   - Verify styleAdapter.inject() is called with userstyle CSS on init.
   - Test that dark theme applies immediately on page load (@run-at document-start).
+  - Verify no flash of unstyled content (FOUC) occurs.
+  - Ensure Tailwind CSS is also injected as inline string.
+  - Test that all FAP pages receive the dark theme styling.
+  - Verify CSS specificity ensures userscript styles override page styles.
+  - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8_
+
+- [ ] 4.5 Verify Build Output and Bundle Analysis
+  - Run build and examine dist/fap-aio.user.js file.
+  - Verify file size is reasonable (target: <500KB uncompressed).
+  - Search bundle for 'fap-aio:' prefix - should appear (from facade).
+  - Search bundle for 'GM_setValue' / 'GM_getValue' - should appear (from adapter).
+  - Search bundle for 'GM_xmlhttpRequest' - should appear (from http adapter).
+  - Search bundle for extension storage module import path - should NOT appear.
+  - Search bundle for 'localStorage.setItem' / 'localStorage.getItem' - should NOT appear (except as fallback in adapter).
+  - Verify metadata block is present at top of file.
+  - Verify React and ReactDOM are external (not bundled).
+  - Verify all features are bundled (GPA, MoveOut, Scheduler).
+  - _Requirements: 17.10, 17.14_
   - Verify no flash of unstyled content (FOUC) occurs.
   - Ensure Tailwind CSS is also injected as inline string.
   - Test that all FAP pages receive the dark theme styling.
@@ -239,6 +346,26 @@
   - Document limited functionality scenarios in README.
   - _Requirements: 3.5, 7.3, 15.3, 16.3_
 
+## Phase 5 (Optional): Error Handling and Compatibility
+
+NOTE: This phase is OPTIONAL - implement Phases 1-4 and 6 (deployment) first.
+
+- [ ] 5.1 Implement Error Boundaries for React Components
+  - Create ErrorBoundary component in shared utilities.
+  - Implement getDerivedStateFromError lifecycle method.
+  - Implement componentDidCatch to log errors to console.
+  - Create fallback UI displaying error message.
+  - Wrap GPA, MoveOut, and Scheduler React components with ErrorBoundary.
+  - _Requirements: 16.6_
+
+- [ ] 5.2 Add Graceful Degradation for Missing GM APIs
+  - In each adapter, add console warnings when GM APIs unavailable.
+  - Implement fallback logic: localStorage for storage, fetch for HTTP, createElement for styles.
+  - Test functionality with GM APIs disabled (e.g., Greasemonkey without full support).
+  - Add user-facing notifications when features are limited.
+  - Document limited functionality scenarios in README.
+  - _Requirements: 4.5, 8.3, 16.3_
+
 - [ ] 5.3 Implement Comprehensive Logging
   - Add console.info logs for initialization steps.
   - Add console.warn logs for fallback scenarios and missing dependencies.
@@ -246,87 +373,77 @@
   - Implement debug mode flag (e.g., check localStorage for 'fap-aio:debug').
   - Add verbose logging when debug mode is enabled.
   - Log feature loading, storage operations, and network requests in debug mode.
-  - _Requirements: 16.1, 16.2, 16.4, 16.5, 16.8_
+  - _Requirements: 17.1, 17.2, 17.4, 17.5, 17.8_
 
 - [ ] 5.4 Test Cross-Browser Userscript Manager Compatibility
-  - Install and test in Tampermonkey on Chrome.
-  - Install and test in Tampermonkey on Firefox.
-  - Install and test in Violentmonkey on Chrome.
-  - Install and test in Violentmonkey on Firefox.
-  - Install and test in Greasemonkey on Firefox (with expected limitations).
-  - Test on Edge and Safari if possible.
-  - Verify @grant permissions work across all managers.
+  - Primary testing: Tampermonkey on Opera GX.
+  - Assume compatibility with other browsers/managers based on Opera GX results.
+  - Verify @grant permissions work.
   - Document known compatibility issues in README.
-  - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5, 17.6, 17.7, 17.8_
+  - _Requirements: 18.1, 18.2, 18.3, 18.4, 18.5, 18.6, 18.7, 18.8_
 
-## Phase 6: Deployment and Distribution
+## Phase 6: Deployment and Distribution (After Phase 3 or 4)
+
+NOTE: This phase moved up - implement after Phase 3 or Phase 4 for early testing on GitHub Pages.
 
 - [ ] 6.1 Set Up GitHub Pages Hosting
-  - Create `gh-pages` branch or configure Pages to serve from main branch `/dist`.
-  - Ensure `dist/fap-aio.user.js` is committed and pushed.
+  - Create `gh-pages` branch or configure Pages to serve from main branch.
+  - Ensure `dist/fap-aio.user.js` is built and ready to commit.
+  - Push to gh-pages branch.
   - Verify raw file is accessible at `https://ruskicoder.github.io/fap-aio/fap-aio.user.js`.
-  - Test that clicking the raw URL triggers Tampermonkey installation prompt.
-  - _Requirements: 10.1, 10.6_
+  - Test that clicking the raw URL triggers Tampermonkey installation prompt in Opera GX.
+  - _Requirements: 11.1, 11.6_
 
 - [ ] 6.2 Create GitHub Actions Workflow for Auto-Deployment
   - Create `.github/workflows/deploy-userscript.yml`.
   - Configure workflow to trigger on push to main branch and version tags.
   - Set up Node.js environment (version 18 or latest LTS).
+  - Navigate to `userscript/fap-aio` directory.
   - Install dependencies with `npm install`.
-  - Build userscript with `npm run build:userscript`.
-  - Deploy to GitHub Pages using `peaceiris/actions-gh-pages@v3`.
+  - Build userscript with `npm run build`.
+  - Deploy dist/ to GitHub Pages using `peaceiris/actions-gh-pages@v3`.
   - Configure `keep_files: true` to preserve other gh-pages content.
-  - _Requirements: 10.6_
+  - _Requirements: 11.6_
 
 - [ ] 6.3 Implement Auto-Update Mechanism
-  - Ensure @updateURL and @downloadURL point to GitHub Pages raw file.
-  - Verify @version in metadata block is read from package.json.
+  - Verify @updateURL and @downloadURL in metadata point to GitHub Pages raw file.
+  - Verify @version in metadata block is read from package.json (start 0.0.1).
   - Test version increment: bump version in package.json, rebuild, deploy.
   - Verify Tampermonkey detects new version and prompts for update.
   - Test that auto-update preserves user data (storage remains intact).
   - Document update process in README.
-  - _Requirements: 10.2, 10.3, 10.4, 10.5, 10.7, 10.8_
+  - _Requirements: 11.2, 11.3, 11.4, 11.5, 11.7, 11.8_
 
 - [ ] 6.4 Create Installation and Usage Documentation
   - Write README section for userscript installation.
   - Include direct installation link to GitHub Pages raw file.
   - Document required userscript manager (Tampermonkey recommended).
-  - List supported browsers and userscript managers.
+  - List supported browsers (tested on Opera GX, should work on others).
   - Provide troubleshooting section for common issues.
   - Document how to enable debug mode for verbose logging.
   - Create FAQ for userscript-specific questions.
-  - Add screenshots or GIFs demonstrating installation process.
   - _Requirements: NFR 3.2_
 
-## Phase 7: Testing and Validation
+## Phase 7 (Optional): Testing and Validation
 
-- [ ] 7.1 Manual Testing on All FAP Pages
+NOTE: This phase is OPTIONAL - basic testing done during Phase 1-4 implementation.
+
+- [ ] 7.1 Manual Testing on Live FAP Site
   - Test dark theme application on main FAP portal page.
   - Test GPA calculator on StudentTranscript.aspx (load, calculate, edit, reset).
   - Test MoveOut on Courses.aspx and MoveSubject.aspx (load timetable, filter, switch class).
   - Test Scheduler on ScheduleExams.aspx (sync, categorize, export ICS).
   - Test Scheduler on ScheduleOfWeek.aspx (sync current week, sync semester, export ICS).
   - Verify online/offline class separation (classes ending with 'c').
-  - Test RegisterCourse component on RegisterCourse.aspx.
+  - All testing on live FAP site with real data (no mocks or fixtures).
   - _Requirements: All feature requirements (12.*, 13.*, 14.*, 15.*)_
 
-- [ ] 7.2 Validate Cheerio Replacement (Critical Feature Parity Test)
-  - **GPA Module Validation**:
-    - Compare GPA calculation results: extension vs userscript for same transcript.
-    - Test with transcripts containing special characters, long course names, various grade types.
-    - Verify semester grouping logic produces identical output.
-    - Test course exclusion logic (non-GPA courses) matches extension behavior.
-    - Verify edit/save/reset functionality works identically.
-  - **MoveOut Module Validation**:
-    - Compare timetable parsing: extension vs userscript for same Courses page response.
-    - Verify class slot extraction (lecturer, room, time) produces identical data structures.
-    - Test with various HTML response formats from FAP (different semesters).
-    - Verify filter logic works identically after parsing.
-    - Test class switching form submission produces same requests.
-  - **Error Handling**:
-    - Verify DOM parser utilities handle malformed HTML gracefully.
-    - Test with missing table elements, unexpected HTML structure.
-    - Ensure error messages match extension quality (user-friendly, actionable).
+- [ ] 7.2 Validate Feature Parity with Extension
+  - **GPA Module**: Compare GPA calculation results extension vs userscript for same transcript.
+  - **MoveOut Module**: Compare timetable parsing and class slot extraction.
+  - **Scheduler Module**: Verify ICS export produces identical files.
+  - **Userstyle**: Verify dark theme matches extension styling.
+  - All comparisons done on live FAP site.
   - _Requirements: 3.9, 12.3, 12.4, 12.8, 12.10, 13.3, 13.10, 13.11_
 
 - [ ] 7.3 Test Storage Persistence
@@ -335,6 +452,7 @@
   - Update GPA exclusion list, reload page, verify list persists.
   - Cache MoveOut timetable, reload page, verify cache used.
   - Test storage clear (reset button), verify all data removed.
+  - _Requirements: 4.1, 4.2, 4.3, 4.6, 12.6, 12.7, 13.7_
   - Test storage expiration (24-hour cache for MoveOut).
   - _Requirements: 3.1, 3.2, 3.3, 3.6, 12.6, 12.7, 13.7_
 
