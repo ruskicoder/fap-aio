@@ -225,6 +225,100 @@ All TypeScript errors resolved:
 ---
 
 **Status**: Phase 4 Complete - Ready for Testing
-**Date**: 2025
+**Date**: December 29, 2025
 **Architecture**: Build-Time Module Substitution
 **Result**: ✅ Extension features now work in userscript with zero code changes
+
+## Breaking Changes & Fixes (December 29, 2025)
+
+### Issue 1: Feature-specific CSS Not Bundled
+**Problem**: React components (GPA calculator, MoveOut tool) had no styling. Home button missing hover effects.
+
+**Root Cause**: `main.ts` only imported global CSS (`userstyle.css`, `tailwind.css`) but not feature-specific CSS files (`gpa/style.css`, `moveout/style.css`).
+
+**Fix**: 
+- Added imports: `import gpaCSS from '@/contentScript/features/gpa/style.css?raw'`
+- Added imports: `import moveoutCSS from '@/contentScript/features/moveout/style.css?raw'`
+- Injected in IIFE: `styleAdapter.inject(gpaCSS, 'gpa')` and `styleAdapter.inject(moveoutCSS, 'moveout')`
+
+**Files Modified**:
+- `src/main.ts` - Added CSS imports and injection calls
+
+### Issue 2: White Flash on Page Load (0.1s delay)
+**Problem**: Global userstyle applied with visible delay, causing white-to-black flash as dark mode activated.
+
+**Root Cause**: 
+1. Styles injected in async `init()` function after waiting for React
+2. `@run-at document-idle` executed after full page render
+
+**Fix**:
+- Moved ALL style injection from `init()` to IIFE (synchronous execution)
+- Changed `@run-at` from `document-idle` → `document-start`
+- Styles now inject BEFORE page renders, eliminating flash
+
+**Files Modified**:
+- `src/main.ts` - Moved style injection to IIFE
+- `vite.userscript.config.ts` - Changed `runAt: 'document-start'`
+
+### Issue 3: Home Button Not Injecting
+**Problem**: "← Home" button didn't appear on https://fap.fpt.edu.vn/Student.aspx
+
+**Root Cause**: Router had duplicate `addBackButton()` implementation that looked for wrong selectors (`.navbar, .header, nav`) instead of using extension's `dom.enhanceUI()` which targets `#ctl00_divUser`.
+
+**Fix**:
+- Removed duplicate `addBackButton()` and `enhanceTitleLink()` functions
+- Imported `dom` from extension: `import { dom } from '@/contentScript/shared/dom'`
+- Called `dom.enhanceUI()` instead of custom implementation
+
+**Files Modified**:
+- `src/router.ts` - Replaced custom logic with extension's dom utilities
+
+### Issue 4: Detailed Logging for Debugging
+**Enhancement**: Added verbose logging to style adapter to track injection process.
+
+**Fix**:
+- Added log before injection: `[FAP-AIO Style] Injecting style 'id' (bytes)`
+- Added log after success: `[FAP-AIO Style] Successfully injected via GM_addStyle 'id'`
+- Added log for errors: `[FAP-AIO Style] Error injecting CSS 'id'`
+
+**Files Modified**:
+- `src/adapters/style.adapter.ts` - Enhanced logging
+
+### Timing Changes Summary
+
+**Before**:
+```
+@run-at document-idle
+├─ React loads from @require
+├─ Page fully rendered (WHITE FLASH VISIBLE)
+└─ IIFE executes
+   ├─ init() async
+   ├─ Wait for React (already loaded)
+   └─ Inject styles (TOO LATE - flash already happened)
+```
+
+**After**:
+```
+@run-at document-start
+├─ React loads from @require
+├─ IIFE executes (page NOT rendered yet)
+│  ├─ Inject ALL styles IMMEDIATELY
+│  └─ Start init() async
+└─ Page renders (styles ALREADY applied - NO FLASH)
+```
+
+### CSS Bundling Summary
+
+**All CSS files now bundled and injected**:
+1. `userstyle.css` (global dark mode) - 8.45 KB
+2. `tailwind.css` (utility classes)
+3. `gpa/style.css` (GPA calculator styling)
+4. `moveout/style.css` (MoveOut tool styling)
+
+**Total**: ~10 KB CSS injected immediately on page load
+
+### Build Impact
+- Bundle size: 201.47 KB (38.95 KB gzipped)
+- No runtime performance impact
+- Eliminated visual artifacts (white flash)
+- All components now properly styled
