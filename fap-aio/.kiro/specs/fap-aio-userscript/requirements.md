@@ -298,6 +298,31 @@ The conversion prioritizes:
 3. WHEN GM APIs are unavailable THEN the userscript SHALL fallback gracefully and log warnings
 4. WHEN debugging THEN the userscript SHALL include a debug mode flag that enables verbose logging
 5. WHEN network requests fail THEN error messages SHALL indicate the specific operation that failed
+
+---
+
+### Requirement 17: Build-Time Module Substitution for Platform Abstraction
+
+**User Story:** As a developer, I want the userscript to reuse extension features without code modifications, so that I maintain a unified codebase with minimal cross-affection.
+
+#### Acceptance Criteria
+
+1. WHEN extension features import shared modules THEN the userscript build SHALL redirect those imports to platform-specific implementations via Vite aliases
+2. WHEN extension features import storage module THEN the userscript build SHALL substitute with a facade that matches the extension interface exactly
+3. WHEN the storage facade is used THEN it SHALL support all extension methods: set<T>(key, value, ttlInMinutes?), get<T>(key), getRaw, setRaw, remove, removeRaw, clear, isExpired, setExpiry, getExpiry
+4. WHEN the storage facade stores data THEN it SHALL use the StorageItem<T> wrapper format: { value: T, expiry?: number }
+5. WHEN TTL is provided THEN the storage facade SHALL calculate expiry timestamp and store it in the wrapper
+6. WHEN retrieving data THEN the storage facade SHALL check expiry, remove expired items, and unwrap the value
+7. WHEN extension features use fetch() THEN the userscript SHALL inject a fetch polyfill at runtime that uses GM_xmlhttpRequest
+8. WHEN the fetch polyfill is called THEN it SHALL return a Response-compatible object matching the native fetch API
+9. WHEN extension features use ReactDOM.createRoot() THEN they SHALL continue using it directly (no mount utility requirement)
+10. WHEN the userscript is built THEN Vite aliases SHALL redirect @/contentScript/shared/storage to the facade implementation
+11. WHEN extension code is modified THEN the userscript build SHALL use the updated code without breaking (extension is source of truth)
+12. WHEN userscript adapters break THEN the extension SHALL continue to build and function without issues (isolated failures)
+13. WHEN the facade interface changes THEN it SHALL match the extension's storage interface to maintain compatibility
+14. WHEN building THEN the output SHALL bundle the facade (not the extension's storage module)
+15. WHEN features are executed THEN they SHALL use GM_setValue/GM_getValue via the facade (not localStorage)
+16. WHEN fetch polyfill is injected THEN it SHALL be installed globally before any features load
 6. WHEN React errors occur THEN error boundaries SHALL catch and display them appropriately
 7. WHEN storage operations fail THEN the userscript SHALL retry or fallback to in-memory storage
 8. WHEN initialization fails THEN the userscript SHALL prevent duplicate retries and log the failure

@@ -1,0 +1,20 @@
+{
+  "name": "fap-aio-userscript",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "description": "All-in-One Enhancement for FPT University Academic Portal (Userscript)",
+  "scripts": {
+    "dev": "vite build --watch --config vite.userscript.config.ts",
+    "build": "vite build --config vite.userscript.config.ts",
+    "preview": "vite preview --config vite.userscript.config.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "rollup": "^4.0.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0"
+  }
+}
