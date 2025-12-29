@@ -62,11 +62,11 @@ function userscriptMetadataPlugin(): Plugin {
         ],
         connect: [
           'fap.fpt.edu.vn',
-          'ruskicoder.github.io'
+          'raw.githubusercontent.com'
         ],
         runAt: 'document-start',
-        updateURL: 'https://ruskicoder.github.io/fap-aio/fap-aio.user.js',
-        downloadURL: 'https://ruskicoder.github.io/fap-aio/fap-aio.user.js',
+        updateURL: 'https://raw.githubusercontent.com/ruskicoder/fap-aio/master/userscript/fap-aio/dist/fap-aio.user.js',
+        downloadURL: 'https://raw.githubusercontent.com/ruskicoder/fap-aio/master/userscript/fap-aio/dist/fap-aio.user.js',
         homepageURL: 'https://github.com/ruskicoder/fap-aio',
         icon: faviconData || undefined
       };

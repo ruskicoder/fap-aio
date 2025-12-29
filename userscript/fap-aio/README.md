@@ -24,10 +24,10 @@ All features from the browser extension in a single userscript:
 
 ## 🚀 Installation
 
-### Quick Install (Coming Soon)
+### Quick Install
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
-2. Click the installation link: [Install FAP-AIO Userscript](https://ruskicoder.github.io/fap-aio/fap-aio.user.js)
+2. Click the installation link: [Install FAP-AIO Userscript](https://raw.githubusercontent.com/ruskicoder/fap-aio/master/userscript/fap-aio/dist/fap-aio.user.js)
 3. Click "Install" when prompted
 4. Navigate to [FAP Portal](https://fap.fpt.edu.vn/) and features will activate automatically
 

@@ -1,6 +1,6 @@
 # Build output
-dist/
-*.user.js
+# dist/ - committed for direct installation
+*.user.js.map
 
 # Dependencies
 node_modules/
