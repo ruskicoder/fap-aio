@@ -64,7 +64,7 @@ function userscriptMetadataPlugin(): Plugin {
           'fap.fpt.edu.vn',
           'ruskicoder.github.io'
         ],
-        runAt: 'document-end',
+        runAt: 'document-start',
         updateURL: 'https://ruskicoder.github.io/fap-aio/fap-aio.user.js',
         downloadURL: 'https://ruskicoder.github.io/fap-aio/fap-aio.user.js',
         homepageURL: 'https://github.com/ruskicoder/fap-aio',

@@ -11,6 +11,7 @@
 import { initGPA } from './features/index';
 import { initMoveOut } from './features/index';
 import { initScheduler } from './features/index';
+import { dom } from '@/contentScript/shared/dom';
 
 /**
  * Determine which feature(s) to initialize based on current URL
@@ -56,78 +57,12 @@ function enhanceGlobalUI(): void {
   try {
     console.info('[FAP-AIO Router] Applying global UI enhancements');
     
-    // Add back button functionality (if applicable)
-    addBackButton();
-    
-    // Enhance title link (if applicable)
-    enhanceTitleLink();
+    // Use extension's DOM utilities for consistent behavior
+    dom.enhanceUI();
     
     console.info('[FAP-AIO Router] Global UI enhancements applied');
   } catch (error) {
     console.error('[FAP-AIO Router] Error applying global UI enhancements:', error);
     // Continue even if enhancements fail
-  }
-}
-
-/**
- * Add back button to navigation
- */
-function addBackButton(): void {
-  // Check if back button already exists
-  if (document.querySelector('.fap-aio-back-button')) {
-    return;
-  }
-  
-  // Find navigation container
-  const nav = document.querySelector('.navbar, .header, nav');
-  if (!nav) {
-    return;
-  }
-  
-  // Create back button
-  const backButton = document.createElement('button');
-  backButton.className = 'fap-aio-back-button';
-  backButton.textContent = '← Back';
-  backButton.style.cssText = `
-    margin: 0 10px;
-    padding: 5px 15px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-  `;
-  
-  backButton.addEventListener('click', () => {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.href = '/';
-    }
-  });
-  
-  nav.prepend(backButton);
-  console.info('[FAP-AIO Router] Back button added');
-}
-
-/**
- * Enhance title link to be clickable and return to home
- */
-function enhanceTitleLink(): void {
-  const titleElement = document.querySelector('h1, .page-title, .header-title');
-  if (!titleElement) {
-    return;
-  }
-  
-  // Make title clickable if not already a link
-  if (titleElement.tagName !== 'A' && !titleElement.querySelector('a')) {
-    if (titleElement instanceof HTMLElement) {
-      titleElement.style.cursor = 'pointer';
-      titleElement.addEventListener('click', () => {
-        window.location.href = '/';
-      });
-      console.info('[FAP-AIO Router] Title link enhanced');
-    }
   }
 }
