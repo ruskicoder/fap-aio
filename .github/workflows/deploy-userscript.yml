@@ -1,0 +1,140 @@
+name: Deploy FAP-AIO Userscript
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'userscript/fap-aio/**'
+      - 'fap-aio/src/contentScript/**'
+      - 'fap-aio/src/styles/**'
+      - '.github/workflows/deploy-userscript.yml'
+
+  # Allow manual deployment
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Install BOTH the extension and userscript dependencies
+      # The userscript build imports source files from ../../fap-aio/src/ which
+      # reference modules (react, tailwindcss, etc.) from the extension's node_modules
+      - name: Install extension dependencies
+        working-directory: fap-aio
+        run: npm ci
+
+      - name: Install userscript dependencies
+        working-directory: userscript/fap-aio
+        run: npm ci
+
+      - name: Build userscript
+        working-directory: userscript/fap-aio
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          if [ ! -f userscript/fap-aio/dist/fap-aio.user.js ]; then
+            echo "::error::Build output not found!"
+            exit 1
+          fi
+          echo "Build successful!"
+          FILE_SIZE=$(ls -lh userscript/fap-aio/dist/fap-aio.user.js | awk '{print $5}')
+          echo "file_size=$FILE_SIZE" >> $GITHUB_ENV
+          echo "File size: $FILE_SIZE"
+          echo ""
+          echo "Metadata block:"
+          head -n 25 userscript/fap-aio/dist/fap-aio.user.js
+
+      - name: Get version from package.json
+        id: get_version
+        working-directory: userscript/fap-aio
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Generate release tag
+        id: release_tag
+        run: |
+          TAG="userscript-v${{ steps.get_version.outputs.version }}"
+          # Append short SHA to prevent duplicate tag errors on re-runs
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          # Check if base tag already exists
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            TAG="${TAG}-${SHORT_SHA}"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Release tag: $TAG"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_tag.outputs.tag }}
+          name: FAP-AIO Userscript v${{ steps.get_version.outputs.version }}
+          make_latest: true
+          body: |
+            ## FAP-AIO Userscript v${{ steps.get_version.outputs.version }}
+
+            ### Installation
+            Click the link below to install (requires [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)):
+
+            👉 **[Install FAP-AIO Userscript](https://github.com/${{ github.repository }}/releases/download/${{ steps.release_tag.outputs.tag }}/fap-aio.user.js)** 👈
+
+            ### Build Info
+            - Commit: ${{ github.sha }}
+            - Build size: ${{ env.file_size }}
+            - Triggered by: ${{ github.event_name }}
+
+            ### Features
+            - 🎨 Dark Mode Theme
+            - 📊 GPA Calculator
+            - 📅 Schedule Exporter (ICS format)
+            - 🔄 MoveOut Tool (Class switching)
+
+            ### Links
+            - [Source Code](https://github.com/${{ github.repository }}/tree/master/userscript/fap-aio)
+            - [Report Issues](https://github.com/${{ github.repository }}/issues)
+          files: |
+            userscript/fap-aio/dist/fap-aio.user.js
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create deployment summary
+        run: |
+          cat << 'EOF' >> $GITHUB_STEP_SUMMARY
+          ## 🚀 Release Created Successfully!
+
+          | Field | Value |
+          |-------|-------|
+          | **Version** | v${{ steps.get_version.outputs.version }} |
+          | **Tag** | ${{ steps.release_tag.outputs.tag }} |
+          | **Build Size** | ${{ env.file_size }} |
+
+          ### Install URL
+          ```
+          https://github.com/${{ github.repository }}/releases/download/${{ steps.release_tag.outputs.tag }}/fap-aio.user.js
+          ```
+
+          ### Latest Release URL (always points to newest)
+          ```
+          https://github.com/${{ github.repository }}/releases/latest/download/fap-aio.user.js
+          ```
+          EOF
