@@ -11,6 +11,10 @@
 
 /// <reference path="./types/tampermonkey.d.ts" />
 
+// CRITICAL: Import nativeFetch FIRST to capture original fetch before polyfill replaces it
+// This module saves a reference to the browser's native fetch() for MoveOut's same-origin requests
+import './nativeFetch';
+
 import { createFetchPolyfill } from './polyfills/fetch.polyfill';
 import { initRouter } from './router';
 import { styleAdapter } from './adapters/style.adapter';

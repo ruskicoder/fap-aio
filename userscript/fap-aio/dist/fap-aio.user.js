@@ -27,7 +27,8 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-(function(React$1, require$$0) {
+(function(React$1, ReactDOM$1) {
+  const nativeFetch = globalThis.fetch.bind(globalThis);
   class HTTPAdapter {
     constructor() {
       __publicField(this, "useGM");
@@ -286,13 +287,6 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     };
   }
   console.log("[FAP-AIO] Fetch polyfill module loaded");
-  var client = {};
-  var createRoot;
-  var m$1 = require$$0;
-  {
-    createRoot = client.createRoot = m$1.createRoot;
-    client.hydrateRoot = m$1.hydrateRoot;
-  }
   var jsxRuntime = { exports: {} };
   var reactJsxRuntime_production_min = {};
   /**
@@ -927,7 +921,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         const tabContainer = document.createElement("div");
         tabContainer.className = "gpa-tab-container";
         gradeDiv.insertBefore(tabContainer, gradeDiv.firstChild);
-        tabRootRef.current = createRoot(tabContainer);
+        tabRootRef.current = ReactDOM$1.createRoot(tabContainer);
       }
     }, []);
     React$1.useEffect(() => {
@@ -1208,7 +1202,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const container = document.createElement("div");
     container.id = "gpa-panel-new";
     gradeDiv.prepend(container);
-    const root = client.createRoot(container);
+    const root = ReactDOM$1.createRoot(container);
     root.render(React$1.createElement(App$1));
     injectSemesterStyles();
     setTimeout(() => {
@@ -1384,6 +1378,18 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     document.head.appendChild(style);
     console.info("[FAP-AIO] Semester color styles injected with high specificity");
   }
+  function initScheduler() {
+    if (window.__FPTU_SCHEDULER_LOADED__) {
+      console.log("FPTU Scheduler already loaded");
+      return;
+    }
+    window.__FPTU_SCHEDULER_LOADED__ = true;
+    if (!window.location.href.includes("fap.fpt.edu.vn")) return;
+    console.log("FPTU Scheduler initializing...");
+    Promise.resolve().then(() => scheduler).then(({ initSchedulerPanel: initSchedulerPanel2 }) => {
+      initSchedulerPanel2();
+    });
+  }
   function parseHTML(html) {
     const parser = new DOMParser();
     return parser.parseFromString(html, "text/html");
@@ -1403,97 +1409,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const slots = ["1", "2", "3", "4", "5", "6", "7", "8"];
   const classData = /* @__PURE__ */ new Map([
-    [
-      "Mon",
-      /* @__PURE__ */ new Map([
-        ["1", []],
-        ["2", []],
-        ["3", []],
-        ["4", []],
-        ["5", []],
-        ["6", []],
-        ["7", []],
-        ["8", []]
-      ])
-    ],
-    [
-      "Tue",
-      /* @__PURE__ */ new Map([
-        ["1", []],
-        ["2", []],
-        ["3", []],
-        ["4", []],
-        ["5", []],
-        ["6", []],
-        ["7", []],
-        ["8", []]
-      ])
-    ],
-    [
-      "Wed",
-      /* @__PURE__ */ new Map([
-        ["1", []],
-        ["2", []],
-        ["3", []],
-        ["4", []],
-        ["5", []],
-        ["6", []],
-        ["7", []],
-        ["8", []]
-      ])
-    ],
-    [
-      "Thu",
-      /* @__PURE__ */ new Map([
-        ["1", []],
-        ["2", []],
-        ["3", []],
-        ["4", []],
-        ["5", []],
-        ["6", []],
-        ["7", []],
-        ["8", []]
-      ])
-    ],
-    [
-      "Fri",
-      /* @__PURE__ */ new Map([
-        ["1", []],
-        ["2", []],
-        ["3", []],
-        ["4", []],
-        ["5", []],
-        ["6", []],
-        ["7", []],
-        ["8", []]
-      ])
-    ],
-    [
-      "Sat",
-      /* @__PURE__ */ new Map([
-        ["1", []],
-        ["2", []],
-        ["3", []],
-        ["4", []],
-        ["5", []],
-        ["6", []],
-        ["7", []],
-        ["8", []]
-      ])
-    ],
-    [
-      "Sun",
-      /* @__PURE__ */ new Map([
-        ["1", []],
-        ["2", []],
-        ["3", []],
-        ["4", []],
-        ["5", []],
-        ["6", []],
-        ["7", []],
-        ["8", []]
-      ])
-    ]
+    ["Mon", /* @__PURE__ */ new Map([["1", []], ["2", []], ["3", []], ["4", []], ["5", []], ["6", []], ["7", []], ["8", []]])],
+    ["Tue", /* @__PURE__ */ new Map([["1", []], ["2", []], ["3", []], ["4", []], ["5", []], ["6", []], ["7", []], ["8", []]])],
+    ["Wed", /* @__PURE__ */ new Map([["1", []], ["2", []], ["3", []], ["4", []], ["5", []], ["6", []], ["7", []], ["8", []]])],
+    ["Thu", /* @__PURE__ */ new Map([["1", []], ["2", []], ["3", []], ["4", []], ["5", []], ["6", []], ["7", []], ["8", []]])],
+    ["Fri", /* @__PURE__ */ new Map([["1", []], ["2", []], ["3", []], ["4", []], ["5", []], ["6", []], ["7", []], ["8", []]])],
+    ["Sat", /* @__PURE__ */ new Map([["1", []], ["2", []], ["3", []], ["4", []], ["5", []], ["6", []], ["7", []], ["8", []]])],
+    ["Sun", /* @__PURE__ */ new Map([["1", []], ["2", []], ["3", []], ["4", []], ["5", []], ["6", []], ["7", []], ["8", []]])]
   ]);
   const url = "https://fap.fpt.edu.vn/FrontOffice/MoveSubject.aspx";
   const formGetter = (id = "", isRegisterCourse = false) => {
@@ -1518,7 +1440,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return formData;
   };
   const secondFormGetter = async (secondId, id) => {
-    const page = await (await fetch(url + `?id=${secondId}`, {
+    const page = await (await nativeFetch(url + `?id=${secondId}`, {
       method: "GET"
     })).text();
     const doc = parseHTML(page);
@@ -1537,73 +1459,6 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     formData.append("ctl00$mainContent$dllCourse", id);
     formData.append("ctl00$mainContent$hdException", "");
     return formData;
-  };
-  const PREFIX = "fap-aio:";
-  const storage$1 = {
-    set: (key, value, ttlInMinutes) => {
-      const item = { value };
-      if (ttlInMinutes) {
-        item.expiry = Date.now() + ttlInMinutes * 60 * 1e3;
-      }
-      localStorage.setItem(PREFIX + key, JSON.stringify(item));
-    },
-    get: (key) => {
-      const itemStr = localStorage.getItem(PREFIX + key);
-      if (!itemStr) return null;
-      try {
-        const item = JSON.parse(itemStr);
-        if (item.expiry && Date.now() > item.expiry) {
-          localStorage.removeItem(PREFIX + key);
-          return null;
-        }
-        return item.value;
-      } catch (e) {
-        console.error("Error parsing storage item", e);
-        return null;
-      }
-    },
-    // Raw methods for direct localStorage access (for backward compatibility)
-    getRaw: (key) => {
-      return localStorage.getItem(key);
-    },
-    setRaw: (key, value) => {
-      localStorage.setItem(key, value);
-    },
-    remove: (key) => {
-      localStorage.removeItem(PREFIX + key);
-    },
-    removeRaw: (key) => {
-      localStorage.removeItem(key);
-    },
-    clear: () => {
-      Object.keys(localStorage).forEach((key) => {
-        if (key.startsWith(PREFIX)) {
-          localStorage.removeItem(key);
-        }
-      });
-    },
-    isExpired: (key) => {
-      const itemStr = localStorage.getItem(PREFIX + key);
-      if (!itemStr) return true;
-      try {
-        const item = JSON.parse(itemStr);
-        if (item.expiry && Date.now() > item.expiry) {
-          return true;
-        }
-        return false;
-      } catch {
-        return true;
-      }
-    },
-    // Helper to set expiry timestamp
-    setExpiry: (key, durationMs) => {
-      localStorage.setItem(key, (Date.now() + durationMs).toString());
-    },
-    // Helper to get expiry timestamp
-    getExpiry: (key) => {
-      const value = localStorage.getItem(key);
-      return value ? Number(value) : null;
-    }
   };
   function mapToObject(map) {
     const obj = {};
@@ -1662,7 +1517,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return classes;
   };
   const send = async (subject, formData) => {
-    const response = await fetch(
+    const response = await nativeFetch(
       "https://fap.fpt.edu.vn/FrontOffice/Courses.aspx",
       {
         headers: {
@@ -1689,7 +1544,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   };
   const getCurrentSubjects = async () => {
-    const response = await fetch(
+    const response = await nativeFetch(
       "https://fap.fpt.edu.vn/FrontOffice/Courses.aspx",
       {
         method: "GET"
@@ -1721,7 +1576,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     };
   };
   const getCurrentStatus = async () => {
-    const response = await fetch(
+    const response = await nativeFetch(
       "https://fap.fpt.edu.vn/Course/Courses.aspx"
     ).then((res2) => res2.text());
     const doc = parseHTML(response);
@@ -1741,7 +1596,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
     let deptData;
     try {
-      const deptResponse = await fetch(
+      const deptResponse = await nativeFetch(
         "https://ruskicoder.github.io/fap-moveout/dept.json"
       );
       if (!deptResponse.ok) throw new Error("Failed to fetch");
@@ -1755,7 +1610,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     )?.[0];
     const link = `https://fap.fpt.edu.vn/Course/Courses.aspx${currentLink}=${deptData[campusName][deptNum]}`;
     console.log(link);
-    const res = await fetch(link, {
+    const res = await nativeFetch(link, {
       priority: "low",
       keepalive: false
     }).then((res2) => res2.text());
@@ -1818,62 +1673,49 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     handleStudentCount,
     isRegisterCourse
   }) => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-6 items-center text-xl", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-5 items-center", children: [
-      !isLoading.fetching && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "a",
-          {
-            href: "https://docs.google.com/spreadsheets/d/1CTlmTC4RgW4zk-A9VTkz4BGzjY2PMk5s/edit",
-            className: "font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all cursor-pointer !no-underline",
-            target: "_blank",
-            children: "Xem review GV"
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "button",
-          {
-            type: "button",
-            onClick: refresh,
-            className: "font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all cursor-pointer",
-            children: "Làm mới"
-          }
-        ),
-        !isRegisterCourse && /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "button",
-          {
-            type: "button",
-            onClick: handleStudentCount,
-            className: "font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all cursor-pointer",
-            id: "studentCount",
-            title: "(Có thể sẽ hơi lag)",
-            children: "Lấy sĩ số"
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-bold text-3xl", id: "class-id", children: document.getElementById("ctl00_mainContent_lblSubject")?.textContent?.split("-")[0].trim() })
-      ] }),
-      (isLoading.moving || isLoading.fetching) && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "", children: isLoading.moving ? "Đang thực hiện chuyển đổi, vui lòng đợi trong giây lát" : "Đang lấy sĩ số lớp" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "svg",
-          {
-            xmlns: "http://www.w3.org/2000/svg",
-            width: 24,
-            height: 24,
-            viewBox: "0 0 24 24",
-            fill: "none",
-            stroke: "currentColor",
-            strokeWidth: 2,
-            strokeLinecap: "round",
-            strokeLinejoin: "round",
-            className: "lucide lucide-rotate-cw rotate",
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M21 3v5h-5" })
-            ]
-          }
-        )
-      ] })
-    ] }) });
+    return /* @__PURE__ */ React$1.createElement("div", { className: "flex gap-6 items-center text-xl" }, /* @__PURE__ */ React$1.createElement("div", { className: "flex gap-5 items-center" }, !isLoading.fetching && /* @__PURE__ */ React$1.createElement(React$1.Fragment, null, /* @__PURE__ */ React$1.createElement(
+      "a",
+      {
+        href: "https://docs.google.com/spreadsheets/d/1CTlmTC4RgW4zk-A9VTkz4BGzjY2PMk5s/edit",
+        className: "font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all cursor-pointer !no-underline",
+        target: "_blank"
+      },
+      "Xem review GV"
+    ), /* @__PURE__ */ React$1.createElement(
+      "button",
+      {
+        type: "button",
+        onClick: refresh,
+        className: "font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all cursor-pointer"
+      },
+      "Làm mới"
+    ), !isRegisterCourse && /* @__PURE__ */ React$1.createElement(
+      "button",
+      {
+        type: "button",
+        onClick: handleStudentCount,
+        className: "font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all cursor-pointer",
+        id: "studentCount",
+        title: "(Có thể sẽ hơi lag)"
+      },
+      "Lấy sĩ số"
+    ), /* @__PURE__ */ React$1.createElement("span", { className: "font-bold text-3xl", id: "class-id" }, document.getElementById("ctl00_mainContent_lblSubject")?.textContent?.split("-")[0].trim())), (isLoading.moving || isLoading.fetching) && /* @__PURE__ */ React$1.createElement(React$1.Fragment, null, /* @__PURE__ */ React$1.createElement("div", { className: "" }, isLoading.moving ? "Đang thực hiện chuyển đổi, vui lòng đợi trong giây lát" : "Đang lấy sĩ số lớp"), /* @__PURE__ */ React$1.createElement(
+      "svg",
+      {
+        xmlns: "http://www.w3.org/2000/svg",
+        width: 24,
+        height: 24,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "currentColor",
+        strokeWidth: 2,
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        className: "lucide lucide-rotate-cw rotate"
+      },
+      /* @__PURE__ */ React$1.createElement("path", { d: "M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" }),
+      /* @__PURE__ */ React$1.createElement("path", { d: "M21 3v5h-5" })
+    ))));
   };
   const Timetable = ({
     timeTable,
@@ -1905,7 +1747,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           formData.set("ctl00$mainContent$dllCourse", classId);
         }
         formData.set("ctl00$mainContent$btSave", "Save");
-        fetch(window.location.href, {
+        nativeFetch(window.location.href, {
           method: "POST",
           headers: {},
           body: formData,
@@ -1933,7 +1775,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                 if (classId) {
                   url2.searchParams.set("id", classId);
                 }
-                storage$1.removeRaw(subject);
+                localStorage.removeItem(subject);
                 window.location.href = "https://fap.fpt.edu.vn/FrontOffice/MoveSubject.aspx?id=" + getClassKey2().get(item.split(" ")[0]);
               } else if (res?.includes("Bạn không thể chuyển tới lớp này, bởi vì")) {
                 setIsFull(true);
@@ -1949,113 +1791,95 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         });
       }
     };
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("table", { className: "w-full", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("thead", { children: /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { className: "", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "text-white bg-blue-500 font-bold p-2 w-[100px] text-center rounded-tl-2xl" }),
-        weekdays.map((day) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "td",
+    return /* @__PURE__ */ React$1.createElement("table", { className: "w-full" }, /* @__PURE__ */ React$1.createElement("thead", null, /* @__PURE__ */ React$1.createElement("tr", { className: "" }, /* @__PURE__ */ React$1.createElement("td", { className: "text-white bg-blue-500 font-bold p-2 w-[100px] text-center rounded-tl-2xl" }), weekdays.map((day) => /* @__PURE__ */ React$1.createElement(
+      "td",
+      {
+        key: day,
+        className: `text-white bg-blue-500 font-bold border px-2 py-3 w-[200px] text-center ${day == "Sun" && "rounded-tr-2xl border-transparent"}`
+      },
+      /* @__PURE__ */ React$1.createElement(
+        "label",
+        {
+          htmlFor: day,
+          className: "flex justify-center items-center gap-2 !m-0 cursor-pointer"
+        },
+        /* @__PURE__ */ React$1.createElement(
+          "input",
           {
-            className: `text-white bg-blue-500 font-bold border px-2 py-3 w-[200px] text-center ${day == "Sun" && "rounded-tr-2xl border-transparent"}`,
-            children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              "label",
-              {
-                htmlFor: day,
-                className: "flex justify-center items-center gap-2 !m-0 cursor-pointer",
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    "input",
-                    {
-                      defaultChecked: true,
-                      className: "!mt-0",
-                      type: "checkbox",
-                      id: day,
-                      checked: !filter.excludeWeekdays.includes(day),
-                      onChange: (e) => {
-                        setFilter((prev) => ({
-                          ...prev,
-                          excludeWeekdays: !e.target.checked ? [...filter.excludeWeekdays, day] : filter.excludeWeekdays.filter(
-                            (item) => item != day
-                          )
-                        }));
-                      }
-                    }
-                  ),
-                  day
-                ]
-              }
-            )
-          },
-          day
-        ))
-      ] }) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("tbody", { children: slots.map((slot) => /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { className: "", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "td",
-          {
-            className: `text-white bg-blue-500 font-bold border w-[80px] text-center px-3 py-4 m-auto ${slot == "8" && "rounded-bl-2xl border-transparent"}`,
-            children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              "label",
-              {
-                htmlFor: slot,
-                className: "flex justify-center items-center gap-2 !m-0 cursor-pointer",
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    "input",
-                    {
-                      defaultChecked: true,
-                      className: "!mt-0",
-                      type: "checkbox",
-                      id: slot,
-                      checked: !filter.excludeSlots.includes(slot),
-                      onChange: (e) => {
-                        setFilter((prev) => ({
-                          ...prev,
-                          excludeSlots: !e.target.checked ? [...filter.excludeSlots, slot] : filter.excludeSlots.filter(
-                            (item) => item != slot
-                          )
-                        }));
-                      }
-                    }
-                  ),
-                  "Slot ",
-                  slot
-                ]
-              }
-            )
+            defaultChecked: true,
+            className: "!mt-0",
+            type: "checkbox",
+            id: day,
+            checked: !filter.excludeWeekdays.includes(day),
+            onChange: (e) => {
+              setFilter((prev) => ({
+                ...prev,
+                excludeWeekdays: !e.target.checked ? [...filter.excludeWeekdays, day] : filter.excludeWeekdays.filter(
+                  (item) => item != day
+                )
+              }));
+            }
           }
         ),
-        weekdays.map((day) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "td",
+        day
+      )
+    )))), /* @__PURE__ */ React$1.createElement("tbody", null, slots.map((slot) => /* @__PURE__ */ React$1.createElement("tr", { className: "", key: slot }, /* @__PURE__ */ React$1.createElement(
+      "td",
+      {
+        className: `text-white bg-blue-500 font-bold border w-[80px] text-center px-3 py-4 m-auto ${slot == "8" && "rounded-bl-2xl border-transparent"}`
+      },
+      /* @__PURE__ */ React$1.createElement(
+        "label",
+        {
+          htmlFor: slot,
+          className: "flex justify-center items-center gap-2 !m-0 cursor-pointer"
+        },
+        /* @__PURE__ */ React$1.createElement(
+          "input",
           {
-            className: "border col-span-1 p-2 w-[200px]",
-            onClick: () => {
+            defaultChecked: true,
+            className: "!mt-0",
+            type: "checkbox",
+            id: slot,
+            checked: !filter.excludeSlots.includes(slot),
+            onChange: (e) => {
+              setFilter((prev) => ({
+                ...prev,
+                excludeSlots: !e.target.checked ? [...filter.excludeSlots, slot] : filter.excludeSlots.filter(
+                  (item) => item != slot
+                )
+              }));
+            }
+          }
+        ),
+        "Slot ",
+        slot
+      )
+    ), weekdays.map((day) => /* @__PURE__ */ React$1.createElement(
+      "td",
+      {
+        key: day,
+        className: "border col-span-1 p-2 w-[200px]",
+        onClick: () => {
+        }
+      },
+      timeTable?.get(day)?.get(slot)?.map((item) => {
+        return /* @__PURE__ */ React$1.createElement(
+          "div",
+          {
+            key: item,
+            className: `border-[0.5px] border-black font-bold p-2 rounded-md mb-2 bg-opacity-5 cursor-pointer hover:scale-[1.03] duration-200 ${item.includes(filter.lecturer) && item.toLocaleLowerCase().includes(filter.classId.toLowerCase()) && (Object.keys(studentCount).length > 0 ? studentCount?.[item.split(" ")[0]] <= filter.studentCount : true) && !filter.excludeWeekdays.includes(day) && !filter.excludeSlots.includes(slot) ? "" : "hidden"}`,
+            style: {
+              backgroundColor: textToColor(item)
             },
-            children: timeTable?.get(day)?.get(slot)?.map((item) => {
-              return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                "div",
-                {
-                  className: `border-[0.5px] border-black font-bold p-2 rounded-md mb-2 bg-opacity-5 cursor-pointer hover:scale-[1.03] duration-200 ${item.includes(filter.lecturer) && item.toLocaleLowerCase().includes(filter.classId.toLowerCase()) && (Object.keys(studentCount).length > 0 ? studentCount?.[item.split(" ")[0]] <= filter.studentCount : true) && !filter.excludeWeekdays.includes(day) && !filter.excludeSlots.includes(slot) ? "" : "hidden"}`,
-                  style: {
-                    backgroundColor: textToColor(item)
-                  },
-                  title: getClassKey2(isRegisterCourse).get(item.split(" (")[0]) || "",
-                  onClick: () => handleClassClick(item),
-                  children: [
-                    item.split("\n").map((line, index) => /* @__PURE__ */ jsxRuntimeExports.jsxs(React$1.Fragment, { children: [
-                      line,
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("br", {})
-                    ] }, line + index)),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-lg mt-1", children: `${studentCount?.[item.split(" ")[0]] ?? ""} ${studentCount?.[item.split(" ")[0]] ? "students" : ""}` })
-                  ]
-                },
-                item
-              );
-            })
+            title: getClassKey2(isRegisterCourse).get(item.split(" (")[0]) || "",
+            onClick: () => handleClassClick(item)
           },
-          day
-        ))
-      ] }, slot)) })
-    ] });
+          item.split("\n").map((line, index) => /* @__PURE__ */ React$1.createElement(React$1.Fragment, { key: line + index }, line, /* @__PURE__ */ React$1.createElement("br", null))),
+          /* @__PURE__ */ React$1.createElement("span", { className: "text-lg mt-1" }, `${studentCount?.[item.split(" ")[0]] ?? ""} ${studentCount?.[item.split(" ")[0]] ? "students" : ""}`)
+        );
+      })
+    ))))));
   };
   const FilterSection = ({
     filter,
@@ -2069,208 +1893,172 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     send: send2,
     isRegisterCourse
   }) => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-6 items-center justify-between mb-3 mt-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center text-xl", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(
-        "select",
-        {
-          name: "",
-          id: "",
-          defaultValue: "",
-          className: "border-2 rounded-md p-2 h-full",
-          onChange: async (e) => {
-            setIsLoading((prev) => ({
-              ...prev,
-              moving: true
-            }));
-            if (e.target.value) {
-              send2(e.target.value, changeSubjectForm);
-            }
-          },
-          children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", disabled: true, children: "Tìm theo môn học" }),
-            moveList?.map((move) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "option",
-              {
-                selected: subject.includes(move.subject),
-                value: move?.moveId.replaceAll("_", "$"),
-                children: `${move?.subject} (${move?.classId} - ${move?.lecturer.trim() == "" ? "N/A" : move?.lecturer})`
-              },
-              move.moveId
-            ))
-          ]
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(
-        "select",
-        {
-          name: "",
-          id: "",
-          value: filter.lecturer,
-          className: "ml-4 border-2 rounded-md p-2 !h-full",
-          onChange: (e) => setFilter((prev) => ({
+    return /* @__PURE__ */ React$1.createElement("div", { className: "flex gap-6 items-center justify-between mb-3 mt-3" }, /* @__PURE__ */ React$1.createElement("div", { className: "flex items-center text-xl" }, /* @__PURE__ */ React$1.createElement(
+      "select",
+      {
+        name: "",
+        id: "",
+        defaultValue: "",
+        className: "border-2 rounded-md p-2 h-full",
+        onChange: async (e) => {
+          setIsLoading((prev) => ({
             ...prev,
-            lecturer: e.target.value
-          })),
-          defaultValue: "",
-          children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", disabled: true, children: "Tìm theo giảng viên" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "Tất cả" }),
-            lecturerList?.map((lecture) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: lecture, children: lecture }, lecture))
-          ]
+            moving: true
+          }));
+          if (e.target.value) {
+            send2(e.target.value, changeSubjectForm);
+          }
         }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "input",
+      },
+      /* @__PURE__ */ React$1.createElement("option", { value: "", disabled: true }, "Tìm theo môn học"),
+      moveList?.map((move) => /* @__PURE__ */ React$1.createElement(
+        "option",
         {
-          name: "search",
-          id: "",
-          className: "w-[140px] ml-4 border-2 rounded-md p-2",
-          placeholder: "Tìm theo lớp",
-          value: filter.classId,
-          onChange: (e) => {
+          key: move.moveId,
+          selected: subject.includes(move.subject),
+          value: move?.moveId.replaceAll("_", "$")
+        },
+        `${move?.subject} (${move?.classId} - ${move?.lecturer.trim() == "" ? "N/A" : move?.lecturer})`
+      ))
+    ), /* @__PURE__ */ React$1.createElement(
+      "select",
+      {
+        name: "",
+        id: "",
+        value: filter.lecturer,
+        className: "ml-4 border-2 rounded-md p-2 !h-full",
+        onChange: (e) => setFilter((prev) => ({
+          ...prev,
+          lecturer: e.target.value
+        })),
+        defaultValue: ""
+      },
+      /* @__PURE__ */ React$1.createElement("option", { value: "", disabled: true }, "Tìm theo giảng viên"),
+      /* @__PURE__ */ React$1.createElement("option", { value: "" }, "Tất cả"),
+      lecturerList?.map((lecture) => /* @__PURE__ */ React$1.createElement("option", { key: lecture, value: lecture }, lecture))
+    ), /* @__PURE__ */ React$1.createElement(
+      "input",
+      {
+        name: "search",
+        id: "",
+        className: "w-[140px] ml-4 border-2 rounded-md p-2",
+        placeholder: "Tìm theo lớp",
+        value: filter.classId,
+        onChange: (e) => {
+          setFilter((prev) => ({
+            ...prev,
+            classId: e.target.value
+          }));
+        }
+      }
+    ), /* @__PURE__ */ React$1.createElement("div", { className: "ml-4" }, /* @__PURE__ */ React$1.createElement("span", { className: "text-lg" }, "Lọc sĩ số ", `(≤ ${filter?.studentCount})`, " "), /* @__PURE__ */ React$1.createElement("span", { className: "flex gap-2 items-center" }, /* @__PURE__ */ React$1.createElement(
+      "input",
+      {
+        type: "range",
+        defaultValue: 100,
+        value: filter.studentCount,
+        min: Math.min(
+          ...Object.values(studentCount).map((value) => Number(value))
+        ) ?? 0,
+        max: Math.max(
+          ...Object.values(studentCount).map((value) => Number(value))
+        ) ?? 100,
+        onChange: (e) => {
+          if (Object.keys(studentCount).length === 0) {
+            alert(`Cần phải lấy sĩ số lớp trước`);
+          } else {
             setFilter((prev) => ({
               ...prev,
-              classId: e.target.value
+              studentCount: e.target.value
             }));
           }
         }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ml-4", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-lg", children: [
-          "Lọc sĩ số ",
-          `(≤ ${filter?.studentCount})`,
-          " "
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex gap-2 items-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "input",
-          {
-            type: "range",
-            defaultValue: 100,
-            value: filter.studentCount,
-            min: Math.min(
-              ...Object.values(studentCount).map((value) => Number(value))
-            ) ?? 0,
-            max: Math.max(
-              ...Object.values(studentCount).map((value) => Number(value))
-            ) ?? 100,
-            onChange: (e) => {
-              if (Object.keys(studentCount).length === 0) {
-                alert(`Cần phải lấy sĩ số lớp trước`);
-              } else {
-                setFilter((prev) => ({
-                  ...prev,
-                  studentCount: e.target.value
-                }));
-              }
-            }
-          }
-        ) })
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "span",
+      }
+    ))), /* @__PURE__ */ React$1.createElement(
+      "span",
+      {
+        className: "cursor-pointer inline-block ml-4 mt-1 rounded-full !text-sm p-1 font-semibold bg-slate-500 hover:bg-slate-400 text-white",
+        onClick: () => setFilter({
+          lecturer: "",
+          classId: "",
+          studentCount: Object.values(studentCount).length > 0 ? Math.max(
+            ...Object.values(studentCount).map(
+              (value) => Number(value)
+            )
+          ) ?? 100 : 100,
+          excludeSlots: [],
+          excludeWeekdays: []
+        })
+      },
+      /* @__PURE__ */ React$1.createElement(
+        "svg",
         {
-          className: "cursor-pointer inline-block ml-4 mt-1 rounded-full !text-sm p-1 font-semibold bg-slate-500 hover:bg-slate-400 text-white",
-          onClick: () => setFilter({
-            lecturer: "",
-            classId: "",
-            studentCount: Object.values(studentCount).length > 0 ? Math.max(
-              ...Object.values(studentCount).map(
-                (value) => Number(value)
-              )
-            ) ?? 100 : 100,
-            excludeSlots: [],
-            excludeWeekdays: []
-          }),
-          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "svg",
-            {
-              xmlns: "http://www.w3.org/2000/svg",
-              width: 12,
-              height: 12,
-              viewBox: "0 0 24 24",
-              fill: "none",
-              stroke: "currentColor",
-              strokeWidth: 2,
-              strokeLinecap: "round",
-              strokeLinejoin: "round",
-              className: "lucide lucide-x-icon lucide-x",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M18 6 6 18" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "m6 6 12 12" })
-              ]
-            }
-          )
-        }
+          xmlns: "http://www.w3.org/2000/svg",
+          width: 12,
+          height: 12,
+          viewBox: "0 0 24 24",
+          fill: "none",
+          stroke: "currentColor",
+          strokeWidth: 2,
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          className: "lucide lucide-x-icon lucide-x"
+        },
+        /* @__PURE__ */ React$1.createElement("path", { d: "M18 6 6 18" }),
+        /* @__PURE__ */ React$1.createElement("path", { d: "m6 6 12 12" })
       )
-    ] }) });
+    )));
   };
   const ClassListDetails = ({
     handleDownload: handleDownload2
   }) => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("details", { className: "p-4 [&_svg]:open:-rotate-180 mt-4", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("summary", { className: "flex cursor-pointer list-none items-center gap-4 text-xl", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "svg",
-          {
-            className: "rotate-0 transform text-blue-700 transition-all duration-300",
-            fill: "none",
-            height: 20,
-            width: 20,
-            stroke: "currentColor",
-            strokeLinecap: "round",
-            strokeLinejoin: "round",
-            strokeWidth: 2,
-            viewBox: "0 0 24 24",
-            children: /* @__PURE__ */ jsxRuntimeExports.jsx("polyline", { points: "6 9 12 15 18 9" })
-          }
-        ) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-4 items-center", children: [
-          "Danh sách lớp hiện tại (",
-          document.querySelector("#ctl00_mainContent_lblOldGroup")?.textContent,
-          ")",
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "div",
-            {
-              onClick: handleDownload2,
-              className: "hover:bg-green-700 font-bold py-2 px-4 bg-green-500 text-white rounded-md",
-              children: "Tải danh sách lớp"
-            }
-          )
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[500px] overflow-y-scroll", id: "class-list" })
-    ] });
+    return /* @__PURE__ */ React$1.createElement("details", { className: "p-4 [&_svg]:open:-rotate-180 mt-4" }, /* @__PURE__ */ React$1.createElement("summary", { className: "flex cursor-pointer list-none items-center gap-4 text-xl" }, /* @__PURE__ */ React$1.createElement("div", null, /* @__PURE__ */ React$1.createElement(
+      "svg",
+      {
+        className: "rotate-0 transform text-blue-700 transition-all duration-300",
+        fill: "none",
+        height: 20,
+        width: 20,
+        stroke: "currentColor",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeWidth: 2,
+        viewBox: "0 0 24 24"
+      },
+      /* @__PURE__ */ React$1.createElement("polyline", { points: "6 9 12 15 18 9" })
+    )), /* @__PURE__ */ React$1.createElement("div", { className: "flex gap-4 items-center" }, "Danh sách lớp hiện tại (", document.querySelector("#ctl00_mainContent_lblOldGroup")?.textContent, ")", /* @__PURE__ */ React$1.createElement(
+      "div",
+      {
+        onClick: handleDownload2,
+        className: "hover:bg-green-700 font-bold py-2 px-4 bg-green-500 text-white rounded-md"
+      },
+      "Tải danh sách lớp"
+    ))), /* @__PURE__ */ React$1.createElement("div", { className: "h-[500px] overflow-y-scroll", id: "class-list" }));
   };
   const TimetableDetails = () => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("details", { className: "p-4 [&_svg]:open:-rotate-180", style: { width: "100%" }, children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("summary", { className: "flex cursor-pointer list-none items-center gap-4 text-xl font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "svg",
-          {
-            className: "rotate-0 transform transition-all duration-300",
-            fill: "none",
-            height: 20,
-            width: 20,
-            stroke: "currentColor",
-            strokeLinecap: "round",
-            strokeLinejoin: "round",
-            strokeWidth: 2,
-            viewBox: "0 0 24 24",
-            children: /* @__PURE__ */ jsxRuntimeExports.jsx("polyline", { points: "6 9 12 15 18 9" })
-          }
-        ) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: "Thời khóa biểu" })
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "iframe",
-        {
-          id: "myframe",
-          src: "https://fap.fpt.edu.vn/Report/ScheduleOfWeek.aspx",
-          className: "w-full border",
-          style: { width: "100%", height: "80vh", minHeight: "600px" }
-        }
-      )
-    ] });
+    return /* @__PURE__ */ React$1.createElement("details", { className: "p-4 [&_svg]:open:-rotate-180", style: { width: "100%" } }, /* @__PURE__ */ React$1.createElement("summary", { className: "flex cursor-pointer list-none items-center gap-4 text-xl font-semibold px-4 py-2 rounded-md border-2 border-[#F36B16] text-[#F36B16] hover:bg-[#F36B16] hover:text-black transition-all" }, /* @__PURE__ */ React$1.createElement("div", null, /* @__PURE__ */ React$1.createElement(
+      "svg",
+      {
+        className: "rotate-0 transform transition-all duration-300",
+        fill: "none",
+        height: 20,
+        width: 20,
+        stroke: "currentColor",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        strokeWidth: 2,
+        viewBox: "0 0 24 24"
+      },
+      /* @__PURE__ */ React$1.createElement("polyline", { points: "6 9 12 15 18 9" })
+    )), /* @__PURE__ */ React$1.createElement("div", null, "Thời khóa biểu")), /* @__PURE__ */ React$1.createElement(
+      "iframe",
+      {
+        id: "myframe",
+        src: "https://fap.fpt.edu.vn/Report/ScheduleOfWeek.aspx",
+        className: "w-full border",
+        style: { width: "100%", height: "80vh", minHeight: "600px" }
+      }
+    ));
   };
   function App() {
     const url2 = window.location.href;
@@ -2279,7 +2067,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const [message, setMessage] = React$1.useState("");
     let secondId = "";
     let subject = document.getElementById("ctl00_mainContent_lblSubject")?.textContent || "";
-    let cached = storage$1.getRaw(subject);
+    let cached = localStorage.getItem(subject);
     let timeTableData = cached ? JSON.parse(cached) : null;
     const [timeTable, setTimeTable] = React$1.useState(timeTableData ? objectToMap(timeTableData) : classData);
     const [total, setTotal] = React$1.useState(0);
@@ -2325,7 +2113,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const fetchInitialData = async () => {
         await crawlAndSave();
         try {
-          const response = await fetch(
+          const response = await nativeFetch(
             "https://ruskicoder.github.io/fap-moveout/noti.json",
             { cache: "no-cache" }
           );
@@ -2352,7 +2140,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }, []);
     React$1.useEffect(() => {
       const fetchClassListAndSubjects = async () => {
-        fetch(`https://fap.fpt.edu.vn/Course/Groups.aspx?group=${id}`).then((response) => response.text()).then((html) => {
+        nativeFetch(`https://fap.fpt.edu.vn/Course/Groups.aspx?group=${id}`).then((response) => response.text()).then((html) => {
           const parser = new DOMParser();
           const doc = parser.parseFromString(html, "text/html");
           const element = doc.querySelector("#ctl00_mainContent_divStudents");
@@ -2374,11 +2162,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }, []);
     const refresh = async () => {
       await sendTrackingEvent();
-      storage$1.removeRaw(subject);
+      localStorage.removeItem(subject);
       window.location.reload();
     };
     const crawlAndSave = async () => {
-      if (Date.now() < Number(storage$1.getExpiry("expireAt")) && timeTableData) {
+      if (Date.now() < Number(localStorage.getItem("expireAt")) && timeTableData) {
         let lecturerList2 = [];
         slots.forEach((slot) => {
           weekdays.forEach((day) => {
@@ -2412,13 +2200,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       for (const [key, _item] of classes) {
         formData.set("ctl00$mainContent$dllCourse", key);
         let nextClass;
-        nextClass = await (await fetch(window.location.href, {
+        nextClass = await (await nativeFetch(window.location.href, {
           method: "POST",
           headers: {},
           body: formData
         })).text();
         const nextDoc = parseHTML(nextClass);
-        const classInfo = getText(query("#ctl00_mainContent_lblNewSlot", nextDoc));
+        const classInfo = getText(nextDoc.querySelector("#ctl00_mainContent_lblNewSlot"));
         const selectOptions = queryAll("#ctl00_mainContent_dllCourse option", nextDoc);
         const selectedOption = selectOptions.find((opt) => opt.hasAttribute("selected"));
         const className = selectedOption ? getText(selectedOption) : "";
@@ -2449,7 +2237,7 @@ ${classRoom}`
         }
         setGotten((prev) => prev + 1);
       }
-      storage$1.setRaw(subject, JSON.stringify(mapToObject(timeTable)));
+      localStorage.setItem(subject, JSON.stringify(mapToObject(timeTable)));
       let lecturerListTemp = [];
       slots.forEach((slot) => {
         weekdays.forEach((day) => {
@@ -2469,133 +2257,113 @@ ${classRoom}`
       });
       console.log("lecturerListTemp", lecturerListTemp);
       setLecturerList(lecturerListTemp);
-      storage$1.setExpiry("expireAt", 1e3 * 60 * 60 * 24);
+      localStorage.setItem(
+        "expireAt",
+        (Date.now() + 1e3 * 60 * 60 * 24).toString()
+      );
     };
     const handleToggleOldFeature = () => {
       document.getElementById("ctl00_mainContent_divMoveSubject")?.classList.toggle("hidden");
       document.getElementById("ctl00_mainContent_divNewGroupInfo")?.classList.toggle("hidden");
     };
-    const MoveToFilledClass = () => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-xl font-semibold flex gap-6 items-center mt-4", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "a",
-        {
-          href: "https://github.com/ruskicoder/fap-moveout",
-          target: "_blank",
-          className: "text-blue-500 !no-underline transition-all duration-200 border-blue-500 border-b-2 hover:border-transparent",
-          children: "v1.3.9"
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "a",
-        {
-          href: "https://github.com/ruskicoder/fap-moveout/issues",
-          target: "_blank",
-          className: "text-blue-500 !no-underline transition-all duration-200 border-blue-500 border-b-2 hover:border-transparent",
-          children: "Feedback 😇"
-        }
-      )
-    ] });
-    const ShowOldFeature = () => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 mt-4", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "input",
-        {
-          id: "showOldFeature",
-          type: "checkbox",
-          defaultChecked: false,
-          onChange: handleToggleOldFeature
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "label",
-        {
-          className: "text-xl mb-0 mt-2 leading-none",
-          htmlFor: "showOldFeature",
-          children: "Hiện chức năng FAP cũ"
-        }
-      )
-    ] });
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          Header,
-          {
-            isLoading,
-            refresh,
-            handleStudentCount
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          FilterSection,
-          {
-            filter,
-            setFilter,
-            studentCount,
-            lecturerList,
-            moveList,
-            subject,
-            changeSubjectForm,
-            setIsLoading,
-            isRegisterCourse: false,
-            send
-          }
-        ),
-        gotten < total && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "my-4 flex gap-4 justify-between items-center w-full", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-2xl", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "svg",
-            {
-              xmlns: "http://www.w3.org/2000/svg",
-              width: 24,
-              height: 24,
-              viewBox: "0 0 24 24",
-              fill: "none",
-              stroke: "currentColor",
-              strokeWidth: 2,
-              strokeLinecap: "round",
-              strokeLinejoin: "round",
-              className: "lucide lucide-rotate-cw rotate",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M21 3v5h-5" })
-              ]
-            }
-          ) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "progress",
-            {
-              value: gotten,
-              max: total,
-              className: "w-full border border-zinc-500"
-            }
-          )
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "div",
-        {
-          className: "text-2xl mb-4",
-          dangerouslySetInnerHTML: { __html: message }
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        Timetable,
-        {
-          timeTable,
-          filter,
-          studentCount,
-          getClassKey,
-          sendTrackingEvent,
-          setIsLoading,
-          formData,
-          setIsFull,
-          subject,
-          setFilter
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(ClassListDetails, { handleDownload }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(TimetableDetails, {}),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(MoveToFilledClass, {}),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(ShowOldFeature, {})
-    ] });
+    const MoveToFilledClass = () => /* @__PURE__ */ React$1.createElement("div", { className: "text-xl font-semibold flex gap-6 items-center mt-4" }, /* @__PURE__ */ React$1.createElement(
+      "a",
+      {
+        href: "https://github.com/ruskicoder/fap-moveout",
+        target: "_blank",
+        className: "text-blue-500 !no-underline transition-all duration-200 border-blue-500 border-b-2 hover:border-transparent"
+      },
+      "v1.3.9"
+    ), /* @__PURE__ */ React$1.createElement(
+      "a",
+      {
+        href: "https://github.com/ruskicoder/fap-moveout/issues",
+        target: "_blank",
+        className: "text-blue-500 !no-underline transition-all duration-200 border-blue-500 border-b-2 hover:border-transparent"
+      },
+      "Feedback 😇"
+    ));
+    const ShowOldFeature = () => /* @__PURE__ */ React$1.createElement("div", { className: "flex items-center gap-2 mt-4" }, /* @__PURE__ */ React$1.createElement(
+      "input",
+      {
+        id: "showOldFeature",
+        type: "checkbox",
+        defaultChecked: false,
+        onChange: handleToggleOldFeature
+      }
+    ), /* @__PURE__ */ React$1.createElement(
+      "label",
+      {
+        className: "text-xl mb-0 mt-2 leading-none",
+        htmlFor: "showOldFeature"
+      },
+      "Hiện chức năng FAP cũ"
+    ));
+    return /* @__PURE__ */ React$1.createElement("div", { className: "w-full" }, /* @__PURE__ */ React$1.createElement("div", { className: "mt-3" }, /* @__PURE__ */ React$1.createElement(
+      Header,
+      {
+        isLoading,
+        refresh,
+        handleStudentCount
+      }
+    ), /* @__PURE__ */ React$1.createElement(
+      FilterSection,
+      {
+        filter,
+        setFilter,
+        studentCount,
+        lecturerList,
+        moveList,
+        subject,
+        changeSubjectForm,
+        setIsLoading,
+        isRegisterCourse: false,
+        send
+      }
+    ), gotten < total && /* @__PURE__ */ React$1.createElement("span", { className: "my-4 flex gap-4 justify-between items-center w-full" }, /* @__PURE__ */ React$1.createElement("span", { className: "text-2xl" }, /* @__PURE__ */ React$1.createElement(
+      "svg",
+      {
+        xmlns: "http://www.w3.org/2000/svg",
+        width: 24,
+        height: 24,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "currentColor",
+        strokeWidth: 2,
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        className: "lucide lucide-rotate-cw rotate"
+      },
+      /* @__PURE__ */ React$1.createElement("path", { d: "M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" }),
+      /* @__PURE__ */ React$1.createElement("path", { d: "M21 3v5h-5" })
+    )), /* @__PURE__ */ React$1.createElement(
+      "progress",
+      {
+        value: gotten,
+        max: total,
+        className: "w-full border border-zinc-500"
+      }
+    ))), /* @__PURE__ */ React$1.createElement(
+      "div",
+      {
+        className: "text-2xl mb-4",
+        dangerouslySetInnerHTML: { __html: message }
+      }
+    ), /* @__PURE__ */ React$1.createElement(
+      Timetable,
+      {
+        timeTable,
+        filter,
+        studentCount,
+        getClassKey,
+        sendTrackingEvent,
+        setIsLoading,
+        formData,
+        setIsFull,
+        subject,
+        setFilter
+      }
+    ), /* @__PURE__ */ React$1.createElement(ClassListDetails, { handleDownload }), /* @__PURE__ */ React$1.createElement(TimetableDetails, null), /* @__PURE__ */ React$1.createElement(MoveToFilledClass, null), /* @__PURE__ */ React$1.createElement(ShowOldFeature, null));
   }
   function RegisterCourse() {
     const url2 = window.location.href;
@@ -2603,7 +2371,7 @@ ${classRoom}`
     const formData = formGetter(id, true);
     let secondId = "";
     let subject = document.getElementById("ctl00_mainContent_lblSubject")?.textContent || "";
-    let cached = storage$1.getRaw(subject);
+    let cached = localStorage.getItem(subject);
     let timeTableData = cached ? JSON.parse(cached) : null;
     const [timeTable, setTimeTable] = React$1.useState(timeTableData ? objectToMap(timeTableData) : classData);
     const [total, setTotal] = React$1.useState(0);
@@ -2656,7 +2424,7 @@ ${classRoom}`
     }, []);
     React$1.useEffect(() => {
       const fetchClassListAndSubjects = async () => {
-        fetch(`https://fap.fpt.edu.vn/Course/Groups.aspx?group=${id}`).then((response) => response.text()).then((html) => {
+        nativeFetch(`https://fap.fpt.edu.vn/Course/Groups.aspx?group=${id}`).then((response) => response.text()).then((html) => {
           const parser = new DOMParser();
           const doc = parser.parseFromString(html, "text/html");
           const element = doc.querySelector("#ctl00_mainContent_divStudents");
@@ -2678,7 +2446,7 @@ ${classRoom}`
     }, []);
     const refresh = async () => {
       await sendTrackingEvent();
-      storage$1.removeRaw(subject);
+      localStorage.removeItem(subject);
       window.location.reload();
     };
     const crawlAndSave = async () => {
@@ -2701,13 +2469,13 @@ ${classRoom}`
       for (const [key, _item] of classes) {
         formData.set("ctl00$mainContent$ddlGroups", key);
         let nextClass;
-        nextClass = await (await fetch(window.location.href, {
+        nextClass = await (await nativeFetch(window.location.href, {
           method: "POST",
           headers: {},
           body: formData
         })).text();
         const nextDoc = parseHTML(nextClass);
-        const classInfo = getText(query("#ctl00_mainContent_lblCourseInfo", nextDoc)).replaceAll(
+        const classInfo = getText(nextDoc.querySelector("#ctl00_mainContent_lblCourseInfo")).replaceAll(
           "(học tại nhà văn hóa Sinh viên, khu Đại học quốc gia)",
           ""
         );
@@ -2743,7 +2511,7 @@ ${classRoom}`
         }
         setGotten((prev) => prev + 1);
       }
-      storage$1.setRaw(subject, JSON.stringify(mapToObject(timeTable)));
+      localStorage.setItem(subject, JSON.stringify(mapToObject(timeTable)));
       let lecturerListTemp = [];
       slots.forEach((slot) => {
         weekdays.forEach((day) => {
@@ -2759,122 +2527,103 @@ ${classRoom}`
         });
       });
       setLecturerList(lecturerListTemp);
-      storage$1.setExpiry("expireAt", 1e3 * 60 * 60 * 24);
+      localStorage.setItem(
+        "expireAt",
+        (Date.now() + 1e3 * 60 * 60 * 24).toString()
+      );
     };
     const handleToggleOldFeature = () => {
       document.getElementById("ctl00_mainContent_divMoveSubject")?.classList.toggle("hidden");
       document.getElementById("ctl00_mainContent_divNewGroupInfo")?.classList.toggle("hidden");
     };
-    const ShowOldFeature = () => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 mt-4", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "input",
-        {
-          id: "showOldFeature",
-          type: "checkbox",
-          defaultChecked: false,
-          onChange: handleToggleOldFeature
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "label",
-        {
-          className: "text-xl mb-0 mt-2 leading-none",
-          htmlFor: "showOldFeature",
-          children: "Hiện chức năng FAP cũ"
-        }
-      )
-    ] });
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "my-8", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          Header,
-          {
-            isLoading,
-            refresh,
-            handleStudentCount,
-            isRegisterCourse: true
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          FilterSection,
-          {
-            filter,
-            setFilter,
-            studentCount,
-            lecturerList,
-            moveList,
-            subject,
-            changeSubjectForm,
-            setIsLoading,
-            send,
-            isRegisterCourse: true
-          }
-        ),
-        gotten < total && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "my-4 flex gap-4 justify-between items-center w-full", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-2xl", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "svg",
-            {
-              xmlns: "http://www.w3.org/2000/svg",
-              width: 24,
-              height: 24,
-              viewBox: "0 0 24 24",
-              fill: "none",
-              stroke: "currentColor",
-              strokeWidth: 2,
-              strokeLinecap: "round",
-              strokeLinejoin: "round",
-              className: "lucide lucide-rotate-cw rotate",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M21 3v5h-5" })
-              ]
-            }
-          ) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "progress",
-            {
-              value: gotten,
-              max: total,
-              className: "w-full border border-zinc-500"
-            }
-          )
-        ] })
-      ] }),
-      isFull && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-2xl mb-4", children: [
-        "Lớp đã full. Xem thêm tại",
-        " ",
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "a",
-          {
-            href: "https://github.com/ruskicoder/fap-moveout",
-            target: "_blank",
-            rel: "noreferrer",
-            children: "GitHub"
-          }
-        )
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        Timetable,
-        {
-          timeTable,
-          filter,
-          studentCount,
-          getClassKey,
-          sendTrackingEvent,
-          setIsLoading,
-          formData,
-          setIsFull,
-          subject,
-          setFilter,
-          isRegisterCourse: true
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(TimetableDetails, {}),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(ShowOldFeature, {})
-    ] });
+    const ShowOldFeature = () => /* @__PURE__ */ React$1.createElement("div", { className: "flex items-center gap-2 mt-4" }, /* @__PURE__ */ React$1.createElement(
+      "input",
+      {
+        id: "showOldFeature",
+        type: "checkbox",
+        defaultChecked: false,
+        onChange: handleToggleOldFeature
+      }
+    ), /* @__PURE__ */ React$1.createElement(
+      "label",
+      {
+        className: "text-xl mb-0 mt-2 leading-none",
+        htmlFor: "showOldFeature"
+      },
+      "Hiện chức năng FAP cũ"
+    ));
+    return /* @__PURE__ */ React$1.createElement("div", { className: "w-full" }, /* @__PURE__ */ React$1.createElement("div", { className: "my-8" }, /* @__PURE__ */ React$1.createElement(
+      Header,
+      {
+        isLoading,
+        refresh,
+        handleStudentCount,
+        isRegisterCourse: true
+      }
+    ), /* @__PURE__ */ React$1.createElement(
+      FilterSection,
+      {
+        filter,
+        setFilter,
+        studentCount,
+        lecturerList,
+        moveList,
+        subject,
+        changeSubjectForm,
+        setIsLoading,
+        send,
+        isRegisterCourse: true
+      }
+    ), gotten < total && /* @__PURE__ */ React$1.createElement("span", { className: "my-4 flex gap-4 justify-between items-center w-full" }, /* @__PURE__ */ React$1.createElement("span", { className: "text-2xl" }, /* @__PURE__ */ React$1.createElement(
+      "svg",
+      {
+        xmlns: "http://www.w3.org/2000/svg",
+        width: 24,
+        height: 24,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "currentColor",
+        strokeWidth: 2,
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        className: "lucide lucide-rotate-cw rotate"
+      },
+      /* @__PURE__ */ React$1.createElement("path", { d: "M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" }),
+      /* @__PURE__ */ React$1.createElement("path", { d: "M21 3v5h-5" })
+    )), /* @__PURE__ */ React$1.createElement(
+      "progress",
+      {
+        value: gotten,
+        max: total,
+        className: "w-full border border-zinc-500"
+      }
+    ))), isFull && /* @__PURE__ */ React$1.createElement("div", { className: "text-2xl mb-4" }, "Lớp đã full. Xem thêm tại", " ", /* @__PURE__ */ React$1.createElement(
+      "a",
+      {
+        href: "https://github.com/ruskicoder/fap-moveout",
+        target: "_blank",
+        rel: "noreferrer"
+      },
+      "GitHub"
+    )), /* @__PURE__ */ React$1.createElement(
+      Timetable,
+      {
+        timeTable,
+        filter,
+        studentCount,
+        getClassKey,
+        sendTrackingEvent,
+        setIsLoading,
+        formData,
+        setIsFull,
+        subject,
+        setFilter,
+        isRegisterCourse: true
+      }
+    ), /* @__PURE__ */ React$1.createElement(TimetableDetails, null), /* @__PURE__ */ React$1.createElement(ShowOldFeature, null));
   }
   function initMoveOut() {
-    console.info("[FAP-AIO] Initializing MoveOut module");
+    console.info("[FAP-AIO Userscript] Initializing MoveOut module (standalone)");
     const url2 = window.location.href;
     const dateInfoElement = document.getElementById("ctl00_mainContent_lblDateInfo");
     if (dateInfoElement) {
@@ -2904,29 +2653,17 @@ ${classRoom}`
     rootContainer?.insertBefore(appDiv, rootContainer.firstChild);
     const rootElement = document.getElementById("fap-moveout-root");
     if (rootElement) {
-      const root = client.createRoot(rootElement);
+      const root = ReactDOM$1.createRoot(rootElement);
       if (url2.startsWith("https://fap.fpt.edu.vn/FrontOffice/MoveSubject.aspx")) {
         root.render(React$1.createElement(App));
-        console.info("[FAP-AIO] MoveOut App (MoveSubject) mounted");
+        console.info("[FAP-AIO Userscript] MoveOut App (MoveSubject) mounted");
       } else if (url2.startsWith("https://fap.fpt.edu.vn/FrontOffice/Courses.aspx")) {
         root.render(React$1.createElement(RegisterCourse));
-        console.info("[FAP-AIO] MoveOut RegisterCourse mounted");
+        console.info("[FAP-AIO Userscript] MoveOut RegisterCourse mounted");
       }
     } else {
-      console.warn("[FAP-AIO] Failed to find root element for MoveOut module");
+      console.warn("[FAP-AIO Userscript] Failed to find root element for MoveOut module");
     }
-  }
-  function initScheduler() {
-    if (window.__FPTU_SCHEDULER_LOADED__) {
-      console.log("FPTU Scheduler already loaded");
-      return;
-    }
-    window.__FPTU_SCHEDULER_LOADED__ = true;
-    if (!window.location.href.includes("fap.fpt.edu.vn")) return;
-    console.log("FPTU Scheduler initializing...");
-    Promise.resolve().then(() => scheduler).then(({ initSchedulerPanel: initSchedulerPanel2 }) => {
-      initSchedulerPanel2();
-    });
   }
   console.log("[FAP-AIO Userscript] Feature modules loaded");
   function initRouter() {

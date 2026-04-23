@@ -1,18 +1,21 @@
 /**
  * Feature Modules Barrel File
  * 
- * Re-exports feature initialization functions from the extension source.
- * This barrel file provides a centralized import point for the userscript router.
+ * Re-exports feature initialization functions.
+ * MoveOut uses a self-contained local module to bypass polyfill/facade issues.
+ * GPA and Scheduler still re-export from the extension source.
  * 
  * Features:
  * - GPA Calculator: Grade point average calculations and transcript display
- * - MoveOut Tool: Course registration notifications and tracking
+ * - MoveOut Tool: Self-contained module using native fetch + raw localStorage
  * - Scheduler: Weekly schedule visualization and management
  */
 
-// Re-export feature initialization functions from extension source
+// GPA and Scheduler re-export from extension source
 export { initGPA } from '../../../../fap-aio/src/contentScript/features/gpa/index.tsx';
-export { initMoveOut } from '../../../../fap-aio/src/contentScript/features/moveout/index.tsx';
 export { initScheduler } from '../../../../fap-aio/src/contentScript/features/scheduler/index.ts';
+
+// MoveOut uses self-contained local module (bypasses polyfilled fetch + storage facade)
+export { initMoveOut } from './moveout/index.tsx';
 
 console.log('[FAP-AIO Userscript] Feature modules loaded');
