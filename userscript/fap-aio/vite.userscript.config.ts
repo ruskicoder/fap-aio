@@ -171,12 +171,13 @@ export default defineConfig({
     // Rollup options
     rollupOptions: {
       // Externalize React and ReactDOM (loaded via @require CDN)
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', 'react-dom/client'],
       output: {
         // Map externals to global variables loaded by @require
         globals: {
           react: 'React',
-          'react-dom': 'ReactDOM'
+          'react-dom': 'ReactDOM',
+          'react-dom/client': 'ReactDOM'
         },
         // Don't use 'use strict' (handled by IIFE in main.ts)
         strict: false,
