@@ -88,29 +88,8 @@ export default function App() {
   useEffect(() => {
     const fetchInitialData = async () => {
       await crawlAndSave();
-      try {
-        const response = await nativeFetch(
-          "https://ruskicoder.github.io/fap-moveout/noti.json",
-          { cache: "no-cache" }
-        );
-        if (!response.ok) throw new Error("Failed to fetch");
-        const data = await response.json();
-        const message = `
-          <div class="notification-container ${data.bg}">
-            <span class="notification-dot animate-ping-slow mx-1"></span>
-            <span class="notification-text font-semibold text-xl">
-            ${data.message}
-            </span>
-            <span class="notification-dot animate-ping-slow mx-1"></span>
-          </div>
-        `;
-        setMessage(message);
-        setVersion(data.version);
-      } catch (error) {
-        console.log("Notification fetch failed, using defaults");
-        setMessage("");
-        setVersion("1.3.9");
-      }
+      // Notification and version are now hardcoded defaults
+      // (remote noti.json blocked by FAP's CSP: connect-src 'self' only)
     };
 
     fetchInitialData();

@@ -6,6 +6,7 @@
 
 import { nativeFetch } from '../../nativeFetch';
 import { parseHTML, query, queryAll, getText, getAttr } from './dom-helpers';
+import { deptData } from './constants/deptData';
 
 export function mapToObject(map: Map<string, Map<string, string[]>>) {
   const obj: any = {};
@@ -159,33 +160,26 @@ export const getCurrentStatus = async () => {
 
   let campusName = "";
   const campus = getText(query("#ctl00_lblCampusName", doc));
-  console.log(campus);
+  console.log("CAMPUS:", campus);
   if (campus.includes("Hòa Lạc")) {
     campusName = "hola";
   } else {
     campusName = "xavalo";
   }
 
-  let deptData: any;
-  try {
-    const deptResponse = await nativeFetch(
-      "https://ruskicoder.github.io/fap-moveout/dept.json"
-    );
-    if (!deptResponse.ok) throw new Error("Failed to fetch");
-    deptData = await deptResponse.json();
-  } catch (error) {
-    console.log("Dept fetch failed, returning empty result");
+  // Use embedded dept data (bypasses CSP blocking external connect-src)
+  const campusDepts = deptData[campusName];
+  if (!campusDepts) {
+    console.log("No dept data for campus:", campusName);
     return {};
   }
 
-  let deptNum = Object.keys((deptData as any)[campusName]).filter((item) =>
+  let deptNum = Object.keys(campusDepts).filter((item) =>
     item.includes(classCode.toLowerCase())
   )?.[0];
 
   const link = `https://fap.fpt.edu.vn/Course/Courses.aspx${currentLink}=${
-    (deptData as { [key: string]: { [key: string]: number } })[campusName][
-      deptNum
-    ]
+    campusDepts[deptNum]
   }`;
 
   console.log(link);
