@@ -23,7 +23,7 @@ FAP-AIO v2.0.0 upgrade for the rewritten FAP portal. Legacy code is preserved in
 7. Fill `10-context/` (overview, requirements) for v2.0.0, then write change specs in `.kiro/specs/` per feature: GPA, timetable and exam ICS export, cross-class exchange, theme.
 8. Decide the MoveOut redesign: v2 has no student route for class schedules or class lists (see route map). Open-class lists of the class transfer application were empty on 2026-10-04; re-check during an add/drop period.
 
-Done 2026-10-04: third-party FPTU Schedule 4.0.0 analyzed ([record](investigations/2026-10-04-fptu-schedule-extension.md)). Five student data domains verified at field level in [data-model.md](../20-architecture/fap-v2/data-model.md). `chrome-devtools` MCP attached to the owner's Chrome; page scripts, globals, DOM events and the function-to-endpoint matrix recorded in [scripts.md](../20-architecture/fap-v2/scripts.md).
+Done 2026-10-04: scheduler comparison and v2.0.0 module feasibility ([record](investigations/2026-10-04-scheduler-comparison-and-v2-scope.md)). Third-party FPTU Schedule 4.0.0 analyzed ([record](investigations/2026-10-04-fptu-schedule-extension.md)). Five student data domains verified at field level in [data-model.md](../20-architecture/fap-v2/data-model.md). `chrome-devtools` MCP attached to the owner's Chrome; page scripts, globals, DOM events and the function-to-endpoint matrix recorded in [scripts.md](../20-architecture/fap-v2/scripts.md).
 
 ## Last sync
 
