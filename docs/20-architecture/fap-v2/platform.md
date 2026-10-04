@@ -47,6 +47,24 @@ ASP.NET Core antiforgery. Forms carry a hidden `__RequestVerificationToken`. Scr
 
 The same controller action serves a full page or an HTML partial. Scripts send `X-Requested-With: XMLHttpRequest` to get the partial (confirmed on `/Report/Grade`; used by `academic-report.js`, `timetable-common.js`, `notification-bell.js`, `base.js` modals). Dedicated partial actions also exist: `/Home/StudentContentPartial`, `/WeeklyTimetable/WeekPartial`.
 
+## Rendering modes per module
+
+Measured 2026-10-04 by requesting each route three ways: plain, with `X-Requested-With: XMLHttpRequest`, and with `Accept: application/json`.
+
+| Module | Plain | `X-Requested-With` | `Accept: application/json` |
+|---|---|---|---|
+| `/Report/Attendance` | full page | partial (about 40% of the page) | full page |
+| `/Report/Grade` | full page | partial (about 21% of the page) | full page |
+| `/WeeklyTimetable/WeekPartial`, `/Home/StudentContentPartial`, `/Notification/BellList` | partial | partial | partial |
+| `/Notification/UnreadCount` | json | json | json |
+| Every other page: `/`, `/WeeklyTimetable`, `/ExamSchedule`, `/Report/Transcript`, `/Report/OjtConditions`, `/Report/ThesisConditions`, `/Curriculum`, `/Subject`, `/News`, `/Document`, `/Transaction`, `/Wishlist`, `/CrossClassChange`, `/Application`, `/ShoppingCart`, `/CoursePendingPayment`, `/StartupGroup`, `/FyeCheckInLog`, `/Account`, `/StudentProfile` | full page | full page | full page |
+
+No route negotiates JSON. The transcript, exam schedule and curriculum exist only as server-rendered HTML tables, so FAP-AIO must parse HTML for them. JSON exists only for the lookup endpoints in [endpoints.md](endpoints.md) (application option sources, waitlist, cross-class resolve, wards, notifications).
+
+## Route visibility
+
+Routes the user may not access respond 404, exactly like routes that do not exist. Example: `/Academic/ApplicationTypes/OptionsProxy` is referenced by every application schema but returns 404 to a student. Endpoint discovery therefore relies on what pages and scripts reference, not on probing.
+
 ## Gates and permission handling (`base.js`)
 
 - `base.js` wraps `window.fetch` (`fapPermissionAwareFetch`). A response header `X-Feedback-Required: 1` redirects the user to `/Feedback?required=1` (a mandatory survey gate).

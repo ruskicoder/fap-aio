@@ -30,6 +30,7 @@
 | [60-decisions/README.md](60-decisions/README.md) | decisions | readme | draft | Numbered decision records. |
 | [70-work/README.md](70-work/README.md) | work | readme | draft | Dated work records and the progress ledger. |
 | [70-work/STATUS.md](70-work/STATUS.md) | work.status | status | draft | Single living progress ledger. |
+| [70-work/investigations/2026-10-04-class-roster-and-rendering.md](70-work/investigations/2026-10-04-class-roster-and-rendering.md) | work.investigations.10-04-class-roster-and-rendering | investigation | draft | Where FAP v2 exposes per-class student lists, how each module renders, and the remaining POST endpoints. |
 | [70-work/investigations/2026-10-04-fap-v2-scrape.md](70-work/investigations/2026-10-04-fap-v2-scrape.md) | work.investigations.10-04-fap-v2-scrape | investigation | draft | Read-only scrape of the rewritten FAP v2 portal to inventory routes, endpoints and page structure for the FAP-AIO v2.0.0 upgrade. |
 | [80-guides/README.md](80-guides/README.md) | guides | readme | draft | Onboarding, how-tos, examples. |
 | [90-meta/conventions.md](90-meta/conventions.md) | meta.conventions | conventions | approved | Rules for this documentation tree. |

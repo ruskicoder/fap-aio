@@ -24,6 +24,8 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 | POST | `/Language/SetLanguage` | `returnUrl`, `culture` (submit button value) | redirect | form | form in layout |
 | POST | `/Auth/Logout` | none | redirect | form | form in layout |
 | GET | `/Feedback` | `required=1` when forced | page | | GET 200, `base.js` |
+| GET | `/Home/Index`, `/Account/Index`, `/Feedback/Index` | none | page (same as the controller root) | | GET 200 |
+| GET | `/Home/Privacy` | none | HTTP 500 (template leftover) | | GET 500 |
 
 ## Notifications (layout bell)
 
@@ -70,7 +72,7 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 
 | Method | Path | Parameters | Response | CSRF | Evidence |
 |---|---|---|---|---|---|
-| GET | `/Subject` | `keyword`, `TakeAttendance`, `IsGraded`, `IsGraduate`, `pageIndex` | page (paged table, 50 rows) | | GET 200, GET form |
+| GET | `/Subject` | `keyword`, `TakeAttendance`, `IsGraded`, `IsGraduate`, `pageIndex`, `pageSize` (max 100) | page (paged table, 50 rows by default) | | GET 200, GET form |
 | GET | `/Subject/Detail/{guid}` | none | page (detail grid) | | GET 200 |
 | GET | `/Curriculum` | none | page (`table.fap-sheet`) | | GET 200 |
 
@@ -95,8 +97,8 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 | GET | `/Application/Catalog` | none | page (46 application types) | | GET 200 |
 | GET | `/Application/Create` | `applicationTypeId={guid}` | page (dynamic form) | | GET 200 |
 | POST | `/Application/Create` | `ApplicationTypeId`, `Mssv`, `Reason`, `Number`, `FormData` (JSON of the runtime form) | redirect | form | form `#test-create-app-form` |
-| GET | `/Application/GetFormSchema` | `applicationTypeId` | json (runtime form schema) | | `data-get-schema-url`, `application-create.js` |
-| GET | `/Application/GetFormSchema*` (34 option sources, listed below) | schema-defined | json options | | `data-form-schema-*-url` |
+| GET | `/Application/GetFormSchema` | `applicationTypeId` | json (runtime form schema, see below) | | GET 200 (all 46 types), `data-get-schema-url` |
+| GET | `/Application/GetFormSchema*` (34 option sources, listed below) | see "Option sources" below | json `[{value, label, description, isDefault}]` | | GET 200 (sampled), `data-form-schema-*-url` |
 | GET | `/Application/GetStudentIdByMssv` | `mssv` | json `{studentId}` | | `data-get-student-id-url` |
 | POST | `/Application/UploadFormFile` | multipart `file`, `__RequestVerificationToken` | json `{success, hash, error}` | form field | `data-fap-upload-url`, `app-type-runtime-form.js` |
 | POST | `/Application/PreviewApplicationFee` | JSON body | json | header | `data-preview-fee-url` |
@@ -107,6 +109,14 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 | GET | per-application `data-payment-status-url` | none | json | | `application-create.js`; not observed |
 | POST | per-application `data-foxpay-url` | `dngItemId` | json | header | `application-create.js`; not observed |
 
+### Option sources
+
+The schema returned by `GetFormSchema` is `{formSchema, isPrintRequire, requiresQuantity, deadline, fixedFeeAmount, feeKey, note, registrationPeriodDisplay}`, where `formSchema` is a JSON string `{fields: [...], version}`. Field types seen across all 46 application types: `select` (45), `text` (8), `displayApi` (8), `file` (6), `number`, `staticText`, `radio`, `confirm`, `checkbox`. Field keys: `id, name, type, label, accept, required, apiUrl, apiMethod, labelField, valueField, optionSource, regex, regexMessage, content, options, confirmText, referencedApplicationTypeId`.
+
+Option fields declare `apiUrl: /Academic/ApplicationTypes/OptionsProxy?apiKey=<Key>` with `apiMethod: GET` (38 distinct keys). That proxy is a staff route and returns 404 to students; `app-type-runtime-form.js` rewrites each key to the dedicated `/Application/GetFormSchema<...>` route below. Dependent fields add query parameters taken from the preceding field: `subjectId`, `courseId`, `termId`, `markGroupName`, `majorId`, `bankId`, `provinceId`, `studentId` (for `SubjectsByStudentCurrentTerm`, `CurriculumNextTermSubjectsForStudent`, `CampusesExceptStudentCurrent`), `applicationTypeId` (Coursera list) and `referencedApplicationTypeId`.
+
+Dependency chains, from the script's `upstreamKeys` table: `SemesterSubjectsByTerm` then `MarkGroupsByTermSubject` then `MarksByTermSubjectGroup`; subject lists then `OpenCoursesBySubject` (or `...ExcludingStudentCourse`, `OpenInternationalCoursesBySubject`); `StudentLukCourses` or `StudentNonLukCourses` then `CourseAttendanceSessions`; `ProvincesList` then `WardsByProvince`; `BanksList` then `BankBranchesByBank`; `NewMajorsList` then `SpecializationsByNewMajor`.
+
 `GetFormSchema*` option sources, all `GET /Application/<name>`: `GetFormSchemaReferencedApplicationOptions`, `GetFormSchemaRetakeEligibleSubjects`, `GetFormSchemaPassedSubjectsWithPrerequisites`, `GetFormSchemaStudiedNonCourseraSubjects`, `GetFormSchemaCurriculumPastTermUnstudiedSubjectsWithPrerequisites`, `GetFormSchemaCurriculumNextTermSubjects`, `GetFormSchemaSubjectsByStudentCurrentTerm`, `GetFormSchemaCampusesExceptStudentCurrent`, `GetFormSchemaBanks`, `GetFormSchemaProvincesOptions`, `GetFormSchemaWardsByProvinceOptions`, `GetFormSchemaBankBranches`, `GetFormSchemaTerms`, `GetFormSchemaSemesterSubjectsByTerm`, `GetFormSchemaCourseraSubjects`, `GetFormSchemaNewMajors`, `GetFormSchemaSpecializationsByMajor`, `GetFormSchemaStudentCurrentMajor`, `GetFormSchemaStudentCurrentSpecialization`, `GetFormSchemaMarkGroupNames`, `GetFormSchemaMarkNames`, `GetFormSchemaCurriculumFutureTermUnstudiedSubjectsWithPrerequisites`, `GetFormSchemaOpenCoursesBySubject`, `GetFormSchemaPlacedSubjectsNoPresentAttendance`, `GetFormSchemaRetutoringSubjects`, `GetFormSchemaOpenCoursesBySubjectExcludingStudentCourse`, `GetFormSchemaStudentLukCourses`, `GetFormSchemaStudentNonLukSubjects`, `GetFormSchemaStudentNonLukCourses`, `GetFormSchemaCourseAttendanceSessions`, `GetFormSchemaUnpassedCurriculumSubjectsWithPrerequisites`, `GetFormSchemaOpenInternationalCoursesBySubject`, `GetFormSchemaStudentProfileDisplayOptions`, `GetFormSchemaHealthInsuranceFacilitiesOptions`.
 
 ## Cross-class exchange (replaces legacy MoveOut)
@@ -115,14 +125,15 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 |---|---|---|---|---|---|
 | GET | `/CrossClassChange` | `termId={guid}` (select with 28 terms, Fall2017 to Fall2026) | page (my exchange requests) | | GET 200, GET form |
 | GET | `/CrossClassChange/Create` | none | page; shows an empty card when the student has no eligible class | | GET 200 |
-| GET | `/CrossClassChange/ResolveTargetStudent` | `fromCourseId={guid}`, `rollNumber` | json `{rollNumber, courses: [{courseId, ...}]}` | | `data-resolve-url`, `cross-class-change-create.js` |
-| POST | `/CrossClassChange/Create` (inferred) | from course, target student, to course | not observed | form | form not rendered for this account |
+| GET | `/CrossClassChange/ResolveTargetStudent` | `fromCourseId={guid}`, `rollNumber` | json `{rollNumber, courses: [{courseId, label or courseName}]}` | | `data-resolve-url`, `cross-class-change-create.js`; not called (it looks up another student) |
+| POST | `/CrossClassChange/Create` (inferred) | form `#cross-class-change-form`: from course `#cross-class-from-course`, target roll `#cross-class-target-roll`, resolved student `#cross-class-target-student`, to course `#cross-class-to-course`; field `name`s not observed | not observed | form | `cross-class-change-create.js`; form markup not rendered for this account |
 
 ## Payments and wallet
 
 | Method | Path | Parameters | Response | CSRF | Evidence |
 |---|---|---|---|---|---|
 | GET | `/ShoppingCart` | none | page (tuition and dormitory items, wallet modal) | | GET 200 |
+| POST | per-item `form.js-payment-form` / `.js-total-payment-form` action | `amount`, `typeDng`, `useBalance`, `payableIds`, `isPayable`, `externalId`, `isDormitory` | redirect to payment | form | `shopping-cart.js`; no cart items for this account, so the action URL was not rendered |
 | GET | `/CoursePendingPayment` | none | page | | GET 200 |
 | GET | `/Transaction` | `keyword`, `FromReceiptDate`, `ToReceiptDate`, `SortBy`, `IsDesc`, `pageIndex`, `pageSize` | page (`#transaction-datatable`) | | GET 200, GET form |
 | GET | `/Transaction/Detail/{guid}` | none | page | | GET 200 |
@@ -155,10 +166,12 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 | POST | `/FyeCheckInLog/Create` | `Request.MeetingDate`, `Request.MeetingMethod`, `Request.ConnectionScore`, `Topic*` flags, `Request.TopicOtherText`, `Request.NeedsSupport`, `Signal*` flags, `Request.SupportDescription`, `Request.AdditionalNote` | redirect | form | form |
 | GET | `/FyeMentorFeedback` | none | page | | GET 200 |
 | GET | `/FyeMentorFeedback/Create` | none | page | | GET 200 |
+| GET | `/FyeMentorFeedback/SearchAssignments` | `keyword` (2 or more characters, optional); sends `X-Requested-With` | json | | inline script on the Create page |
 | POST | `/FyeMentorFeedback/Create` | `AssignmentId`, `OverallRating`, `SupportRating`, `CommunicationRating`, `EngagementRating`, `Comment`, `IsAnonymous` | redirect | form | form |
 
 ## Not found or not captured
 
 - Request bodies of `MarkRead`, `SyncWebDevice`, `PreviewApplicationFee`, `Wishlist/Deposit` and the `CrossClassChange` create form are partly unknown. Capturing them needs a real interaction, which this scrape did not do.
+- Unauthorized and non-existent routes both return 404 (see [platform.md](platform.md)), so routes outside this list cannot be discovered by guessing. 78 guessed routes (course, group, class, student, lecturer, admin, API and Swagger paths) all returned 404.
 - The edunext, payment-status and foxpay URLs are rendered per item and were not present for this account.
 - No JSON API exists for timetable, exams, grades, attendance or transcript. All are server-rendered HTML; the timetable and reports also serve HTML partials.

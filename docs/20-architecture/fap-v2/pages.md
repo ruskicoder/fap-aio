@@ -32,13 +32,13 @@ Selectors observed 2026-10-04. Endpoint parameters live in [endpoints.md](endpoi
 
 ## Exam schedule
 
-`/ExamSchedule`, one `table.fap-sheet`. Columns: Date, Time (`10h50-12h20`), Room, Subject (`CODE - Name`), Exam type, Grade publication date, Attendance note, Note.
+`/ExamSchedule`, one `table.fap-sheet`, no filters (a `termId` query is ignored; only upcoming exams are listed). Cells are plain text. Exam type is a code such as `FE`. Columns: Date, Time (`10h50-12h20`), Room, Subject (`CODE - Name`), Exam type, Grade publication date, Attendance note, Note.
 
 ## Academic transcript
 
 `/Report/Transcript`. Title: `Grade report for transcript <curriculum code>`.
 
-- Table 1, `table.fap-sheet`: No., Term, Semester, Subject code, Prerequisites, Replaced subject, Subject name, Credits, Grade, Status. Status is a `span.badge`; `In progress` was observed, other values were not recorded.
+- Table 1, `table.fap-sheet`: No., Term, Semester, Subject code, Prerequisites, Replaced subject, Subject name, Credits, Grade, Status. Grade and Status are both `span.badge`: grade `badge bg-success` with the numeric mark, or a plain `<span>-</span>` when no grade; status `bg-success` for `Passed` and `Exempt`, `bg-info` for `In progress`. Missing prerequisite or replacement cells hold `-`.
 - Table 2, `table.fap-sheet`: replaced or extra subjects. No., Semester, Subject code, Subject name, Credits, Grade, Status.
 
 ## Grade report
@@ -60,7 +60,11 @@ Table `table.fap-sheet.attendance-session-sheet`: #, Study date, Study slot, Roo
 ## Cross-class exchange
 
 - `/CrossClassChange`: GET form with `select#termId` (28 terms); link to `/CrossClassChange/Create`; list of the student's requests (empty for this account).
-- `/CrossClassChange/Create`: config element with `data-resolve-url`, `data-searching`, `data-found-template`, `data-required`, `data-resolve-failed`, `data-no-target-courses`, `data-select-to-course`, `data-confirm-create`. When the student has no eligible class the page shows `.fap-empty-card` instead of the form.
+- `/CrossClassChange/Create`: config element `#cross-class-config` with `data-resolve-url`, `data-searching`, `data-found-template`, `data-required`, `data-resolve-failed`, `data-no-target-courses`, `data-select-to-course`, `data-confirm-create`. When the student has no eligible class the page shows `.fap-empty-card` instead of the form.
+
+## Paged lists
+
+`/Subject` caps `pageSize` at 100 (requesting 1000 returns 100 rows). `/News`, `/Document`, `/Transaction` and `/Wishlist` offer `pageSize` 10, 20, 50 or 100.
 
 ## Home partial
 
