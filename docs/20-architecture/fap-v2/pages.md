@@ -26,6 +26,8 @@ Every visible label, table header and `title` attribute follows the culture set 
 
 - `/WeeklyTimetable` renders a shell. The element with `data-fetch-url="/WeeklyTimetable/WeekPartial"` also carries `data-reference-date` (ISO date) and `data-culture`. Buttons: `#weekly-timetable-current`, previous and next; a week `<input>` holds the ISO week.
 - The partial holds `.weekly-timetable-grid` with one `table` whose header is `Slot`, then `Mon (dd/MM)` to `Sun (dd/MM)`. The current day header has `.weekly-timetable-today-header`. A mobile copy uses `.weekly-timetable-mobile-card`.
+- Ids: the shell container is `#weekly-timetable-container`; the week picker is `input#weekly-timetable-week` (`type="week"`, `name="week"`). `WeekPartial` ignores a `week=YYYY-Www` parameter (returns the current week) and a `dd/MM/yyyy` `referenceDate` (returns the empty state).
+- A week without sessions returns only `.fap-empty-state` ("You do not have any schedule participation in this week."), no grid. Coverage for the owner's account, checked 2026-10-04: weeks from 2026-01-05 to 2026-12-07 have data; every 2025 week is empty although the grade report lists Fall2025 courses. See [the FPTU Schedule analysis](../../70-work/investigations/2026-10-04-fptu-schedule-extension.md).
 - Row headers carry `title="Slot"` with the slot number. An occupied cell (`td`) contains the items below. The `title` attributes are localized (in `vi`: `Điểm danh`, `Học online`, `Loại lịch`, ...), so match on class or icon, not on `title`. Culture-independent hooks: icon `ri-book-open-line` (course), `ri-time-line` (time), `ri-wifi-off-line` (offline), `ri-map-pin-line` (room), `ri-user-line` (lecturer).
   - `.weekly-timetable-cell-title`: `CODE - Group`, for example `HCM202 - Half1_GD1805`.
   - `.weekly-timetable-attendance-status`: status text; `Attendance exempt` was observed, other values were not recorded.
@@ -51,13 +53,15 @@ Every visible label, table header and `title` attribute follows the culture set 
 
 `/Report/Grade`. Selects `#grade-report-term` and `#grade-report-course` (outside any form). The report root has `data-report-url`, `data-report-term-param`, `data-report-course-param`, `data-report-term-id`; options carry `data-fallback-href`. `academic-report.js` swaps `.academic-report-content` with the partial.
 
-Mark table: `table.student-mark-sheet`, columns Mark group, Mark name, Weight (%), Final mark, Comment. Summary: `.grade-average`, `.grade-status`, `.grade-status--studying`.
+The selected course is summarized in `.fap-result-card` with `.fap-result-card__title`, `__code` (subject code) and `__meta` (contains the term name). Server HTML cells carry no `data-label`; that attribute is added client-side (inferred, `fap-table-cards.js`).
+
+Mark table: `table.student-mark-sheet`, columns Mark group, Mark name, Weight (%), Final mark, Comment. Rows: `tr.sheet-row-total` (group total), `tr.sheet-grand-total` (course summary); the first row of a group has a `rowspan` group cell. Summary: `.grade-average`, `.grade-status`, each with `grade-status--studying`, `--passed` or `--failed`. See [data-model.md](data-model.md).
 
 ## Attendance report
 
 `/Report/Attendance`. Selects `#attendance-report-term`, `#attendance-report-course`, same `data-report-*` hooks as the grade report.
 
-Table `table.fap-sheet.attendance-session-sheet`: #, Study date, Study slot, Room, Lecturer, Course, Status, Comment. Summary `.attendance-summary` (`--ok` modifier); chips `.attendance-chip--date`, `.attendance-chip--slot`; status `.attendance-status--<state>` (observed `--exempt`).
+Table `table.fap-sheet.attendance-session-sheet`: #, Study date, Study slot, Room, Lecturer, Course, Status, Comment. Summary `.attendance-summary` (`--ok` modifier); chips `.attendance-chip--date`, `.attendance-chip--slot`; status `.attendance-status--<state>`, states `present`, `absent`, `pending` (Not taken), `exempt`.
 
 ## Curriculum
 

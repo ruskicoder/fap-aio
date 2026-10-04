@@ -21,5 +21,7 @@ FAP-AIO does not own this system. Everything in this section was observed from a
 | [00-verification-guide.md](00-verification-guide.md) | How to re-scrape and re-check this section, read-only |
 | [endpoints.md](endpoints.md) | Every endpoint found: method, path, parameters, response, evidence |
 | [pages.md](pages.md) | DOM contracts (tables, columns, selectors, `data-*` hooks) of the pages FAP-AIO reads |
+| [data-model.md](data-model.md) | Student-visible entities by domain: fields, keys, enumerations, unverified shapes |
+| [scripts.md](scripts.md) | First-party scripts per page, window globals, DOM events, function-to-endpoint matrix |
 | [platform.md](platform.md) | CSP, headers, CSRF, partial rendering, auth and other cross-cutting behavior |
 | [route-map.md](route-map.md) | Legacy FAP-AIO feature routes mapped to their v2 replacements |

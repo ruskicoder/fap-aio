@@ -14,10 +14,12 @@
 | [20-architecture/data-model.md](20-architecture/data-model.md) | architecture.data-model | data-model | todo | Entities, relationships, data ownership. |
 | [20-architecture/fap-v2/00-verification-guide.md](20-architecture/fap-v2/00-verification-guide.md) | architecture.fap-v2.verification-guide | guide | draft | How to re-scrape FAP v2 read-only and re-check this section. |
 | [20-architecture/fap-v2/README.md](20-architecture/fap-v2/README.md) | architecture.fap-v2 | section | draft | External system: the rewritten FAP portal (v2.0.0.0) that FAP-AIO enhances. |
+| [20-architecture/fap-v2/data-model.md](20-architecture/fap-v2/data-model.md) | architecture.fap-v2.data-model | data-model | draft | Entities FAP v2 exposes to a student, by domain: fields, keys, enumerations and where each is read. |
 | [20-architecture/fap-v2/endpoints.md](20-architecture/fap-v2/endpoints.md) | architecture.fap-v2.endpoints | interface | draft | Catalog of every FAP v2 endpoint found, grouped by MVC controller, with method, parameters and response. |
 | [20-architecture/fap-v2/pages.md](20-architecture/fap-v2/pages.md) | architecture.fap-v2.pages | interface | draft | DOM contracts of the FAP v2 pages FAP-AIO reads: tables, columns, selectors and data hooks. |
 | [20-architecture/fap-v2/platform.md](20-architecture/fap-v2/platform.md) | architecture.fap-v2.platform | cross-cutting | draft | FAP v2 cross-cutting behavior: CSP, security headers, CSRF, partial rendering, auth and client libraries. |
 | [20-architecture/fap-v2/route-map.md](20-architecture/fap-v2/route-map.md) | architecture.fap-v2.route-map | interface | draft | Legacy FAP routes used by FAP-AIO v0.0.1 mapped to their FAP v2 replacements. |
+| [20-architecture/fap-v2/scripts.md](20-architecture/fap-v2/scripts.md) | architecture.fap-v2.scripts | interface | draft | FAP v2 first-party scripts: which page loads which script, the globals and events they expose, and which function calls which endpoint. |
 | [20-architecture/interfaces.md](20-architecture/interfaces.md) | architecture.interfaces | interface | draft | Contracts between units and external systems. |
 | [20-architecture/system.md](20-architecture/system.md) | architecture.system | architecture | todo | Context and component view; how units relate. |
 | [30-units/README.md](30-units/README.md) | units | readme | draft | Index of units (modules, apps, services). |
@@ -31,8 +33,10 @@
 | [70-work/README.md](70-work/README.md) | work | readme | draft | Dated work records and the progress ledger. |
 | [70-work/STATUS.md](70-work/STATUS.md) | work.status | status | draft | Single living progress ledger. |
 | [70-work/investigations/2026-10-04-class-roster-and-rendering.md](70-work/investigations/2026-10-04-class-roster-and-rendering.md) | work.investigations.10-04-class-roster-and-rendering | investigation | draft | Where FAP v2 exposes per-class student lists, how each module renders, and the remaining POST endpoints. |
+| [70-work/investigations/2026-10-04-data-domains.md](70-work/investigations/2026-10-04-data-domains.md) | work.investigations.10-04-data-domains | investigation | draft | Field-level verification of the five FAP v2 data domains seen by a student. |
 | [70-work/investigations/2026-10-04-endpoint-and-flow-verification.md](70-work/investigations/2026-10-04-endpoint-and-flow-verification.md) | work.investigations.10-04-endpoint-and-flow-verification | investigation | draft | Each read-only GET endpoint called once, ResolveTargetStudent probed, and four owner-approved low-risk POST and navigation flows run. |
 | [70-work/investigations/2026-10-04-fap-v2-scrape.md](70-work/investigations/2026-10-04-fap-v2-scrape.md) | work.investigations.10-04-fap-v2-scrape | investigation | draft | Read-only scrape of the rewritten FAP v2 portal to inventory routes, endpoints and page structure for the FAP-AIO v2.0.0 upgrade. |
+| [70-work/investigations/2026-10-04-fptu-schedule-extension.md](70-work/investigations/2026-10-04-fptu-schedule-extension.md) | work.investigations.10-04-fptu-schedule-extension | investigation | draft | Static analysis of the third-party 'FPTU Schedule' 4.0.0 extension and how it reads FAP v2, with live read-only checks of its assumptions. |
 | [80-guides/README.md](80-guides/README.md) | guides | readme | draft | Onboarding, how-tos, examples. |
 | [90-meta/conventions.md](90-meta/conventions.md) | meta.conventions | conventions | approved | Rules for this documentation tree. |
 | [README.md](README.md) | readme | readme | draft | Entry point: purpose, scope, folder map, reading order. |
