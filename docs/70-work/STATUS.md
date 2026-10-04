@@ -22,8 +22,8 @@ FAP-AIO v2.0.0 upgrade for the rewritten FAP portal. Legacy code is preserved in
 ## Last sync
 
 <!-- docs-scaffold:sync:start -->
-- last_sync: 2026-10-04T16:49:10+07:00
-- head: 447cf42
-- journal: 20261004-162854.md entry 008 hash c4e456ff0f7de1a4
+- last_sync: 2026-10-04T18:45:09+07:00
+- head: 985b9ca
+- journal: 20261004-162854.md entry 011 hash dde63dff448079cc
 - health: 0 error, 0 warn, 12 info
 <!-- docs-scaffold:sync:end -->
