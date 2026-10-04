@@ -10,6 +10,10 @@ summary: "DOM contracts of the FAP v2 pages FAP-AIO reads: tables, columns, sele
 
 Selectors observed 2026-10-04. Endpoint parameters live in [endpoints.md](endpoints.md); this file only records page structure.
 
+## Localization of page text
+
+Every visible label, table header and `title` attribute follows the culture set by `POST /Language/SetLanguage`. Values observed in `vi`: transcript headers `STT | KỲ | HỌC KỲ | MÃ MÔN | TIÊN QUYẾT | MÔN THAY THẾ | TÊN MÔN | TÍN CHỈ | ĐIỂM | TRẠNG THÁI`; transcript statuses `Đạt` (Passed), `Đang học` (In progress), `Exempt` (not translated); exam headers `Ngày | Thời gian | Phòng | Môn thi | Loại thi | Ngày công bố điểm | Ghi chú điểm danh | Ghi chú`; weekday headers `Thứ 2 (dd/MM)` to `Chủ nhật (dd/MM)`. Parsers must locate columns by position or class, and map status text for both cultures (or use the badge colour: `bg-success`, `bg-info`).
+
 ## Shared layout
 
 - Page body content sits in `.content-page`. Titles use `.fap-page-title` with breadcrumbs `.fap-page-title__crumb-*`.
@@ -22,13 +26,15 @@ Selectors observed 2026-10-04. Endpoint parameters live in [endpoints.md](endpoi
 
 - `/WeeklyTimetable` renders a shell. The element with `data-fetch-url="/WeeklyTimetable/WeekPartial"` also carries `data-reference-date` (ISO date) and `data-culture`. Buttons: `#weekly-timetable-current`, previous and next; a week `<input>` holds the ISO week.
 - The partial holds `.weekly-timetable-grid` with one `table` whose header is `Slot`, then `Mon (dd/MM)` to `Sun (dd/MM)`. The current day header has `.weekly-timetable-today-header`. A mobile copy uses `.weekly-timetable-mobile-card`.
-- An occupied cell (`td`) contains:
+- Row headers carry `title="Slot"` with the slot number. An occupied cell (`td`) contains the items below. The `title` attributes are localized (in `vi`: `Điểm danh`, `Học online`, `Loại lịch`, ...), so match on class or icon, not on `title`. Culture-independent hooks: icon `ri-book-open-line` (course), `ri-time-line` (time), `ri-wifi-off-line` (offline), `ri-map-pin-line` (room), `ri-user-line` (lecturer).
   - `.weekly-timetable-cell-title`: `CODE - Group`, for example `HCM202 - Half1_GD1805`.
   - `.weekly-timetable-attendance-status`: status text; `Attendance exempt` was observed, other values were not recorded.
   - `[title="Start time - End time"] span.fw-bold`: explicit time `15h00-17h15`. Slot times are no longer fixed; read them from the cell.
   - `span[title="Online"]`: `Online` or `Offline`.
   - `[title="Room"]`: room, for example `NVH 308`.
   - `[title="Lecturer"]`: lecturer login.
+  - `[title="Schedule type"]` (only on some cells): for example `Project`.
+- Attendance status texts observed in `en`: `Attendance exempt`, `Present`; in `vi`: `Miễn điểm danh`, `Có mặt`.
 
 ## Exam schedule
 

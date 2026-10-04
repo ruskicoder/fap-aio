@@ -21,7 +21,7 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 |---|---|---|---|---|---|
 | GET | `/` | none | page (student home shell) | | GET 200 |
 | GET | `/Home/StudentContentPartial` | none; sends `X-Requested-With: XMLHttpRequest`, `Accept: text/html` | partial (profile card, metrics, wallet, news, pinned modal) | | GET 200, `data-fetch-url`, `home-student-content.js` |
-| POST | `/Language/SetLanguage` | `returnUrl`, `culture` (submit button value) | redirect | form | form in layout |
+| POST | `/Language/SetLanguage` | `returnUrl`, `culture` (`vi` or `en`) | redirect to `returnUrl`; sets an HttpOnly culture cookie; `<html lang>` follows | form | POST verified 2026-10-04 (vi, then back to en) |
 | POST | `/Auth/Logout` | none | redirect | form | form in layout |
 | GET | `/Feedback` | `required=1` when forced | page | | GET 200, `base.js` |
 | GET | `/Home/Index`, `/Account/Index`, `/Feedback/Index` | none | page (same as the controller root) | | GET 200 |
@@ -31,9 +31,9 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 
 | Method | Path | Parameters | Response | CSRF | Evidence |
 |---|---|---|---|---|---|
-| GET | `/Notification/BellList` | `pageIndex`, `pageSize`, `cursor` (optional) | partial | | GET 200, `data-load-url`, `notification-bell.js` |
+| GET | `/Notification/BellList` | `pageIndex`, `pageSize`, `cursor` (optional) | partial; items carry `data-notification-id`, `-link-url`, `-source-code`, `-is-read` (`True`/`False`) | | GET 200, `data-load-url`, `notification-bell.js` |
 | GET | `/Notification/UnreadCount` | none | json `{hasUnread}` | | GET 200, `data-unread-url` |
-| POST | `/Notification/MarkRead` | JSON body `{notificationIds: [...]}` | json | header | `data-mark-read-url`, `notification-bell.js` |
+| POST | `/Notification/MarkRead` | JSON body `{notificationIds: [...]}` | json `{success, affected, hasUnread}`; missing CSRF header gives HTTP 400 with an empty body | header | POST verified 2026-10-04 (one notification) |
 | POST | `/Notification/MarkReadAll` | none | json | header | `data-mark-all-read-url` |
 | POST | `/Notification/SyncWebDevice` | JSON body (FCM device token, enabled flag, permission) | json | header | `data-sync-url`, `web-notification-device.js` |
 | GET | `/firebase-messaging-sw.js` | none | script (FCM service worker) | | GET 200 |
@@ -84,9 +84,9 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 | GET | `/News/Detail/{guid}` | none | page | | GET 200 |
 | GET | `/Document` | `keyword`, `DocumentTypeId`, `IsActive`, `SortBy` (`Name`, `DocumentTypeId`, `CreatedAt`), `IsDesc`, `pageIndex`, `pageSize` | page | | GET 200, GET form `#document-filter-form` |
 | GET | `/Document/Detail/{guid}` | none | page | | GET 200 |
-| GET | `/Document/DrivePdf` | none | redirect to a cross-origin target (opaque under `redirect: manual`) | | GET 3xx |
+| GET | `/Document/DrivePdf` | none | redirect to a Google Drive viewer (`drive.google.com/file/d/<id>/view`) for the student user manual | | navigation verified 2026-10-04 |
 | GET | `/Cdn/GetViewToken` | `fileId`, `fileName`, split from `data-file-ref` (`<fileId>_<fileName>`) at the first `_` | json `{data: {success, message, code, data: {token}}, isSuccess, message, code, validationErrors}` | | GET 200, `file-attach.js` |
-| GET | `https://cdn.fpt.edu.vn/api/cdn/token_cdn/{hash}` | `{hash}` is the whole file ref; `project`, `token` | file | | `data-cdn-url-pattern`; `fetch` from the page is blocked by CSP `connect-src` (verified), the browser opens it as a navigation |
+| GET | `https://cdn.fpt.edu.vn/api/cdn/token_cdn/{hash}` | `{hash}` is the whole file ref; `project`, `token` | redirect to a MinIO S3 presigned URL `https://cdn.fpt.edu.vn/cdn-files/documents/<fileRef>?X-Amz-...` valid 3600 s | | `data-cdn-url-pattern`; `fetch` from the page is blocked by CSP `connect-src` (verified), the browser opens it as a navigation |
 | GET | `/Cdn/ViewImage` | `fileRef` | image | | `news-detail.js` |
 
 ## Applications (student requests)
@@ -101,13 +101,17 @@ Observed 2026-10-04 from a student account. Rules for reading this table:
 | GET | `/Application/GetFormSchema*` (34 option sources, listed below) | see "Option sources" below | json `[{value, label, description, isDefault}]` | | GET 200 (sampled), `data-form-schema-*-url` |
 | GET | `/Application/GetStudentIdByMssv` | `mssv` | json `{studentId}` | | GET 200 (own roll number) |
 | POST | `/Application/UploadFormFile` | multipart `file`, `__RequestVerificationToken` | json `{success, hash, error}` | form field | `data-fap-upload-url`, `app-type-runtime-form.js` |
-| POST | `/Application/PreviewApplicationFee` | JSON body | json | header | `data-preview-fee-url` |
+| POST | `/Application/PreviewApplicationFee` | JSON body `{applicationTypeId, number, reason, formData}`, where `formData` is a JSON string keyed by schema field `name` | json `{feeAmount, errorCode, message}`; observed `errorCode: APPLICATION_REGISTRATION_CLOSED` outside the registration window | header | POST verified 2026-10-04; only sent for process-driven fee keys (see below) |
 | GET | `/Application/GetBalance` | none | json `{balance}` (wallet, number) | | GET 200, `home.js` |
 | POST | `/Application/InsertToDNG` | `Amount`, `typeDng`, use-balance flag | json (payment invoice) | header | `home.js` |
 | POST | `/Application/GetFoxPay` | `typeDng` | json (FPT Pay link) | header | `home.js` |
 | POST | `/Application/GetQr` | `typeDng` | json (VietQR data) | header | `home.js` |
 | GET | per-application `data-payment-status-url` | none | json | | `application-create.js`; not observed |
 | POST | per-application `data-foxpay-url` | `dngItemId` | json | header | `application-create.js`; not observed |
+
+### Fee keys
+
+`GetFormSchema` returns a `feeKey` per application type. Counts over the 46 types: `fixed-fee` 35, `fixed-fee-times-quantity` 4, `retake-improvement-tuition-student-term-window` 2, `fixed-fee-times-quantity-tiered` 1, `health-insurance-payment-term-by-batch` 1, `subject-fee-one-minus-scholarship-rate` 1, `coursera-assessment-suspended-mark` 1, `subject-transfer-scholarship-rate` 1. The last six of those, together with `course-change-refund` (declared in the script, no type uses it today), are "process-driven": the client calls `PreviewApplicationFee` for them instead of showing `fixedFeeAmount`.
 
 ### Option sources
 
