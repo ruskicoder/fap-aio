@@ -11,6 +11,8 @@
 import { readFileSync } from 'node:fs';
 
 const EPS = 1e-9;
+/** FAP shows the course average with one decimal, half up (8.45 shows as 8.5). */
+const round1 = (x) => Math.round(x * 10 + EPS) / 10;
 const meets = (score, c) => !c || (c.inclusive ? score >= c.value - EPS : score > c.value + EPS);
 /** The stricter of two criteria. */
 const maxCrit = (a, b) => (!a ? b : !b ? a : a.value > b.value || (a.value === b.value && a.inclusive === false) ? a : b);
@@ -31,6 +33,7 @@ export function predict(subject, scores = {}, opts = {}) {
   const issues = [];
   const warnings = [];
 
+  if (!subject) return { scored: null, note: 'No FLM syllabus and no graded items.' };
   if (!subject.scored) return { scored: false, note: 'Subject is not scored (pass/fail by completion).' };
 
   // Expand assessments into gradable parts. An aggregate row with sub-rows (parentIndex)
@@ -81,6 +84,9 @@ export function predict(subject, scores = {}, opts = {}) {
   }
   if (subject.coursera?.required && !opts.courseraDone) warnings.push('Coursera courses must be completed before the final exam, otherwise the FE score is not validated.');
 
+  // Mark bonus (Coursera MOOC completion on c subjects) is added to the weighted average,
+  // capped at the scale: FR = min(10, average + bonus) (FLM notes, verified on FAP 2026-10-10).
+  const bonus = opts.bonus ?? subject.bonus ?? 0;
   const known = parts.filter((p) => p.score != null).reduce((s, p) => s + p.weight * p.score, 0);
   const remaining = parts.filter((p) => p.score == null);
   const remainingWeight = remaining.reduce((s, p) => s + p.weight, 0);
@@ -88,10 +94,11 @@ export function predict(subject, scores = {}, opts = {}) {
   const tiers = rules.tiers.map((t) => {
     const target = t.minAverage;
     if (!remaining.length) {
-      return { tier: t.id, target, reachable: issues.length === 0 && known >= target - EPS, final: +known.toFixed(2) };
+      const final = Math.min(scale, known + bonus);
+      return { tier: t.id, target, reachable: issues.length === 0 && final >= target - EPS, final: +final.toFixed(2), displayed: round1(final) };
     }
     // Water-filling: smallest uniform score x so that sum w * max(x, floor) reaches the target.
-    const total = (x) => known + remaining.reduce((s, p) => s + p.weight * Math.max(x, floorOf(p.criterion)), 0);
+    const total = (x) => known + bonus + remaining.reduce((s, p) => s + p.weight * Math.max(x, floorOf(p.criterion)), 0);
     let lo = 0;
     let hi = scale;
     if (total(hi) < target - EPS) return { tier: t.id, target, reachable: false, reason: `needs more than ${scale} on every remaining component` };
@@ -112,7 +119,7 @@ export function predict(subject, scores = {}, opts = {}) {
   return {
     code: subject.code,
     scored: true,
-    current: { weightedSoFar: +known.toFixed(3), gradedWeight: +(1 - remainingWeight).toFixed(4), remainingWeight: +remainingWeight.toFixed(4) },
+    current: { weightedSoFar: +known.toFixed(3), bonus, gradedWeight: +(1 - remainingWeight).toFixed(4), remainingWeight: +remainingWeight.toFixed(4) },
     failed: issues.length > 0,
     issues,
     warnings,

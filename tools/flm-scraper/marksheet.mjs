@@ -13,25 +13,48 @@
  */
 
 /**
- * DOM adapter. Row shapes (fap-v2/data-model.md): first row of a group has 5 cells with a
- * rowspan group cell; further items have 4 cells; tr.sheet-row-total and tr.sheet-grand-total
- * are totals. Columns: Mark group, Mark name, Weight (%), Final mark, Comment.
+ * DOM adapter. Row shapes (verified on 53 live sheets, 2026-10-10): the first item of a group
+ * has a `td.sheet-group-cell` with rowspan; further items have 4 cells; `tr.sheet-row-total`
+ * is a group total ("Total"). Three `tr.sheet-grand-total` rows close the sheet, each with an
+ * empty first cell and a `td.text-end` label: "Late penalty (%)" (value cell colspan 2, "0%"),
+ * "Mark bonus" ("-", "0" or "1") and "Course total" (`.grade-average`, `.grade-status`).
+ * A missing mark is "-". Columns: Mark group, Mark name, Weight (%), Final mark, Comment.
  */
 export function rowsFromTable(table) {
   const text = (c) => (c ? c.textContent.replace(/\s+/g, ' ').trim() : '');
   const rows = [];
   let group = '';
   for (const tr of table.querySelectorAll('tbody tr')) {
-    const kind = tr.classList.contains('sheet-grand-total') ? 'grand-total' : tr.classList.contains('sheet-row-total') ? 'group-total' : 'item';
-    const c = [...tr.cells];
+    const c = [...tr.children].filter((x) => /^t[dh]$/i.test(x.tagName));
+    if (tr.classList.contains('sheet-grand-total')) {
+      const label = c.find((x) => x.classList.contains('text-end'));
+      const avg = tr.querySelector('.grade-average');
+      const st = tr.querySelector('.grade-status');
+      const status = st ? ([...st.classList].find((k) => k.startsWith('grade-status--')) || '').replace('grade-status--', '') : null;
+      rows.push({ kind: 'summary', label: text(label), value: avg ? text(avg) : text(label && label.nextElementSibling), status });
+      continue;
+    }
+    const kind = tr.classList.contains('sheet-row-total') ? 'group-total' : 'item';
     let o = 0;
-    if (c[0] && (c[0].rowSpan > 1 || c[0].classList.contains('sheet-group-cell') || c.length >= 5)) {
+    if (c[0] && (c[0].classList.contains('sheet-group-cell') || Number(c[0].getAttribute('rowspan')) > 1)) {
       group = text(c[0]);
       o = 1;
     }
     rows.push({ kind, group, name: text(c[o]), weight: text(c[o + 1]), value: text(c[o + 2]) });
   }
   return rows;
+}
+
+/** Summary values of a sheet: late penalty (%), mark bonus, course average and status. */
+export function summaryOf(rows) {
+  const get = (re) => rows.find((r) => r.kind === 'summary' && re.test(r.label));
+  const total = get(/course total/i);
+  return {
+    latePenaltyPercent: num(get(/penalty/i)?.value),
+    bonus: num(get(/bonus/i)?.value),
+    average: num(total?.value),
+    status: total?.status ?? null,
+  };
 }
 
 const num = (s) => {
@@ -94,6 +117,16 @@ function flmCandidates(subject) {
  */
 export function courseModel(flm, rows) {
   const items = rows.filter((r) => r.kind === 'item' && r.name && !/^total$/i.test(r.name));
+  const summary = summaryOf(rows);
+  // No items yet (course not started, or a result-only sheet): use FLM's plan without scores.
+  if (!items.length) {
+    return {
+      subject: flm ? { ...flm, bonus: summary.bonus ?? 0, source: 'flm-plan' } : null,
+      scores: {},
+      mapping: [],
+      summary,
+    };
+  }
   const groups = new Map();
   const resits = [];
   for (const r of items) {
@@ -171,7 +204,7 @@ export function courseModel(flm, rows) {
   const weightSum = +assessments.filter((a) => a.parentIndex == null).reduce((s, a) => s + a.weight, 0).toFixed(4);
   const subject = {
     code: flm?.code ?? null,
-    scored: true,
+    scored: flm?.scored ?? true, // FLM "Is Scored: False" (LAB211 ...): pass by completion, FAP status decides
     scoringScale: 10,
     minAvgMarkToPass: flm?.minAvgMarkToPass ?? 5,
     attendance: flm?.attendance ?? { minPercent: 80, source: 'default' },
@@ -179,8 +212,10 @@ export function courseModel(flm, rows) {
     hasFinal: assessments.some((a) => a.type === 'final'),
     assessments,
     weightSum,
-    flags: [...(flm?.flags ?? []), ...(Math.abs(weightSum - 1) > 0.001 ? ['fap-weights-not-100'] : []), ...(mapping.some((m) => m.flmIndex == null) ? ['unmatched-groups'] : [])],
+    bonus: summary.bonus ?? 0,
+    latePenaltyPercent: summary.latePenaltyPercent ?? 0,
+    flags: [...(flm?.flags ?? []), ...(summary.latePenaltyPercent ? ['late-penalty-unmodelled'] : []), ...(Math.abs(weightSum - 1) > 0.001 ? ['fap-weights-not-100'] : []), ...(mapping.some((m) => m.flmIndex == null) ? ['unmatched-groups'] : [])],
     source: 'fap-marksheet',
   };
-  return { subject, scores, mapping };
+  return { subject, scores, mapping, summary };
 }

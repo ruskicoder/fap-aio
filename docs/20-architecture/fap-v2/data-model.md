@@ -123,3 +123,13 @@ Waitlist enumerations: Class assignment `Assigned` (`badge bg-primary`) or `Not 
 | Feedback session | counters Pending forms, Submitted forms, Total opened forms; form shape unverified (`There is no opened feedback session for your classes at the moment.`) | `/Feedback` |
 
 `/Feedback` uses its own layout (`.feedback-layout-root`, `.feedback-layout-sheet`) without the sidebar, because `base.js` sends students there when `X-Feedback-Required` is set ([scripts.md](scripts.md)). FYE mentor feedback fields are in [endpoints.md](endpoints.md).
+
+### Mark sheet summary rows and bonus (verified 2026-10-10, 53 sheets over 10 terms)
+
+- Every sheet ends with three `tr.sheet-grand-total` rows: an empty first cell, a `td.text-end` label and a value: `Late penalty (%)` (colspan 2, `0%` on every sheet seen), `Mark bonus` (`-`, `0` or `1`), `Course total` (`Average`, `.grade-average`, `.grade-status`). Item rows of a group follow the first row that carries `td.sheet-group-cell` with `rowspan`. A missing mark is `-`.
+- `(Resit)` groups repeat the item name with a `(Resit)` suffix (`Final Exam (Resit)`, `PE (Resit)`, `TE (Resit)`). A graded resit replaces the original score (`ENW493c`: PE 0.0, PE resit 6.2, average 6.2).
+- Course total = min(10, weighted average + mark bonus), shown with one decimal, half up (`PMG201c` 7.45 + 1 shows 8.5; `DXD391c` 9.2 + 1 shows 10.0). The bonus is the MOOC completion point of Coursera subjects.
+- A course can fail with an average of 5 or more: `CSD201` Spring2025, average 5.3, `grade-status--failed`, Practical Exam 0.
+- Some sheets have only the summary rows: courses not yet graded (current term), and result-only courses (`WED201c`, `SSL101c`, `OTP101` with an average; `TRS601` exempt). `LAB211` lists items but no average (not scored).
+- Status `Exempt` uses `grade-status--passed`.
+- A fast run of about 110 `/Report/Grade` GETs in a few minutes was followed by HTTP 403 on further fetches from the same tab (2026-10-10); cause not determined (rate limit or session end). Pace grade reads.
