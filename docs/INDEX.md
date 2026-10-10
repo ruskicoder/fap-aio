@@ -5,7 +5,7 @@
 | Path | ID | Type | Status | Summary |
 |---|---|---|---|---|
 | [10-context/README.md](10-context/README.md) | context | section | draft | Why and what: overview, requirements, constraints. |
-| [10-context/constraints.md](10-context/constraints.md) | context.constraints | constraints | todo | Regulatory, client, and technical constraints. |
+| [10-context/constraints.md](10-context/constraints.md) | context.constraints | constraints | draft | Regulatory, client, and technical constraints, including the FPTU academic pass rules that grade features must follow. |
 | [10-context/nfr.md](10-context/nfr.md) | context.nfr | nfr | todo | Non-functional requirements with stable NFR-n IDs. |
 | [10-context/overview.md](10-context/overview.md) | context.overview | overview | todo | Vision, stakeholders, boundaries. |
 | [10-context/requirements.md](10-context/requirements.md) | context.requirements | requirements | todo | Functional requirements with stable REQ-n IDs. |
@@ -20,6 +20,7 @@
 | [20-architecture/fap-v2/platform.md](20-architecture/fap-v2/platform.md) | architecture.fap-v2.platform | cross-cutting | draft | FAP v2 cross-cutting behavior: CSP, security headers, CSRF, partial rendering, auth and client libraries. |
 | [20-architecture/fap-v2/route-map.md](20-architecture/fap-v2/route-map.md) | architecture.fap-v2.route-map | interface | draft | Legacy FAP routes used by FAP-AIO v0.0.1 mapped to their FAP v2 replacements. |
 | [20-architecture/fap-v2/scripts.md](20-architecture/fap-v2/scripts.md) | architecture.fap-v2.scripts | interface | draft | FAP v2 first-party scripts: which page loads which script, the globals and events they expose, and which function calls which endpoint. |
+| [20-architecture/flm-subject-list.md](20-architecture/flm-subject-list.md) | architecture.flm-subject-list | data-model | draft | FLM (flm.fpt.edu.vn) as the source of per-subject pass requirements, and the subject-list.json contract that grade prediction reads. |
 | [20-architecture/interfaces.md](20-architecture/interfaces.md) | architecture.interfaces | interface | draft | Contracts between units and external systems. |
 | [20-architecture/system.md](20-architecture/system.md) | architecture.system | architecture | todo | Context and component view; how units relate. |
 | [30-units/README.md](30-units/README.md) | units | readme | draft | Index of units (modules, apps, services). |
@@ -29,6 +30,7 @@
 | [50-operations/README.md](50-operations/README.md) | operations | section | draft | Build, deploy, configure, recover. |
 | [50-operations/configuration.md](50-operations/configuration.md) | operations.configuration | configuration | todo | Configuration and environment variables (templates live outside the docs root). |
 | [50-operations/deploy.md](50-operations/deploy.md) | operations.deploy | deploy | todo | How to build and deploy. |
+| [60-decisions/0001-v2-extension-foundations.md](60-decisions/0001-v2-extension-foundations.md) | decisions.v2-extension-foundations | adr | approved | FAP-AIO v2.0.0 foundations: persistent in-page panel, English-only UI with locale-independent parsing, opt-in session keep-alive, legacy page storage exported and cleared. |
 | [60-decisions/README.md](60-decisions/README.md) | decisions | readme | draft | Numbered decision records. |
 | [70-work/README.md](70-work/README.md) | work | readme | draft | Dated work records and the progress ledger. |
 | [70-work/STATUS.md](70-work/STATUS.md) | work.status | status | draft | Single living progress ledger. |
@@ -38,6 +40,8 @@
 | [70-work/investigations/2026-10-04-fap-v2-scrape.md](70-work/investigations/2026-10-04-fap-v2-scrape.md) | work.investigations.10-04-fap-v2-scrape | investigation | draft | Read-only scrape of the rewritten FAP v2 portal to inventory routes, endpoints and page structure for the FAP-AIO v2.0.0 upgrade. |
 | [70-work/investigations/2026-10-04-fptu-schedule-extension.md](70-work/investigations/2026-10-04-fptu-schedule-extension.md) | work.investigations.10-04-fptu-schedule-extension | investigation | draft | Static analysis of the third-party 'FPTU Schedule' 4.0.0 extension and how it reads FAP v2, with live read-only checks of its assumptions. |
 | [70-work/investigations/2026-10-04-scheduler-comparison-and-v2-scope.md](70-work/investigations/2026-10-04-scheduler-comparison-and-v2-scope.md) | work.investigations.10-04-scheduler-comparison-and-v2-scope | investigation | draft | Business-rule comparison of the legacy FAP-AIO scheduler and the third-party FPTU Schedule 4.0.0, practices worth adopting, and feasibility of the v2.0.0 module list against FAP v2. |
+| [70-work/investigations/2026-10-10-flm-syllabus-scrape.md](70-work/investigations/2026-10-10-flm-syllabus-scrape.md) | work.investigations.10-10-flm-syllabus-scrape | investigation | draft | Read-only scrape of every syllabus on flm.fpt.edu.vn into subject-list.json, for per-subject pass requirements and goal-tier score prediction. |
+| [70-work/investigations/2026-10-10-jpdictionary-gpa-extension.md](70-work/investigations/2026-10-10-jpdictionary-gpa-extension.md) | work.investigations.10-10-jpdictionary-gpa-extension | investigation | draft | Static analysis of the unvetted 'Japanese Dictionary JP' 3.3.4 extension, which carries a FAP v2 GPA helper, and comparison of its GPA rules with legacy FAP-AIO and FPTU Schedule. |
 | [80-guides/README.md](80-guides/README.md) | guides | readme | draft | Onboarding, how-tos, examples. |
 | [90-meta/conventions.md](90-meta/conventions.md) | meta.conventions | conventions | approved | Rules for this documentation tree. |
 | [README.md](README.md) | readme | readme | draft | Entry point: purpose, scope, folder map, reading order. |

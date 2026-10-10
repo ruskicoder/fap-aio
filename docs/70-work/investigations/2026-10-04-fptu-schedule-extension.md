@@ -83,3 +83,5 @@ No class list, no other class's schedule, no class switching, no cross-class exc
 - [pages.md](../../20-architecture/fap-v2/pages.md): `.fap-result-card`, timetable container ids, week coverage and empty state appended.
 - [route-map.md](../../20-architecture/fap-v2/route-map.md): class transfer application note appended.
 - Timetable ICS export over a whole term or year is feasible with `WeekPartial` alone, within the coverage window above.
+
+Path note (2026-10-10): the owner renamed the folder to `/mnt/DATA/DATA/Github/unvetted-fap-new-scheduler/`; paths above use the old name.

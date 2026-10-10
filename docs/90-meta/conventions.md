@@ -18,6 +18,9 @@ summary: "Rules for this documentation tree."
 7. Wrong, mistaken, or substantively changed specs are preserved with `deprecate`, never deleted. Minor edits (typography, spelling, formatting, link repair) rely on version control history.
 8. Every change to the codebase is appended to the session journal. Journal entries are never edited or deleted.
 
+## Domain rules
+FPTU academic pass rules (overall ≥ 5, FE ≥ 4, no zero progress score, 80% attendance, Coursera before FE) and the GPA decisions live in [constraints.md](../10-context/constraints.md). Every grade, prediction and GPA feature follows them.
+
 ## Frontmatter syntax
 Flat `key: value` lines. Values: plain scalars, quoted strings, inline lists `[a, b]`, inline maps `{k: v}`.
 
