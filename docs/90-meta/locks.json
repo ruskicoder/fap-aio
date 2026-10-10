@@ -1,4 +1,5 @@
 {
   "60-decisions/0001-v2-extension-foundations.md": "6ee47e929b9ef7010f3282c9ab9689005e7cc199f335f727c6bedf39561716d2",
-  "60-decisions/0002-v2-module-scope.md": "ebd2e9cd7adf7a08804188ed5d4e38caebbabc1d07da3a3591253f1d9645b35c"
+  "60-decisions/0002-v2-module-scope.md": "ebd2e9cd7adf7a08804188ed5d4e38caebbabc1d07da3a3591253f1d9645b35c",
+  "60-decisions/0003-v2-panel-ux-and-news.md": "c1b967bedb4df8e6ba45491ee1e4df3bafe0c975610d4298728c2b06443889da"
 }

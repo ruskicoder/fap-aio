@@ -16,7 +16,7 @@ Key design decisions:
 | Timers | `chrome.alarms` in the service worker (minimum period 30 s from Chrome 120, [Chrome docs](https://developer.chrome.google.cn/docs/extensions/reference/api/alarms)); `minimum_chrome_version: "120"` | Survives service worker shutdown; reminders, keep-alive and background refresh share one scheduler |
 | Work that needs FAP from a timer | Service worker sends a message to one open FAP tab; that tab's content script does the GET | Keep-alive and background refresh only matter while a FAP tab is open (R11.2) |
 | Storage | `chrome.storage.local`, one key per store, each with `schemaVersion` | R5; never the FAP origin's storage (R5.2) |
-| Request pacing | One request at a time, 400 ms pause, 1.5 s after an error | R3.8; a burst of about 110 GETs on 2026-10-10 was followed by HTTP 403 (data-model.md) |
+| Request pacing | One request at a time, 400 ms pause, 1.5 s after an error, and a rolling budget of 30 FAP requests per 5 minutes per browser (shared through the service worker) | R3.8; bursts of about 110 and 53 GETs triggered a Cloudflare managed challenge (platform.md) |
 
 ## Architecture
 
@@ -61,6 +61,8 @@ interface FeatureModule {
 
 ### Panel (`src/content/panel/`)
 
+Layout, navigation, Today, command palette, alerts inbox, keybinds and the Settings view are specified in `.kiro/specs/v2-panel-ux/` (state schema v2, migration from the v1 state below). This section keeps the host mechanics.
+
 - `PanelHost`: creates `<div id="fap-aio-root">`, attaches an open shadow root, adopts the compiled stylesheet, renders `<PanelApp>`.
 - `PanelState`: `{ x, y, width, height, minimized, view }` persisted under `panel.state` on every change, debounced 250 ms (R1.4).
 - Drag: pointer events on the header, clamped to the viewport (R1.2); on `resize` the saved rectangle is clamped again (R1.5).
@@ -79,6 +81,7 @@ type FapError =
   | { kind: 'session-expired' }
   | { kind: 'feedback-required'; url: '/Feedback?required=1' }
   | { kind: 'unavailable'; status: 404 }
+  | { kind: 'challenge' }                 // Cloudflare managed challenge: 403 + cf-mitigated: challenge
   | { kind: 'forbidden'; status: 403 }
   | { kind: 'network'; message: string }
   | { kind: 'layout-changed'; source: string; detail: string };
@@ -90,7 +93,8 @@ function fapGet(path: string, opts?: { partial?: boolean; signal?: AbortSignal }
 - `partial: true` adds `X-Requested-With: XMLHttpRequest` (R3.2).
 - Session check: final URL path starts with `/Auth/Login`, or the parsed document contains the login form (R3.5).
 - `X-Feedback-Required: 1` header gives `feedback-required` (R3.4).
-- 404 gives `unavailable`, never retried (R3.6); 403 gives `forbidden`, never retried within the operation.
+- 404 gives `unavailable`, never retried (R3.6). A 403 with the header `cf-mitigated: challenge` gives `challenge`: Cloudflare bot management has flagged the session (verified 2026-10-11, `platform.md`). It stops every queued and background read in the tab and is never retried. Any other 403 gives `forbidden`, never retried within the operation.
+- The content script's `fetch` is the isolated-world native fetch, not FAP's `fapPermissionAwareFetch` wrapper, so headers and status arrive unmodified.
 - Network failure: one retry after 1.5 s (R3.7).
 - A single queue serializes all requests with a 400 ms gap (R3.8). The queue is per tab; the service worker routes timer work to one tab.
 
@@ -226,6 +230,7 @@ Migrations: `migrations[store][fromVersion] = (old) => new`. A missing step disc
 | `session-expired` | Panel banner, notification for timer work | Stop the operation; keep-alive disables itself; a range sync job stays resumable |
 | `feedback-required` | Panel banner with a link to `/Feedback?required=1` | Stop the operation (R3.4) |
 | `unavailable` (404) | Inline in the view | Not retried (R3.6) |
+| `challenge` (Cloudflare) | Panel banner "FAP asked your browser to verify. Reload this page to continue." with a Reload button | Stop all reads in the tab; background refresh stops until the next `tab-ready`; never retried; the extension never interacts with the challenge |
 | `forbidden` (403) | Panel banner | Stop the operation and back off: background refresh pauses for 15 minutes |
 | `network` | Inline | Retried once (R3.7), then reported |
 | `layout-changed` | Panel banner naming the source | Data is not overwritten; the last good copy is kept (R4.3) |

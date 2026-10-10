@@ -16,6 +16,7 @@
 | [20-architecture/fap-v2/README.md](20-architecture/fap-v2/README.md) | architecture.fap-v2 | section | draft | External system: the rewritten FAP portal (v2.0.0.0) that FAP-AIO enhances. |
 | [20-architecture/fap-v2/data-model.md](20-architecture/fap-v2/data-model.md) | architecture.fap-v2.data-model | data-model | draft | Entities FAP v2 exposes to a student, by domain: fields, keys, enumerations and where each is read. |
 | [20-architecture/fap-v2/endpoints.md](20-architecture/fap-v2/endpoints.md) | architecture.fap-v2.endpoints | interface | draft | Catalog of every FAP v2 endpoint found, grouped by MVC controller, with method, parameters and response. |
+| [20-architecture/fap-v2/news.md](20-architecture/fap-v2/news.md) | architecture.fap-v2.news | data-model | draft | How FAP news is structured (list, detail, title grammar) and the convention FAP-AIO uses to classify, prioritize and alert on news. |
 | [20-architecture/fap-v2/pages.md](20-architecture/fap-v2/pages.md) | architecture.fap-v2.pages | interface | draft | DOM contracts of the FAP v2 pages FAP-AIO reads: tables, columns, selectors and data hooks. |
 | [20-architecture/fap-v2/platform.md](20-architecture/fap-v2/platform.md) | architecture.fap-v2.platform | cross-cutting | draft | FAP v2 cross-cutting behavior: CSP, security headers, CSRF, partial rendering, auth and client libraries. |
 | [20-architecture/fap-v2/route-map.md](20-architecture/fap-v2/route-map.md) | architecture.fap-v2.route-map | interface | draft | Legacy FAP routes used by FAP-AIO v0.0.1 mapped to their FAP v2 replacements. |
@@ -32,6 +33,7 @@
 | [50-operations/deploy.md](50-operations/deploy.md) | operations.deploy | deploy | todo | How to build and deploy. |
 | [60-decisions/0001-v2-extension-foundations.md](60-decisions/0001-v2-extension-foundations.md) | decisions.v2-extension-foundations | adr | approved | FAP-AIO v2.0.0 foundations: persistent in-page panel, English-only UI with locale-independent parsing, opt-in session keep-alive, legacy page storage exported and cleared. |
 | [60-decisions/0002-v2-module-scope.md](60-decisions/0002-v2-module-scope.md) | decisions.v2-module-scope | adr | approved | FAP-AIO v2.0.0 module scope and business rules decided 2026-10-10: grades and goals, info sources, background refresh and keep-alive timing, themes, classic layout, MoveOut planned. |
+| [60-decisions/0003-v2-panel-ux-and-news.md](60-decisions/0003-v2-panel-ux-and-news.md) | decisions.v2-panel-ux-and-news | adr | approved | Panel layout and navigation (floating and docked hybrid, four tabs, palette, inbox, keybinds), rule-based news classification, and request budgeting after Cloudflare challenges. |
 | [60-decisions/README.md](60-decisions/README.md) | decisions | readme | draft | Numbered decision records. |
 | [70-work/README.md](70-work/README.md) | work | readme | draft | Dated work records and the progress ledger. |
 | [70-work/STATUS.md](70-work/STATUS.md) | work.status | status | draft | Single living progress ledger. |

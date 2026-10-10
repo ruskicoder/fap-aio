@@ -95,10 +95,13 @@ Not possible for a student on FAP v2 and out of scope: other classes' schedules,
 1. The News section SHALL list FAP news from `/News` (newest first, 20 per page) with title, type, created date, expiry date and pinned state, and SHALL open the FAP detail page on selection.
 2. The section SHALL list FAP documents from `/Document` with name, type and date, opening the FAP detail page on selection.
 3. The module SHALL mark news items as read once the user opens them from the panel, and SHALL show unread counts.
-4. The module SHALL keep a watch list of keywords, case-insensitive and diacritic-insensitive. The default SHALL be: capstone, đồ án, khóa luận, thesis, register, registration, đăng ký, deadline, hạn, OJT, thực tập, internship, học phí, tuition, exam, thi, lịch thi, graduation, tốt nghiệp, scholarship, học bổng.
-5. WHEN a new news item matches a watch keyword THEN the module SHALL show it as important in the Overview and, if notifications are enabled, notify once.
-6. The user SHALL be able to add, remove and reset watch keywords, and to filter news by type.
-7. IF a news item has an expiry date in the next 7 days AND matches the watch list THEN the Overview SHALL show the days left.
+4. The module SHALL classify each news item by the rules in `data/news/news-rules.json` (convention: `docs/20-architecture/fap-v2/news.md`): department tag, event families, priority P1 to P4, flags, term tokens and deadline.
+5. The module SHALL personalize the priority with the student's context: subject codes in progress or not passed, Coursera subjects, thesis or capstone enrolment, cohort and campus. Items for another campus SHALL drop to P4, and staff-only items SHALL be hidden.
+6. WHEN an item is P1 after personalization THEN the module SHALL read its detail page (at most 3 per background cycle) and extract the expiry and the body deadline.
+7. WHEN a new item is P1 after personalization AND it has a deadline within 14 days, OR is an exam-eligibility item, OR names one of the student's subject codes, OR was posted within the last 3 days, THEN the module SHALL show it as important in the Overview and, if news notifications are enabled, notify once.
+8. The module SHALL treat the same normalized title within 30 days as one item, mark it as reposted, and SHALL NOT alert twice for it.
+9. The user SHALL be able to add watch keywords, case-insensitive and diacritic-insensitive; a match SHALL raise the item to P1 for that user. The default user list SHALL be empty, because the rules already cover the common events.
+10. The News section SHALL filter by family group (Action needed, Exams, Results, Schedule, Opportunities, Other) and by priority, and SHALL show each item's deadline and days left.
 
 ### Requirement 8: Background refresh
 
@@ -109,7 +112,7 @@ Not possible for a student on FAP v2 and out of scope: other classes' schedules,
 1. Background refresh SHALL be on by default and switchable in settings.
 2. WHILE background refresh is enabled AND a FAP tab is open THEN the extension SHALL refresh, every 6 minutes by default (adjustable from 1 to 6), these sources: unread notifications, the first page of news, the exam schedule, and the attendance of current-term courses.
 3. Each background cycle SHALL make at most 6 FAP requests, one at a time, with the core's pause between requests.
-4. IF a background request returns 403 THEN the extension SHALL pause background refresh for 15 minutes.
+4. IF a background request returns 403 THEN the extension SHALL pause background refresh for 15 minutes; IF the 403 is a Cloudflare challenge THEN it SHALL stop background refresh until the user reloads a FAP page.
 5. IF a background request finds the session expired THEN the extension SHALL stop background refresh until the next FAP page load.
 6. Opening a section SHALL read its sources on demand when their cache is older than their lifetime, independent of background refresh.
 7. Background refresh SHALL NOT replace keep-alive. Keep-alive stays an opt-in setting firing every 7 minutes (decision 0002 item 5). WHEN both are enabled THEN a background request made within the last 7 minutes SHALL count as the keep-alive request.

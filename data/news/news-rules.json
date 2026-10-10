@@ -1,0 +1,274 @@
+{
+ "schemaVersion": 1,
+ "source": "Derived from 600 FAP news titles (2024-08-15 to 2026-10-09) and 7 detail pages, read 2026-10-11. Convention: docs/20-architecture/fap-v2/news.md",
+ "normalize": "lowercase, Unicode NFD with combining marks removed, 'đ' to 'd', whitespace collapsed; regexes below run on the normalized title",
+ "tags": [
+  {
+   "id": "exam-office",
+   "label": "Exam office (Khảo thí)",
+   "match": "^\\W*\\[?\\s*(khao ?thi)\\s*\\]?"
+  },
+  {
+   "id": "academic",
+   "label": "Academic affairs (QLĐT)",
+   "match": "^\\W*\\[?\\s*q*l\\s*d\\s*t\\s*\\]?|^\\W*\\[\\s*dao tao\\s*\\]"
+  },
+  {
+   "id": "finance",
+   "label": "Finance (Tài chính)",
+   "match": "^\\W*\\[\\s*tai chinh\\s*\\]"
+  },
+  {
+   "id": "library",
+   "label": "Library (Thư viện)",
+   "match": "^\\W*\\[\\s*thu vien\\s*\\]"
+  },
+  {
+   "id": "student-services",
+   "label": "Student services (SSC)",
+   "match": "^\\W*\\[\\s*ssc"
+  },
+  {
+   "id": "development",
+   "label": "Personal development (PDP)",
+   "match": "^\\W*\\[\\s*(phong pdp|ic-pdp)\\s*\\]"
+  },
+  {
+   "id": "international",
+   "label": "International office (IC)",
+   "match": "^\\W*\\[\\s*(ic|phong hop tac quoc te)\\s*\\]"
+  },
+  {
+   "id": "corporate",
+   "label": "Corporate relations (QHDN)",
+   "match": "^\\W*\\[\\s*p\\.? ?qhdn\\s*\\]"
+  },
+  {
+   "id": "it",
+   "label": "IT (CNTT)",
+   "match": "^\\W*\\[\\s*(cntt|it\\.hcm)\\s*\\]"
+  },
+  {
+   "id": "vovinam",
+   "label": "Vovinam department",
+   "match": "^\\W*\\[\\s*(bo mon vov|bm vovinam)\\s*\\]"
+  },
+  {
+   "id": "other",
+   "label": "Other or untagged",
+   "match": ""
+  }
+ ],
+ "flags": [
+  {
+   "id": "important",
+   "match": "\\[\\s*quan trong\\s*\\]|bat buoc",
+   "boost": 1
+  },
+  {
+   "id": "reminder",
+   "match": "\\[\\s*remind\\s*\\]|nhac nho",
+   "boost": 1
+  },
+  {
+   "id": "extension",
+   "match": "gia han",
+   "boost": 0
+  }
+ ],
+ "families": [
+  {
+   "id": "exam-eligibility",
+   "priority": "P1",
+   "label": "Exam eligibility (barred lists)",
+   "match": "khong du dieu kien du thi"
+  },
+  {
+   "id": "tuition",
+   "priority": "P1",
+   "label": "Tuition and fees",
+   "match": "hoc phi|bieu phi|quy dinh tai chinh"
+  },
+  {
+   "id": "course-registration",
+   "priority": "P1",
+   "label": "Course registration",
+   "match": "dang ky mon|dang ky hoc|gia han dang ky|mo them lop|wishlist|hoc vuot|hoc lai|hoc di cham|hoc cai thien|dang ky lop"
+  },
+  {
+   "id": "exam-registration",
+   "priority": "P1",
+   "label": "Exam registration",
+   "match": "dang ky thi|thi tham dinh|thi som"
+  },
+  {
+   "id": "attendance-exemption",
+   "priority": "P1",
+   "label": "Attendance exemption",
+   "match": "mien diem danh"
+  },
+  {
+   "id": "academic-procedure",
+   "priority": "P1",
+   "label": "Academic procedures",
+   "match": "tam nghi|tam hoan|nhap hoc lai|xu ly hoc vu|chuyen nganh|chuyen combo|chuyen co so|thu tuc|don tu|giai dap|khieu nai|kiem tra thong tin nhap hoc"
+  },
+  {
+   "id": "health-insurance",
+   "priority": "P1",
+   "label": "Health insurance",
+   "match": "bhyt|bao hiem y te"
+  },
+  {
+   "id": "thesis",
+   "priority": "P1",
+   "label": "Thesis and capstone",
+   "match": "khoa luan|kltn|do an tot nghiep|capstone|bao ve"
+  },
+  {
+   "id": "graduation",
+   "priority": "P1",
+   "label": "Graduation",
+   "match": "tot nghiep|nhan bang|chung chi giao duc quoc phong"
+  },
+  {
+   "id": "mandatory-program",
+   "priority": "P1",
+   "label": "Mandatory programmes",
+   "match": "gdqp|ren luyen tap trung|rltt|vovinam|hoc vo|nhac cu dan toc"
+  },
+  {
+   "id": "student-card",
+   "priority": "P1",
+   "label": "Student card",
+   "match": "the sinh vien"
+  },
+  {
+   "id": "exam-schedule",
+   "priority": "P2",
+   "label": "Exam schedules",
+   "match": "lich thi"
+  },
+  {
+   "id": "mock-exam",
+   "priority": "P2",
+   "label": "Mock exams and exam software",
+   "match": "thi thu|\\beos\\b|\\bpea\\b|phan mem thi"
+  },
+  {
+   "id": "exam-guidance",
+   "priority": "P2",
+   "label": "Exam rules and guidance",
+   "match": "quy dinh (thi|lam bai|ve viec nop)|noi quy|practical exam|nop bai thi|vat dung|thi tren usb|wifi|check out|e360"
+  },
+  {
+   "id": "results",
+   "priority": "P2",
+   "label": "Results and appeals",
+   "match": "ket qua|cong bo diem|phuc khao|diem bonus|khen thuong|\\bluk\\b|ton vinh"
+  },
+  {
+   "id": "class-mode",
+   "priority": "P2",
+   "label": "Class mode changes",
+   "match": "hoc online|online 100"
+  },
+  {
+   "id": "coursera-guidance",
+   "priority": "P2",
+   "label": "Coursera guidance",
+   "match": "huong dan hoc cac mon coursera|mon coursera|trien khai mon hoc tren fpt|hoan tien"
+  },
+  {
+   "id": "timetable-change",
+   "priority": "P2",
+   "label": "Timetable and calendar",
+   "match": "lich hoc|lich bu|xem lich|ke hoach hoc tap|lich dao tao|nghi le|dia diem hoc"
+  },
+  {
+   "id": "curriculum-change",
+   "priority": "P2",
+   "label": "Curriculum changes",
+   "match": "hoc phan thay the|chuyen doi tin chi|chuong trinh dao tao|khung chuong trinh"
+  },
+  {
+   "id": "textbooks",
+   "priority": "P2",
+   "label": "Textbooks",
+   "match": "giao trinh|muon/tra|tra sach"
+  },
+  {
+   "id": "movement-points",
+   "priority": "P2",
+   "label": "Movement points",
+   "match": "diem phong trao"
+  },
+  {
+   "id": "security",
+   "priority": "P2",
+   "label": "IT and security",
+   "match": "gia mao|dia chi mac|mang internet"
+  },
+  {
+   "id": "opportunity",
+   "priority": "P3",
+   "label": "Opportunities",
+   "match": "\\bojt\\b|winter school|summer school|level 6|nuoc ngoai|thuc tap|workshop|cuoc thi|talent|festival|hoi thao|fisat|hoc bong|scholarship|nghien cuu khoa hoc"
+  },
+  {
+   "id": "skills-course",
+   "priority": "P3",
+   "label": "Skills courses",
+   "match": "professionalism|ky nang|mo lop mien phi|on tap bo tro|notebooklm|advisor|seminar|training|dang ky tham gia lab"
+  },
+  {
+   "id": "library",
+   "priority": "P4",
+   "label": "Library services",
+   "match": "thu vien|sach moi|de xuat sach"
+  },
+  {
+   "id": "service-closure",
+   "priority": "P4",
+   "label": "Service closures",
+   "match": "tam ngung phuc vu"
+  },
+  {
+   "id": "survey",
+   "priority": "P4",
+   "label": "Surveys",
+   "match": "khao sat"
+  },
+  {
+   "id": "staff-only",
+   "priority": "P4",
+   "label": "Staff only",
+   "match": "cho can bo|giang vien, giao vien"
+  }
+ ],
+ "term": {
+  "season": "\\b(spring|summer|fall)\\s*(\\d{4})\\b|\\b(sp|su|fa)(\\d{2})\\b",
+  "half": "\\bhalf\\s*([12])\\b",
+  "block": "\\bblock\\s*0?(10|3)\\s*(w|tuan)?\\b",
+  "cohort": "\\bk(\\d{2})\\b"
+ },
+ "deadline": [
+  "den het(?: ngay)? (\\d{1,2})/(\\d{1,2})/(\\d{4})",
+  "den ngay (\\d{1,2})/(\\d{1,2})/(\\d{4})",
+  "thoi han[^0-9]{0,40}(\\d{1,2})/(\\d{1,2})/(\\d{4})",
+  "chot danh sach[^0-9]{0,80}(\\d{1,2})/(\\d{1,2})/(\\d{4})",
+  "truoc ngay (\\d{1,2})/(\\d{1,2})/(\\d{4})"
+ ],
+ "personalize": {
+  "subjectCode": "\\b[A-Z]{2,4}\\d{3}[a-z]?\\b",
+  "rules": [
+   "boost +1 when the title or body names a subject code the student is taking or has not passed",
+   "boost +1 for thesis when the student is enrolled in a thesis or capstone subject (SEP490, SET490, *490 to *492)",
+   "boost +1 for exam-registration and coursera-guidance when the student has a Coursera subject in progress",
+   "boost +1 for mandatory-program when the cohort token matches the student's cohort",
+   "lower to P4 when the detail campus differs from the student's campus",
+   "ignore staff-only"
+  ]
+ },
+ "dedupe": "same normalized title within 30 days counts as one item; keep the newest and mark it reposted"
+}

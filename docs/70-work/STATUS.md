@@ -25,11 +25,14 @@ FAP-AIO v2.0.0 upgrade for the rewritten FAP portal. Legacy code is preserved in
 9. (Answered 2026-10-10, see constraints.md) Decide the v2 GPA rules before the GPA spec: default non-GPA list and prefix matching, whether the replaced-subjects transcript table counts (check the owner's transcript), and a source for any exam floor ([record](investigations/2026-10-10-jpdictionary-gpa-extension.md)).
 10. Grade prediction: owner answers recorded (commit `data/flm/`, 80% attendance confirmed, case-insensitive GPA match). FAP-to-FLM mapper built in `tools/flm-scraper/marksheet.mjs`; validate `rowsFromTable` and the mapping on live `/Report/Grade` pages once signed in to FAP.
 11. Before the design phase: approve `.kiro/specs/v2-core-scheduler/requirements.md`; then write requirements for GPA and grade prediction against [flm-subject-list.md](../20-architecture/flm-subject-list.md) and [constraints.md](../10-context/constraints.md).
-12. Owner review of `v2-grades`, `v2-info`, `v2-appearance` requirements and all four designs; then write `tasks.md` per spec.
+12. Owner review of `v2-panel-ux` (requirements and design). Then write `tasks.md` for all five specs.
+15. Missing cross-cutting design docs before implementation: manifest and permissions, content-script and service-worker messaging contract, storage catalog and quotas, privacy and security (threat model), bundled data release process (FLM rubric, news rules), test fixtures and anonymization policy, build and release pipeline.
 13. MoveOut: planned. Needs an account inside a class-transfer (moving) period; no work until then.
 14. Verify on live FAP before implementation: Jidox selectors used by Classic layout, `/Report/Attendance` partial with absences, `/News` list columns, `bg-danger` transcript status; and the HTTP 403 seen after about 110 grade GETs (rate limit or session end).
 
 Next session (owner, 2026-10-10; done the same day, see below): statically inspect the unvetted extension at `/mnt/DATA/DATA/Github/unvetted-gpa-fap-translation/` (said to contain a GPA calculator), read-only, then compare its GPA rules with the legacy GPA feature. Requirements in `.kiro/specs/v2-core-scheduler/requirements.md` still await owner approval.
+
+Done 2026-10-11 (later): Cloudflare managed challenge identified as the cause of the 403s ([platform.md](../20-architecture/fap-v2/platform.md)); request budget and `challenge` error added to the specs. FAP news studied (600 items) and classification convention written ([news.md](../20-architecture/fap-v2/news.md), `data/news/news-rules.json`, `tools/news/`). Panel layout co-designed: `.kiro/specs/v2-panel-ux/` requirements and design, [decision 0003](../60-decisions/0003-v2-panel-ux-and-news.md). Owner approved the v2-grades, v2-info and v2-appearance requirements and the four designs.
 
 Done 2026-10-11: mark-sheet mapper validated on 53 live FAP sheets (43 of 43 graded courses match FAP's displayed average and pass or fail); core and scheduler requirements approved and committed. Module scope and business rules recorded in [decision 0002](../60-decisions/0002-v2-module-scope.md). Requirements and design written for all v2.0.0 specs: `.kiro/specs/v2-core-scheduler` (design), `v2-grades`, `v2-info`, `v2-appearance` (requirements and design, awaiting owner review). MoveOut status: planned (decision 0002 item 8).
 
@@ -44,8 +47,8 @@ Done 2026-10-04: scheduler comparison and v2.0.0 module feasibility ([record](in
 ## Last sync
 
 <!-- docs-scaffold:sync:start -->
-- last_sync: 2026-10-10T23:19:13+07:00
-- head: 887fc13
-- journal: 20261010-223451.md entry 007 hash 0bbe794be3dde442
+- last_sync: 2026-10-11T00:06:35+07:00
+- head: 6881cc9
+- journal: 20261010-223451.md entry 009 hash 4e8bf6a95d9ca266
 - health: 0 error, 0 warn, 11 info
 <!-- docs-scaffold:sync:end -->

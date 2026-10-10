@@ -35,6 +35,10 @@ Consequences for FAP-AIO:
 - Inline `<script>` and inline `style` attributes from injected markup are blocked by CSP. Content scripts run in the isolated world and are not subject to page CSP for their own code, but anything they inject into the page is.
 - `style-src 'self'` blocks injected `<style>` elements created by page scripts; extension CSS must be declared in the manifest or injected through `chrome.scripting.insertCSS`.
 
+## Cloudflare bot management (verified 2026-10-11)
+
+Bursts of same-origin GETs (about 110 `/Report/Grade` reads in a few minutes on 2026-10-10, plus 53 more the next day) put the browser session under a Cloudflare managed challenge. While it lasts, every request to FAP from scripts, including small JSON routes, gets HTTP 403 with `server: cloudflare`, `cf-mitigated: challenge` and a challenge page. FAP's `fapPermissionAwareFetch` wrapper passes the 403 through as a normalized JSON body (`code: FORBIDDEN`), so content scripts must check the `cf-mitigated` header on the native response (or use `XMLHttpRequest`) and not rely on the body. Recovery needs a normal page load by the user. Consequences for FAP-AIO: a strict request budget, a typed `challenge` error that stops all reads and tells the user to reload FAP, and no automatic retries.
+
 ## Authentication
 
 Cookie session (FeID single sign-on). All endpoints in [endpoints.md](endpoints.md) need the session cookie; `fetch` from a content script on `fap.fpt.edu.vn` sends it with `credentials: "same-origin"`.
