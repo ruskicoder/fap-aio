@@ -31,6 +31,7 @@
 | [50-operations/configuration.md](50-operations/configuration.md) | operations.configuration | configuration | todo | Configuration and environment variables (templates live outside the docs root). |
 | [50-operations/deploy.md](50-operations/deploy.md) | operations.deploy | deploy | todo | How to build and deploy. |
 | [60-decisions/0001-v2-extension-foundations.md](60-decisions/0001-v2-extension-foundations.md) | decisions.v2-extension-foundations | adr | approved | FAP-AIO v2.0.0 foundations: persistent in-page panel, English-only UI with locale-independent parsing, opt-in session keep-alive, legacy page storage exported and cleared. |
+| [60-decisions/0002-v2-module-scope.md](60-decisions/0002-v2-module-scope.md) | decisions.v2-module-scope | adr | approved | FAP-AIO v2.0.0 module scope and business rules decided 2026-10-10: grades and goals, info sources, background refresh and keep-alive timing, themes, classic layout, MoveOut planned. |
 | [60-decisions/README.md](60-decisions/README.md) | decisions | readme | draft | Numbered decision records. |
 | [70-work/README.md](70-work/README.md) | work | readme | draft | Dated work records and the progress ledger. |
 | [70-work/STATUS.md](70-work/STATUS.md) | work.status | status | draft | Single living progress ledger. |
