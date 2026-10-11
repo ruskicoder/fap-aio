@@ -194,3 +194,7 @@ Background images live inside their theme. Storage use is bounded by the 1.5 MB 
   - Classic patches: `apply` then `revert` restores the DOM byte-identically on fixtures of the FAP layout, home, grade report and timetable.
 - Visual checks: Playwright screenshots of each preset and Classic layout on saved, anonymized FAP page fixtures served locally, with FAP's stylesheets copied from the live site for the fixture. A screenshot review is part of the release checklist.
 - Manual verification on FAP: Classic report tabs drive FAP's own partial loads (grade and attendance); the panel is unaffected by themes; safe mode works; compact density row count on the transcript.
+
+## Platform amendments
+
+Added 2026-10-11: `.kiro/specs/v2-platform/design.md`, section "Amendments to approved designs", changes parts of this design (exports, data access, settings broadcast, permissions). Where they differ, the platform design applies; the text above is kept as approved.

@@ -249,3 +249,7 @@ Errors are typed values, not exceptions, across module boundaries. Every view ha
 - Integration: the panel mounted in a Shadow DOM test page; drag clamping, persistence round trip, keyboard navigation (Testing Library).
 - Manual verification on FAP (owner session), recorded as a test-run document: one week sync in each culture (R2.5), a term range sync, an exam sync, an ICS import into Google Calendar, a reminder, keep-alive over 20 minutes.
 - Accessibility check of the panel with axe-core in the integration tests.
+
+## Platform amendments
+
+Added 2026-10-11: `.kiro/specs/v2-platform/design.md`, section "Amendments to approved designs", changes parts of this design (exports, data access, settings broadcast, permissions). Where they differ, the platform design applies; the text above is kept as approved.

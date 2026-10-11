@@ -181,3 +181,7 @@ Stores: `grades.cache` (transcript, term courses, mark sheets with `fetchedAt`),
 - Parser tests: transcript in `vi` and `en` fixtures; mark sheets with summary rows only; uneven groups; resit groups.
 - Integration: `GradeInline` reacting to a partial swap with `MutationObserver` (linkedom or happy-dom).
 - Manual verification on FAP: the current term's Grades view against FAP pages, the transcript summary against a hand-calculated GPA, and an export opened in a spreadsheet.
+
+## Platform amendments
+
+Added 2026-10-11: `.kiro/specs/v2-platform/design.md`, section "Amendments to approved designs", changes parts of this design (exports, data access, settings broadcast, permissions). Where they differ, the platform design applies; the text above is kept as approved.

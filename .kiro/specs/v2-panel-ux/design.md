@@ -252,3 +252,7 @@ Migration from core `panel.state` v1: keep x, y, width, height and minimized; ma
   - overlay mode below 900 px;
   - keybinds in Chrome on Linux, Windows and macOS;
   - first-run flow.
+
+## Platform amendments
+
+Added 2026-10-11: `.kiro/specs/v2-platform/design.md`, section "Amendments to approved designs", changes parts of this design (exports, data access, settings broadcast, permissions). Where they differ, the platform design applies; the text above is kept as approved.

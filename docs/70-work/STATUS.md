@@ -34,6 +34,10 @@ Next session (owner, 2026-10-10; done the same day, see below): statically inspe
 
 Next session (owner, 2026-10-11): write the missing cross-cutting design docs (item 15), then `tasks.md` for all five specs.
 
+Done 2026-10-11 (session 2): item 15 co-designed with the owner as `.kiro/specs/v2-platform/` (requirements and design, awaiting owner review) and [decision 0004](../60-decisions/0004-v2-platform.md) (draft). Amendment pointers appended to the five feature designs. Open: owner confirmation of the manifest `key` for a stable unpacked id; FLM cookie spike before the live FLM read. Next: owner review of v2-platform, then `tasks.md` for all six specs.
+
+Approved 2026-10-11 (session 2): v2-platform requirements and design, decision 0004, manifest `key` kept. Next: `tasks.md` for all six specs and a central task orchestrator, then owner evaluation.
+
 Done 2026-10-11 (later): Cloudflare managed challenge identified as the cause of the 403s ([platform.md](../20-architecture/fap-v2/platform.md)); request budget and `challenge` error added to the specs. FAP news studied (600 items) and classification convention written ([news.md](../20-architecture/fap-v2/news.md), `data/news/news-rules.json`, `tools/news/`). Panel layout co-designed: `.kiro/specs/v2-panel-ux/` requirements and design, [decision 0003](../60-decisions/0003-v2-panel-ux-and-news.md). Owner approved the v2-grades, v2-info and v2-appearance requirements and the four designs.
 
 Done 2026-10-11: mark-sheet mapper validated on 53 live FAP sheets (43 of 43 graded courses match FAP's displayed average and pass or fail); core and scheduler requirements approved and committed. Module scope and business rules recorded in [decision 0002](../60-decisions/0002-v2-module-scope.md). Requirements and design written for all v2.0.0 specs: `.kiro/specs/v2-core-scheduler` (design), `v2-grades`, `v2-info`, `v2-appearance` (requirements and design, awaiting owner review). MoveOut status: planned (decision 0002 item 8).
@@ -49,8 +53,8 @@ Done 2026-10-04: scheduler comparison and v2.0.0 module feasibility ([record](in
 ## Last sync
 
 <!-- docs-scaffold:sync:start -->
-- last_sync: 2026-10-11T00:56:17+07:00
-- head: 110d4ae
-- journal: 20261010-223451.md entry 013 hash 23eb13281cb2d0d2
+- last_sync: 2026-10-11T01:29:41+07:00
+- head: 3b8d44a
+- journal: 20261011-005835.md entry 003 hash a2cf5536b2e923c6
 - health: 0 error, 0 warn, 11 info
 <!-- docs-scaffold:sync:end -->

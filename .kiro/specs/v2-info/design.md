@@ -139,3 +139,7 @@ The core error kinds apply, including the Cloudflare `challenge` kind (see the c
 - Parser tests with anonymized fixtures of the attendance partial, the news list, the bell list and the curriculum.
 - Integration: the Overview built from seeded stores, and deep links.
 - Manual verification on FAP: a background cycle observed in the network log (at most 6 requests, 400 ms apart), attendance counts against FAP's own summary, and a watched-news alert with a test keyword.
+
+## Platform amendments
+
+Added 2026-10-11: `.kiro/specs/v2-platform/design.md`, section "Amendments to approved designs", changes parts of this design (exports, data access, settings broadcast, permissions). Where they differ, the platform design applies; the text above is kept as approved.
