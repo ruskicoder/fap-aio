@@ -1,0 +1,741 @@
+{
+ "capturedOn": "2026-10-13",
+ "source": "owner session on fap.fpt.edu.vn, read-only GET (2 POSTs to switch culture, owner-approved)",
+ "raw": "ignore/fixtures-raw/<culture>/<slug>.<ext> (git-ignored, personal data)",
+ "committed": "test/fixtures/<culture>/<slug>.<ext> after tools/fixtures/anonymize.mjs (PLT-5.1, PLT-5.4)",
+ "missing": [
+  "attendance partial with a recorded absence (none in the 3 terms FAP lists)",
+  "transcript row with bg-danger (no failed row shown)"
+ ],
+ "pages": [
+  {
+   "slug": "account",
+   "route": "/Account",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "application-catalog",
+   "route": "/Application/Catalog",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "APP-7.3 deadline table"
+  },
+  {
+   "slug": "application-create",
+   "route": "/Application/Create?applicationTypeId={id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "APP-7.3 deadline table"
+  },
+  {
+   "slug": "application-form-schema",
+   "route": "/Application/GetFormSchema?applicationTypeId={id}",
+   "partial": false,
+   "kind": "json",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "APP-7.3 deadline table"
+  },
+  {
+   "slug": "applications",
+   "route": "/Application",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "APP-7.3 deadline table"
+  },
+  {
+   "slug": "attendance",
+   "route": "/Report/Attendance",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-1.4 attendance sources, INF-2.1"
+  },
+  {
+   "slug": "attendance-default.partial",
+   "route": "/Report/Attendance",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "INF-1.4 attendance sources, INF-2.1"
+  },
+  {
+   "slug": "attendance-set490.partial",
+   "route": "/Report/Attendance?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-1.4 attendance sources, INF-2.1"
+  },
+  {
+   "slug": "attendance-term-su26",
+   "route": "/Report/Attendance?termId={id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "INF-1.4 attendance sources, INF-2.1"
+  },
+  {
+   "slug": "attendance-vnr202.partial",
+   "route": "/Report/Attendance?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-1.4 attendance sources, INF-2.1"
+  },
+  {
+   "slug": "bell-list-page2.partial",
+   "route": "/Notification/BellList?pageIndex=2&pageSize=10",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "INF-1.1 bell"
+  },
+  {
+   "slug": "bell-list.partial",
+   "route": "/Notification/BellList?pageIndex=1&pageSize=10",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-1.1 bell"
+  },
+  {
+   "slug": "course-pending-payment",
+   "route": "/CoursePendingPayment",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "cross-class-change",
+   "route": "/CrossClassChange",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "cross-class-change-create",
+   "route": "/CrossClassChange/Create",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "curriculum",
+   "route": "/Curriculum",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-1.2 curriculum, GRD-5.3 planner"
+  },
+  {
+   "slug": "document-detail",
+   "route": "/Document/Detail/{id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "INF-1.3"
+  },
+  {
+   "slug": "documents-list",
+   "route": "/Document?pageIndex=1&pageSize=20&SortBy=CreatedAt&IsDesc=true",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-1.3 documents"
+  },
+  {
+   "slug": "exam-schedule",
+   "route": "/ExamSchedule",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "CORE-3.4 exam parser"
+  },
+  {
+   "slug": "feedback",
+   "route": "/Feedback",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "CORE-2.1 feedback-required context"
+  },
+  {
+   "slug": "grade",
+   "route": "/Report/Grade",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "GRD-1.2 term and course lists, PNL-2.4 page-aware"
+  },
+  {
+   "slug": "grade-default.partial",
+   "route": "/Report/Grade",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-4.2 partial swap"
+  },
+  {
+   "slug": "grade-term-fa24",
+   "route": "/Report/Grade?termId={id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.2"
+  },
+  {
+   "slug": "grade-term-sp26",
+   "route": "/Report/Grade?termId={id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.2"
+  },
+  {
+   "slug": "grade-term-su24",
+   "route": "/Report/Grade?termId={id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.2"
+  },
+  {
+   "slug": "grade-term-su25",
+   "route": "/Report/Grade?termId={id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.2"
+  },
+  {
+   "slug": "home",
+   "route": "/",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "CORE-1.2 page guard; APP-7.2 classic nav; PNL-4.2 dock selectors"
+  },
+  {
+   "slug": "home-content.partial",
+   "route": "/Home/StudentContentPartial",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "APP-7.3 home directory"
+  },
+  {
+   "slug": "login",
+   "route": "/Auth/Login?ReturnUrl=%2F",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "CORE-1.2 page guard (login), CORE-2.1 session-expired detection"
+  },
+  {
+   "slug": "login-while-signed-in",
+   "route": "/Auth/Login",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "marksheet-csd201-failed.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-csd201-pass-retake.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-current-hcm202.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-iot102t-suffix.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-jpd113-uneven.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-lab211-unscored.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-pmg201c-bonus.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-swd392.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-swp391-project.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-vov134-non-gpa.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-wdu203c-coursera-bonus.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "marksheet-wed201c-summary-only.partial",
+   "route": "/Report/Grade?termId={id}&courseId={id}",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "GRD-1.3 mark sheet reader, GRD-2 engines, GRD-4.2"
+  },
+  {
+   "slug": "news-detail-coursera-exam",
+   "route": "/News/Detail/{id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "INF-1.3 news detail enrichment"
+  },
+  {
+   "slug": "news-detail-exam-results",
+   "route": "/News/Detail/{id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "INF-1.3 news detail enrichment"
+  },
+  {
+   "slug": "news-detail-tuition",
+   "route": "/News/Detail/{id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-1.3 news detail enrichment"
+  },
+  {
+   "slug": "news-list",
+   "route": "/News?pageIndex=1&pageSize=20&SortBy=CreatedAt&IsDesc=true",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-1.3 news, INF-2.2"
+  },
+  {
+   "slug": "news-list-page2",
+   "route": "/News?pageIndex=2&pageSize=20&SortBy=CreatedAt&IsDesc=true",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "INF-1.3 news, INF-2.2"
+  },
+  {
+   "slug": "not-found",
+   "route": "/FapAio/DoesNotExist",
+   "partial": false,
+   "kind": "html",
+   "status": 404,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "CORE-1.2 page guard (404)"
+  },
+  {
+   "slug": "ojt-conditions",
+   "route": "/Report/OjtConditions",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "shopping-cart",
+   "route": "/ShoppingCart",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "student-profile",
+   "route": "/StudentProfile",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "subject-detail",
+   "route": "/Subject/Detail/{id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-4 subjects (FAP side)"
+  },
+  {
+   "slug": "subject-list",
+   "route": "/Subject",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "INF-4 subjects (FAP side)"
+  },
+  {
+   "slug": "thesis-conditions",
+   "route": "/Report/ThesisConditions",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "timetable",
+   "route": "/WeeklyTimetable",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "CORE-3.3"
+  },
+  {
+   "slug": "timetable-week-next.partial",
+   "route": "/WeeklyTimetable/WeekPartial?referenceDate=2026-10-19",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "CORE-3.3 timetable parser"
+  },
+  {
+   "slug": "timetable-week-past.partial",
+   "route": "/WeeklyTimetable/WeekPartial?referenceDate=2026-09-14",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "CORE-3.3 timetable parser"
+  },
+  {
+   "slug": "timetable-week-tet.partial",
+   "route": "/WeeklyTimetable/WeekPartial?referenceDate=2026-02-16",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "CORE-3.3 timetable parser"
+  },
+  {
+   "slug": "timetable-week.partial",
+   "route": "/WeeklyTimetable/WeekPartial?referenceDate=2026-10-12",
+   "partial": true,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "CORE-3.3 timetable parser"
+  },
+  {
+   "slug": "transaction-detail",
+   "route": "/Transaction/Detail/{id}",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "transactions",
+   "route": "/Transaction",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  },
+  {
+   "slug": "transcript",
+   "route": "/Report/Transcript",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en",
+    "vi"
+   ],
+   "usedBy": "GRD-1.1 transcript parser, GRD-4.1"
+  },
+  {
+   "slug": "unread-count",
+   "route": "/Notification/UnreadCount",
+   "partial": false,
+   "kind": "json",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "INF-1.1 unread, CORE-9 keep-alive"
+  },
+  {
+   "slug": "wishlist",
+   "route": "/Wishlist",
+   "partial": false,
+   "kind": "html",
+   "status": 200,
+   "cultures": [
+    "en"
+   ],
+   "usedBy": "reference (page structure)"
+  }
+ ]
+}

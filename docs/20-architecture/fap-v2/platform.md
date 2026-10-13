@@ -39,6 +39,15 @@ Consequences for FAP-AIO:
 
 Bursts of same-origin GETs (about 110 `/Report/Grade` reads in a few minutes on 2026-10-10, plus 53 more the next day) put the browser session under a Cloudflare managed challenge. While it lasts, every request to FAP from scripts, including small JSON routes, gets HTTP 403 with `server: cloudflare`, `cf-mitigated: challenge` and a challenge page. FAP's `fapPermissionAwareFetch` wrapper passes the 403 through as a normalized JSON body (`code: FORBIDDEN`), so content scripts must check the `cf-mitigated` header on the native response (or use `XMLHttpRequest`) and not rely on the body. Recovery needs a normal page load by the user. Consequences for FAP-AIO: a strict request budget, a typed `challenge` error that stops all reads and tells the user to reload FAP, and no automatic retries.
 
+### Fixture capture observations (2026-10-13)
+
+Script XHR GETs from a DevTools-controlled tab, owner session (record: `tools/fixtures/catalog.json`; raw batches in `ignore/fixtures-raw/_batches/` and `_rejected/`):
+- The first XHR after the tab opened (16:16 UTC) was challenged, although the tab's own page load had rendered signed in.
+- After the owner passed the check, 14 GETs 20 s apart succeeded (16:18:59 to 16:23:39). A run 20 s apart that started at about 16:24 was lost to a tool timeout; its outcome is unknown. The next GET, at 16:30:42, was challenged, and so was the first GET of a 60 s paced run at 16:35:10.
+- After a fresh check passed, 74 GETs 3 s apart succeeded, plus 2 owner-approved POSTs to switch the culture to `vi` and back.
+
+Inference (not verified): the challenge follows the age or state of the browser's Cloudflare clearance more than the request rate, and a slower pace did not prevent it. The 30 per 5 minutes budget in the specs remains a ceiling, not a guarantee; the `challenge` error path stays the primary protection.
+
 ## Authentication
 
 Cookie session (FeID single sign-on). All endpoints in [endpoints.md](endpoints.md) need the session cookie; `fetch` from a content script on `fap.fpt.edu.vn` sends it with `credentials: "same-origin"`.

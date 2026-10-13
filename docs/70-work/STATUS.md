@@ -38,6 +38,10 @@ Done 2026-10-11 (session 2): item 15 co-designed with the owner as `.kiro/specs/
 
 Approved 2026-10-11 (session 2): v2-platform requirements and design, decision 0004, manifest `key` kept. Next: `tasks.md` for all six specs and a central task orchestrator, then owner evaluation.
 
+Done 2026-10-11 (session 2, later): `tasks.md` written for all six specs (50 phases, 140 subtasks, coding only) and linked through the central orchestrator [`.kiro/orchestrator.md`](../../.kiro/orchestrator.md) (gates, dependencies, waves, fix and decision queues, loop protocol), checked by `tools/orchestrator/orchestrator.mjs`. Convention evaluation for the global prompt orchestrator: [record](investigations/2026-10-11-task-orchestrator-convention.md). Awaiting owner evaluation (gate G-APPROVE); the loop is paused.
+
+Done 2026-10-13: fixture capture for gate G-CAPTURE: 63 en and 25 vi raw FAP pages under `ignore/fixtures-raw/` (12 mark sheets covering bonus, failed, retake, uneven, unscored, non-GPA, summary-only), deny list, committed route catalog `tools/fixtures/catalog.json`, splitter `tools/fixtures/split-capture.py`. G-SELECTORS partly answered offline: Jidox layout selectors and news columns confirmed; attendance with absences and transcript `bg-danger` still unobserved. Cloudflare challenged slow-paced reads; observations in [platform.md](../20-architecture/fap-v2/platform.md). Login page captured signed out; owner marked G-CAPTURE passed.
+
 Done 2026-10-11 (later): Cloudflare managed challenge identified as the cause of the 403s ([platform.md](../20-architecture/fap-v2/platform.md)); request budget and `challenge` error added to the specs. FAP news studied (600 items) and classification convention written ([news.md](../20-architecture/fap-v2/news.md), `data/news/news-rules.json`, `tools/news/`). Panel layout co-designed: `.kiro/specs/v2-panel-ux/` requirements and design, [decision 0003](../60-decisions/0003-v2-panel-ux-and-news.md). Owner approved the v2-grades, v2-info and v2-appearance requirements and the four designs.
 
 Done 2026-10-11: mark-sheet mapper validated on 53 live FAP sheets (43 of 43 graded courses match FAP's displayed average and pass or fail); core and scheduler requirements approved and committed. Module scope and business rules recorded in [decision 0002](../60-decisions/0002-v2-module-scope.md). Requirements and design written for all v2.0.0 specs: `.kiro/specs/v2-core-scheduler` (design), `v2-grades`, `v2-info`, `v2-appearance` (requirements and design, awaiting owner review). MoveOut status: planned (decision 0002 item 8).
@@ -53,8 +57,8 @@ Done 2026-10-04: scheduler comparison and v2.0.0 module feasibility ([record](in
 ## Last sync
 
 <!-- docs-scaffold:sync:start -->
-- last_sync: 2026-10-11T01:29:41+07:00
-- head: 3b8d44a
-- journal: 20261011-005835.md entry 003 hash a2cf5536b2e923c6
+- last_sync: 2026-10-13T23:53:12+07:00
+- head: 6a7ba65
+- journal: 20261011-005835.md entry 009 hash e69d40e4e5daa1fe
 - health: 0 error, 0 warn, 11 info
 <!-- docs-scaffold:sync:end -->
