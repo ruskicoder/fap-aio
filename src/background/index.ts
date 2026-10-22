@@ -1,1 +1,3 @@
-export {}
+import { installRouter } from './router'
+
+installRouter()

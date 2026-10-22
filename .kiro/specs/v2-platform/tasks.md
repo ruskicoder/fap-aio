@@ -25,7 +25,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - `src/shared/call.ts`: `call(msg, timeoutMs?)` returning `Reply<T>`, with `{ kind: 'timeout' }` on no reply; a typed `onMessage` subscription for service-worker-to-tab messages.
   - Unit tests: every type has a schema; a wrong `v` or an unknown `type` is rejected; a missing reply resolves to `timeout`.
   - _Requirements: 2.1, 2.4, 2.5_
-- [ ] 2.2 [PLT-2.2] Build the service worker router
+- [x] 2.2 [PLT-2.2] Build the service worker router
   - `src/background/router.ts`: checks `sender.id`, the FAP origin and `frameId === 0` for content scripts, and the `grant.html` URL for `perm.result`; validates with zod; dispatches to registered handlers; replies with `Reply<T>`.
   - Invalid messages are dropped and counted in `diag.counters`.
   - Unit tests with forged senders (other origin, sub-frame, other extension id).
