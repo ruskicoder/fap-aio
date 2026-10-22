@@ -95,7 +95,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | PLT-10 | Privacy, diagnostics and release | v2-platform | M3 | PLT-2, PLT-3 | - | todo |
 | PLT-10.2 | Release workflow | v2-platform | M5 | - | - | todo |
 | CORE-1 | Content bootstrap and page guard | v2-core-scheduler | M1 | PLT-2, PLT-5.1 | - | done |
-| CORE-2 | Read-only FAP access layer | v2-core-scheduler | M1 | CORE-1, PLT-4 | - | todo |
+| CORE-2 | Read-only FAP access layer | v2-core-scheduler | M1 | CORE-1, PLT-4 | - | doing |
 | CORE-3 | Source registry, constants and scheduler parsers | v2-core-scheduler | M1 | CORE-2, PLT-5.1 | - | todo |
 | CORE-4 | Panel host | v2-core-scheduler | M1 | CORE-1, PLT-3 | - | todo |
 | CORE-5 | Timetable and exam sync | v2-core-scheduler | M1 | CORE-3 | - | todo |
@@ -199,3 +199,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-23 | PLT-4.2 | budget-handlers.ts: budget.acquire and budget.release handlers, reads.stop broadcast on challenge, reads.resume on the next tab-ready, runOnFapTab to the focused or latest tab, skipped without a FAP tab | 50 tests pass | committed
 - 2026-10-23 | PLT-5.2 | tools/fixtures/grade-cases.mjs: 9 synthetic mark sheets (pass, fail with average 5 or more, bonus, resit, unscored, in progress with attendance, zero progress, uneven groups, summary rows only) as rows and FAP HTML, checked to round-trip through rowsFromTable, expected courseModel and predict output in test/fixtures/grades/golden.json | 52 tests pass | committed
 - 2026-10-23 | CORE-1.1 | src/content/modules.ts (FeatureModule, addModule, mount and resume boot hooks), guard.ts (Jidox .wrapper .content-page, login form), bootstrap.ts (top frame, guard, settings via readMigrated, mount, module sources, views and page hooks, resume, tab-ready) | 56 tests incl. home, vi timetable, login and 404 fixtures | committed
+- 2026-10-23 | CORE-2.1 | src/content/fap/access.ts: fapGet and fapGetJson, GET only with no method parameter, site-relative paths only, same-origin credentials, partial header, 12 s timeout, mapping to session-expired, feedback-required, unavailable, challenge, forbidden, network with one retry after 1.5 s | 11 mocked-fetch tests, 67 total | committed
