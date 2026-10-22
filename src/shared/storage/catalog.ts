@@ -1,6 +1,6 @@
 // The storage catalog (platform R4.1, R4.2, R4.5, R4.6; core R5.1, R5.2). Every
 // chrome.storage.local key is listed here; all access goes through read, write, update and
-// subscribe. Feature modules declare their value types by augmenting StoreMap.
+// subscribe (migrations.ts also rewrites versioned records). Feature modules declare their value types by augmenting StoreMap.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface Versioned<T> {
@@ -74,6 +74,7 @@ export const CATALOG = {
   'appearance.themes': { owner: 'appearance', version: 1, size: 'up to 1.5 MB per theme with an image', retention: '20 custom themes' },
   'data.status': { owner: 'platform', version: 1, size: '< 2 KB', retention: 'permanent' },
   'diag.counters': { owner: 'platform', version: 1, size: '< 2 KB', retention: 'reset by Copy diagnostics' },
+  'storage.discarded': { owner: 'platform', version: 1, size: '< 1 KB', retention: 'cleared when the store is filled again' },
 } satisfies Record<string, CatalogEntry>
 
 type FixedKey = Exclude<keyof typeof CATALOG, 'cache:*'>

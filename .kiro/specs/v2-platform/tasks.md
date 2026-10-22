@@ -35,14 +35,14 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - Service worker: keep known FAP tabs and `focusedTab`; the toolbar action sends `panel.toggle` to an active FAP tab or opens `https://fap.fpt.edu.vn/`; `chrome.commands` `toggle-panel` sends `panel.toggle`; `commands.list` returns `chrome.commands.getAll()`.
   - _Requirements: 3.8, 1.5; panel-ux R7.1, R7.4_
 
-- [ ] 3. [PLT-3] Storage catalog, migrations and pruning
+- [x] 3. [PLT-3] Storage catalog, migrations and pruning
 - [x] 3.1 [PLT-3.1] Implement the storage catalog with pruning and usage
   - `src/shared/storage/catalog.ts`: one typed entry per key in the design's catalog (owner, version, retention), `Versioned<T>`, and typed `read(key)`, `write(key, value)` and `subscribe(key)` built on `chrome.storage.local` and `storage.onChanged`.
   - Age and count limits per catalog entry applied inside `write`: alerts (200 or 60 days), timetable and exams (400 days), cache (30 days), news seen (30 days).
   - `data.status` includes `getBytesInUse` per key and `navigator.storage.estimate()` for IndexedDB.
   - Tests: a scan of `src/` fails on a storage key that is not in the catalog; one test per pruning rule.
   - _Requirements: 4.1, 4.2, 4.5, 4.6; core R5.1, R5.2_
-- [ ] 3.2 [PLT-3.2] Add migrations
+- [x] 3.2 [PLT-3.2] Add migrations
   - `src/shared/storage/migrations.ts` and `runMigrations()` on `runtime.onInstalled` (reason `update`); readers wait for the migrated value when they see an old version.
   - A missing or throwing step discards only that key and sets a "sync again" flag the panel shows.
   - Unit tests: ordered steps, missing step, throwing step.

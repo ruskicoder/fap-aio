@@ -24,7 +24,7 @@ describe('storage catalog', () => {
     const bad: string[] = []
     for (const f of files) {
       const text = readFileSync(f, 'utf8')
-      if (!f.endsWith(join('storage', 'catalog.ts')) && /chrome\.storage\.local/.test(text)) bad.push(`${f}: direct chrome.storage.local`)
+      if (!f.endsWith(join('storage', 'catalog.ts')) && !f.endsWith(join('storage', 'migrations.ts')) && /chrome\.storage\.local/.test(text)) bad.push(`${f}: direct chrome.storage.local`)
       for (const m of text.matchAll(/\b(?:read|write|update|subscribe|readRaw|remove)\(\s*['`]([^'`$]+)['`]/g)) {
         const key = m[1]!
         if (!isCatalogKey(key) && !(key.endsWith(':') && isCatalogKey(`${key}x`))) bad.push(`${f}: ${key}`)
