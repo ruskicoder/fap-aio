@@ -1,0 +1,2650 @@
+{
+ "generatedBy": "tools/fixtures/grade-cases.mjs",
+ "marks": "synthetic",
+ "cases": [
+  {
+   "id": "pass-prf192",
+   "category": "pass",
+   "code": "PRF192",
+   "opts": {},
+   "rows": [
+    {
+     "kind": "item",
+     "group": "Assignment",
+     "name": "Assignment",
+     "weight": "15",
+     "value": "8.5"
+    },
+    {
+     "kind": "group-total",
+     "group": "Assignment",
+     "name": "Total",
+     "weight": "15%",
+     "value": "8.5"
+    },
+    {
+     "kind": "item",
+     "group": "Practical Exam",
+     "name": "Practical Exam",
+     "weight": "30",
+     "value": "7"
+    },
+    {
+     "kind": "group-total",
+     "group": "Practical Exam",
+     "name": "Total",
+     "weight": "30%",
+     "value": "7"
+    },
+    {
+     "kind": "item",
+     "group": "Progress test",
+     "name": "Progress test 1",
+     "weight": "7.5",
+     "value": "6"
+    },
+    {
+     "kind": "item",
+     "group": "Progress test",
+     "name": "Progress test 2",
+     "weight": "7.5",
+     "value": "8"
+    },
+    {
+     "kind": "group-total",
+     "group": "Progress test",
+     "name": "Total",
+     "weight": "15%",
+     "value": "7"
+    },
+    {
+     "kind": "item",
+     "group": "Workshop",
+     "name": "Workshop 1",
+     "weight": "2",
+     "value": "9"
+    },
+    {
+     "kind": "item",
+     "group": "Workshop",
+     "name": "Workshop 2",
+     "weight": "2",
+     "value": "9"
+    },
+    {
+     "kind": "item",
+     "group": "Workshop",
+     "name": "Workshop 3",
+     "weight": "2",
+     "value": "9"
+    },
+    {
+     "kind": "item",
+     "group": "Workshop",
+     "name": "Workshop 4",
+     "weight": "2",
+     "value": "9"
+    },
+    {
+     "kind": "item",
+     "group": "Workshop",
+     "name": "Workshop 5",
+     "weight": "2",
+     "value": "9"
+    },
+    {
+     "kind": "group-total",
+     "group": "Workshop",
+     "name": "Total",
+     "weight": "10%",
+     "value": "9"
+    },
+    {
+     "kind": "item",
+     "group": "Final exam",
+     "name": "Final exam",
+     "weight": "30",
+     "value": "6.5"
+    },
+    {
+     "kind": "group-total",
+     "group": "Final exam",
+     "name": "Total",
+     "weight": "30%",
+     "value": "6.5"
+    },
+    {
+     "kind": "summary",
+     "label": "Late penalty (%)",
+     "value": "0%",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Mark bonus",
+     "value": "-",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Course total",
+     "value": "7.3",
+     "status": "passed"
+    }
+   ],
+   "html": "<table class=\"table table-vcenter mb-0 student-mark-sheet\"><thead><tr><th scope=\"col\">Mark group</th><th scope=\"col\">Mark name</th><th scope=\"col\" class=\"student-mark-col-score\">Weight (%)</th><th scope=\"col\" class=\"student-mark-col-score\">Final mark</th><th scope=\"col\">Comment</th></tr></thead><tbody><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Assignment</td><td>Assignment</td><td class=\"text-center mark-score\">15</td><td class=\"text-center mark-score\">8.5</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">15%</td><td class=\"text-center mark-score\">8.5</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Practical Exam</td><td>Practical Exam</td><td class=\"text-center mark-score\">30</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">7</td><td></td></tr><tr><td rowspan=\"3\" class=\"sheet-group-cell\">Progress test</td><td>Progress test 1</td><td class=\"text-center mark-score\">7.5</td><td class=\"text-center mark-score\">6</td><td>-</td></tr><tr><td>Progress test 2</td><td class=\"text-center mark-score\">7.5</td><td class=\"text-center mark-score\">8</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">15%</td><td class=\"text-center mark-score\">7</td><td></td></tr><tr><td rowspan=\"6\" class=\"sheet-group-cell\">Workshop</td><td>Workshop 1</td><td class=\"text-center mark-score\">2</td><td class=\"text-center mark-score\">9</td><td>-</td></tr><tr><td>Workshop 2</td><td class=\"text-center mark-score\">2</td><td class=\"text-center mark-score\">9</td><td>-</td></tr><tr><td>Workshop 3</td><td class=\"text-center mark-score\">2</td><td class=\"text-center mark-score\">9</td><td>-</td></tr><tr><td>Workshop 4</td><td class=\"text-center mark-score\">2</td><td class=\"text-center mark-score\">9</td><td>-</td></tr><tr><td>Workshop 5</td><td class=\"text-center mark-score\">2</td><td class=\"text-center mark-score\">9</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">10%</td><td class=\"text-center mark-score\">9</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Final exam</td><td>Final exam</td><td class=\"text-center mark-score\">30</td><td class=\"text-center mark-score\">6.5</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">6.5</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Late penalty (%)</td><td class=\"text-center\" colspan=\"2\">0%</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Mark bonus</td><td class=\"text-center\" colspan=\"2\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Course total</td><td class=\"text-center\">Average</td><td class=\"text-center\"><span class=\"grade-average grade-status--passed\">7.3</span></td><td><span class=\"grade-status grade-status--passed\">passed</span></td></tr></tbody></table>",
+   "model": {
+    "subject": {
+     "code": "PRF192",
+     "scored": true,
+     "scoringScale": 10,
+     "minAvgMarkToPass": 5,
+     "attendance": {
+      "minPercent": 80,
+      "source": "syllabus",
+      "evidence": "80% of contact"
+     },
+     "coursera": {
+      "required": false,
+      "bonus": false
+     },
+     "hasFinal": true,
+     "assessments": [
+      {
+       "index": 0,
+       "category": "Assignment",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 1,
+       "weight": 0.15,
+       "weightPerPart": 0.15,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 1,
+       "category": "Practical Exam",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 1,
+       "weight": 0.3,
+       "weightPerPart": 0.3,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 2,
+       "category": "Progress test",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 2,
+       "weight": 0.15,
+       "weightPerPart": 0.075,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 3,
+       "category": "Workshop",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 5,
+       "weight": 0.1,
+       "weightPerPart": 0.02,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 4,
+       "category": "Final exam",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 1,
+       "weight": 0.3,
+       "weightPerPart": 0.3,
+       "completion": {
+        "value": 4,
+        "inclusive": true
+       },
+       "parentIndex": null
+      }
+     ],
+     "weightSum": 1,
+     "bonus": 0,
+     "latePenaltyPercent": 0,
+     "flags": [],
+     "source": "fap-marksheet"
+    },
+    "scores": {
+     "0": [
+      8.5
+     ],
+     "1": [
+      7
+     ],
+     "2": [
+      6,
+      8
+     ],
+     "3": [
+      9,
+      9,
+      9,
+      9,
+      9
+     ],
+     "4": [
+      6.5
+     ]
+    },
+    "mapping": [
+     {
+      "group": "Assignment",
+      "items": [
+       "Assignment"
+      ],
+      "flmIndex": 0,
+      "flmCategory": "Assignment",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       0
+      ]
+     },
+     {
+      "group": "Practical Exam",
+      "items": [
+       "Practical Exam"
+      ],
+      "flmIndex": 1,
+      "flmCategory": "Practical Exam",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       1
+      ]
+     },
+     {
+      "group": "Progress test",
+      "items": [
+       "Progress test 1",
+       "Progress test 2"
+      ],
+      "flmIndex": 2,
+      "flmCategory": "Progress test",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       2
+      ]
+     },
+     {
+      "group": "Workshop",
+      "items": [
+       "Workshop 1",
+       "Workshop 2",
+       "Workshop 3",
+       "Workshop 4",
+       "Workshop 5"
+      ],
+      "flmIndex": 3,
+      "flmCategory": "Workshop",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       3
+      ]
+     },
+     {
+      "group": "Final exam",
+      "items": [
+       "Final exam"
+      ],
+      "flmIndex": 4,
+      "flmCategory": "Final exam",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       4
+      ]
+     }
+    ],
+    "summary": {
+     "latePenaltyPercent": 0,
+     "bonus": null,
+     "average": 7.3,
+     "status": "passed"
+    }
+   },
+   "prediction": {
+    "code": "PRF192",
+    "scored": true,
+    "current": {
+     "weightedSoFar": 7.275,
+     "bonus": 0,
+     "gradedWeight": 1,
+     "remainingWeight": 0
+    },
+    "failed": false,
+    "issues": [],
+    "warnings": [],
+    "tiers": [
+     {
+      "tier": "pass",
+      "target": 5,
+      "reachable": true,
+      "final": 7.27,
+      "displayed": 7.3
+     },
+     {
+      "tier": "fair",
+      "target": 7,
+      "reachable": true,
+      "final": 7.27,
+      "displayed": 7.3
+     },
+     {
+      "tier": "good",
+      "target": 8,
+      "reachable": false,
+      "final": 7.27,
+      "displayed": 7.3
+     },
+     {
+      "tier": "excellent",
+      "target": 9,
+      "reachable": false,
+      "final": 7.27,
+      "displayed": 7.3
+     }
+    ]
+   }
+  },
+  {
+   "id": "fail-fe-below-4-csd201",
+   "category": "fail with an average of 5 or more",
+   "code": "CSD201",
+   "opts": {},
+   "rows": [
+    {
+     "kind": "item",
+     "group": "Progress test (PT)",
+     "name": "Progress test (PT) 1",
+     "weight": "10",
+     "value": "9"
+    },
+    {
+     "kind": "item",
+     "group": "Progress test (PT)",
+     "name": "Progress test (PT) 2",
+     "weight": "10",
+     "value": "9.5"
+    },
+    {
+     "kind": "group-total",
+     "group": "Progress test (PT)",
+     "name": "Total",
+     "weight": "20%",
+     "value": "9.3"
+    },
+    {
+     "kind": "item",
+     "group": "Assignment (AS)",
+     "name": "Assignment (AS) 1",
+     "weight": "10",
+     "value": "9"
+    },
+    {
+     "kind": "item",
+     "group": "Assignment (AS)",
+     "name": "Assignment (AS) 2",
+     "weight": "10",
+     "value": "8"
+    },
+    {
+     "kind": "group-total",
+     "group": "Assignment (AS)",
+     "name": "Total",
+     "weight": "20%",
+     "value": "8.5"
+    },
+    {
+     "kind": "item",
+     "group": "Practical Exam",
+     "name": "Practical Exam",
+     "weight": "30",
+     "value": "8"
+    },
+    {
+     "kind": "group-total",
+     "group": "Practical Exam",
+     "name": "Total",
+     "weight": "30%",
+     "value": "8"
+    },
+    {
+     "kind": "item",
+     "group": "Final exam",
+     "name": "Final exam",
+     "weight": "30",
+     "value": "3.5"
+    },
+    {
+     "kind": "group-total",
+     "group": "Final exam",
+     "name": "Total",
+     "weight": "30%",
+     "value": "3.5"
+    },
+    {
+     "kind": "summary",
+     "label": "Late penalty (%)",
+     "value": "0%",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Mark bonus",
+     "value": "-",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Course total",
+     "value": "6.6",
+     "status": "failed"
+    }
+   ],
+   "html": "<table class=\"table table-vcenter mb-0 student-mark-sheet\"><thead><tr><th scope=\"col\">Mark group</th><th scope=\"col\">Mark name</th><th scope=\"col\" class=\"student-mark-col-score\">Weight (%)</th><th scope=\"col\" class=\"student-mark-col-score\">Final mark</th><th scope=\"col\">Comment</th></tr></thead><tbody><tr><td rowspan=\"3\" class=\"sheet-group-cell\">Progress test (PT)</td><td>Progress test (PT) 1</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">9</td><td>-</td></tr><tr><td>Progress test (PT) 2</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">9.5</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">20%</td><td class=\"text-center mark-score\">9.3</td><td></td></tr><tr><td rowspan=\"3\" class=\"sheet-group-cell\">Assignment (AS)</td><td>Assignment (AS) 1</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">9</td><td>-</td></tr><tr><td>Assignment (AS) 2</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">8</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">20%</td><td class=\"text-center mark-score\">8.5</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Practical Exam</td><td>Practical Exam</td><td class=\"text-center mark-score\">30</td><td class=\"text-center mark-score\">8</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">8</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Final exam</td><td>Final exam</td><td class=\"text-center mark-score\">30</td><td class=\"text-center mark-score\">3.5</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">3.5</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Late penalty (%)</td><td class=\"text-center\" colspan=\"2\">0%</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Mark bonus</td><td class=\"text-center\" colspan=\"2\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Course total</td><td class=\"text-center\">Average</td><td class=\"text-center\"><span class=\"grade-average grade-status--failed\">6.6</span></td><td><span class=\"grade-status grade-status--failed\">failed</span></td></tr></tbody></table>",
+   "model": {
+    "subject": {
+     "code": "CSD201",
+     "scored": true,
+     "scoringScale": 10,
+     "minAvgMarkToPass": 5,
+     "attendance": {
+      "minPercent": 80,
+      "source": "syllabus",
+      "evidence": "80% of contact"
+     },
+     "coursera": {
+      "required": false,
+      "bonus": false
+     },
+     "hasFinal": true,
+     "assessments": [
+      {
+       "index": 0,
+       "category": "Progress test (PT)",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 2,
+       "weight": 0.2,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 1,
+       "category": "Assignment (AS)",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 2,
+       "weight": 0.2,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 2,
+       "category": "Practical Exam",
+       "type": "final",
+       "finalKind": "PE",
+       "parts": 1,
+       "weight": 0.3,
+       "weightPerPart": 0.3,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 3,
+       "category": "Final exam",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 1,
+       "weight": 0.3,
+       "weightPerPart": 0.3,
+       "completion": {
+        "value": 4,
+        "inclusive": true
+       },
+       "parentIndex": null
+      }
+     ],
+     "weightSum": 1,
+     "bonus": 0,
+     "latePenaltyPercent": 0,
+     "flags": [],
+     "source": "fap-marksheet"
+    },
+    "scores": {
+     "0": [
+      9,
+      9.5
+     ],
+     "1": [
+      9,
+      8
+     ],
+     "2": [
+      8
+     ],
+     "3": [
+      3.5
+     ]
+    },
+    "mapping": [
+     {
+      "group": "Progress test (PT)",
+      "items": [
+       "Progress test (PT) 1",
+       "Progress test (PT) 2"
+      ],
+      "flmIndex": 0,
+      "flmCategory": "Progress test (PT)",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       0
+      ]
+     },
+     {
+      "group": "Assignment (AS)",
+      "items": [
+       "Assignment (AS) 1",
+       "Assignment (AS) 2"
+      ],
+      "flmIndex": 1,
+      "flmCategory": "Assignment (AS)",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       1
+      ]
+     },
+     {
+      "group": "Practical Exam",
+      "items": [
+       "Practical Exam"
+      ],
+      "flmIndex": 2,
+      "flmCategory": "Practical Exam",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       2
+      ]
+     },
+     {
+      "group": "Final exam",
+      "items": [
+       "Final exam"
+      ],
+      "flmIndex": 3,
+      "flmCategory": "Final exam",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       3
+      ]
+     }
+    ],
+    "summary": {
+     "latePenaltyPercent": 0,
+     "bonus": null,
+     "average": 6.6,
+     "status": "failed"
+    }
+   },
+   "prediction": {
+    "code": "CSD201",
+    "scored": true,
+    "current": {
+     "weightedSoFar": 7,
+     "bonus": 0,
+     "gradedWeight": 1,
+     "remainingWeight": 0
+    },
+    "failed": true,
+    "issues": [
+     "Final exam: 3.5 does not meet >= 4"
+    ],
+    "warnings": [],
+    "tiers": [
+     {
+      "tier": "pass",
+      "target": 5,
+      "reachable": false,
+      "final": 7,
+      "displayed": 7
+     },
+     {
+      "tier": "fair",
+      "target": 7,
+      "reachable": false,
+      "final": 7,
+      "displayed": 7
+     },
+     {
+      "tier": "good",
+      "target": 8,
+      "reachable": false,
+      "final": 7,
+      "displayed": 7
+     },
+     {
+      "tier": "excellent",
+      "target": 9,
+      "reachable": false,
+      "final": 7,
+      "displayed": 7
+     }
+    ]
+   }
+  },
+  {
+   "id": "bonus-pmg201c",
+   "category": "bonus",
+   "code": "PMG201c",
+   "opts": {
+    "courseraDone": true
+   },
+   "rows": [
+    {
+     "kind": "item",
+     "group": "PE",
+     "name": "PE",
+     "weight": "50",
+     "value": "6"
+    },
+    {
+     "kind": "group-total",
+     "group": "PE",
+     "name": "Total",
+     "weight": "50%",
+     "value": "6"
+    },
+    {
+     "kind": "item",
+     "group": "TE",
+     "name": "TE",
+     "weight": "50",
+     "value": "5"
+    },
+    {
+     "kind": "group-total",
+     "group": "TE",
+     "name": "Total",
+     "weight": "50%",
+     "value": "5"
+    },
+    {
+     "kind": "summary",
+     "label": "Late penalty (%)",
+     "value": "0%",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Mark bonus",
+     "value": "1",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Course total",
+     "value": "6.5",
+     "status": "passed"
+    }
+   ],
+   "html": "<table class=\"table table-vcenter mb-0 student-mark-sheet\"><thead><tr><th scope=\"col\">Mark group</th><th scope=\"col\">Mark name</th><th scope=\"col\" class=\"student-mark-col-score\">Weight (%)</th><th scope=\"col\" class=\"student-mark-col-score\">Final mark</th><th scope=\"col\">Comment</th></tr></thead><tbody><tr><td rowspan=\"2\" class=\"sheet-group-cell\">PE</td><td>PE</td><td class=\"text-center mark-score\">50</td><td class=\"text-center mark-score\">6</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">50%</td><td class=\"text-center mark-score\">6</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">TE</td><td>TE</td><td class=\"text-center mark-score\">50</td><td class=\"text-center mark-score\">5</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">50%</td><td class=\"text-center mark-score\">5</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Late penalty (%)</td><td class=\"text-center\" colspan=\"2\">0%</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Mark bonus</td><td class=\"text-center\" colspan=\"2\">1</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Course total</td><td class=\"text-center\">Average</td><td class=\"text-center\"><span class=\"grade-average grade-status--passed\">6.5</span></td><td><span class=\"grade-status grade-status--passed\">passed</span></td></tr></tbody></table>",
+   "model": {
+    "subject": {
+     "code": "PMG201c",
+     "scored": true,
+     "scoringScale": 10,
+     "minAvgMarkToPass": 5,
+     "attendance": {
+      "minPercent": 80,
+      "source": "default",
+      "evidence": ""
+     },
+     "coursera": {
+      "required": true,
+      "bonus": false
+     },
+     "hasFinal": true,
+     "assessments": [
+      {
+       "index": 0,
+       "category": "PE",
+       "type": "final",
+       "finalKind": "PE",
+       "parts": 1,
+       "weight": 0.5,
+       "weightPerPart": 0.5,
+       "completion": {
+        "value": 4,
+        "inclusive": true
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 1,
+       "category": "TE",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 1,
+       "weight": 0.5,
+       "weightPerPart": 0.5,
+       "completion": {
+        "value": 4,
+        "inclusive": true
+       },
+       "parentIndex": null
+      }
+     ],
+     "weightSum": 1,
+     "bonus": 1,
+     "latePenaltyPercent": 0,
+     "flags": [],
+     "source": "fap-marksheet"
+    },
+    "scores": {
+     "0": [
+      6
+     ],
+     "1": [
+      5
+     ]
+    },
+    "mapping": [
+     {
+      "group": "PE",
+      "items": [
+       "PE"
+      ],
+      "flmIndex": 0,
+      "flmCategory": "PE",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       0
+      ]
+     },
+     {
+      "group": "TE",
+      "items": [
+       "TE"
+      ],
+      "flmIndex": 1,
+      "flmCategory": "TE",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       1
+      ]
+     }
+    ],
+    "summary": {
+     "latePenaltyPercent": 0,
+     "bonus": 1,
+     "average": 6.5,
+     "status": "passed"
+    }
+   },
+   "prediction": {
+    "code": "PMG201c",
+    "scored": true,
+    "current": {
+     "weightedSoFar": 5.5,
+     "bonus": 1,
+     "gradedWeight": 1,
+     "remainingWeight": 0
+    },
+    "failed": false,
+    "issues": [],
+    "warnings": [],
+    "tiers": [
+     {
+      "tier": "pass",
+      "target": 5,
+      "reachable": true,
+      "final": 6.5,
+      "displayed": 6.5
+     },
+     {
+      "tier": "fair",
+      "target": 7,
+      "reachable": false,
+      "final": 6.5,
+      "displayed": 6.5
+     },
+     {
+      "tier": "good",
+      "target": 8,
+      "reachable": false,
+      "final": 6.5,
+      "displayed": 6.5
+     },
+     {
+      "tier": "excellent",
+      "target": 9,
+      "reachable": false,
+      "final": 6.5,
+      "displayed": 6.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "resit-csd201",
+   "category": "resit",
+   "code": "CSD201",
+   "opts": {},
+   "rows": [
+    {
+     "kind": "item",
+     "group": "Progress test (PT)",
+     "name": "Progress test (PT) 1",
+     "weight": "10",
+     "value": "6"
+    },
+    {
+     "kind": "item",
+     "group": "Progress test (PT)",
+     "name": "Progress test (PT) 2",
+     "weight": "10",
+     "value": "7"
+    },
+    {
+     "kind": "group-total",
+     "group": "Progress test (PT)",
+     "name": "Total",
+     "weight": "20%",
+     "value": "6.5"
+    },
+    {
+     "kind": "item",
+     "group": "Assignment (AS)",
+     "name": "Assignment (AS) 1",
+     "weight": "10",
+     "value": "7"
+    },
+    {
+     "kind": "item",
+     "group": "Assignment (AS)",
+     "name": "Assignment (AS) 2",
+     "weight": "10",
+     "value": "7"
+    },
+    {
+     "kind": "group-total",
+     "group": "Assignment (AS)",
+     "name": "Total",
+     "weight": "20%",
+     "value": "7"
+    },
+    {
+     "kind": "item",
+     "group": "Practical Exam",
+     "name": "Practical Exam",
+     "weight": "30",
+     "value": "6"
+    },
+    {
+     "kind": "group-total",
+     "group": "Practical Exam",
+     "name": "Total",
+     "weight": "30%",
+     "value": "6"
+    },
+    {
+     "kind": "item",
+     "group": "Final exam",
+     "name": "Final exam",
+     "weight": "30",
+     "value": "2"
+    },
+    {
+     "kind": "group-total",
+     "group": "Final exam",
+     "name": "Total",
+     "weight": "30%",
+     "value": "2"
+    },
+    {
+     "kind": "item",
+     "group": "Final exam (Resit)",
+     "name": "Final exam",
+     "weight": "30",
+     "value": "6"
+    },
+    {
+     "kind": "group-total",
+     "group": "Final exam (Resit)",
+     "name": "Total",
+     "weight": "30%",
+     "value": "6"
+    },
+    {
+     "kind": "summary",
+     "label": "Late penalty (%)",
+     "value": "0%",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Mark bonus",
+     "value": "-",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Course total",
+     "value": "6.3",
+     "status": "passed"
+    }
+   ],
+   "html": "<table class=\"table table-vcenter mb-0 student-mark-sheet\"><thead><tr><th scope=\"col\">Mark group</th><th scope=\"col\">Mark name</th><th scope=\"col\" class=\"student-mark-col-score\">Weight (%)</th><th scope=\"col\" class=\"student-mark-col-score\">Final mark</th><th scope=\"col\">Comment</th></tr></thead><tbody><tr><td rowspan=\"3\" class=\"sheet-group-cell\">Progress test (PT)</td><td>Progress test (PT) 1</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">6</td><td>-</td></tr><tr><td>Progress test (PT) 2</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">20%</td><td class=\"text-center mark-score\">6.5</td><td></td></tr><tr><td rowspan=\"3\" class=\"sheet-group-cell\">Assignment (AS)</td><td>Assignment (AS) 1</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr><td>Assignment (AS) 2</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">20%</td><td class=\"text-center mark-score\">7</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Practical Exam</td><td>Practical Exam</td><td class=\"text-center mark-score\">30</td><td class=\"text-center mark-score\">6</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">6</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Final exam</td><td>Final exam</td><td class=\"text-center mark-score\">30</td><td class=\"text-center mark-score\">2</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">2</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Final exam (Resit)</td><td>Final exam</td><td class=\"text-center mark-score\">30</td><td class=\"text-center mark-score\">6</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">6</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Late penalty (%)</td><td class=\"text-center\" colspan=\"2\">0%</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Mark bonus</td><td class=\"text-center\" colspan=\"2\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Course total</td><td class=\"text-center\">Average</td><td class=\"text-center\"><span class=\"grade-average grade-status--passed\">6.3</span></td><td><span class=\"grade-status grade-status--passed\">passed</span></td></tr></tbody></table>",
+   "model": {
+    "subject": {
+     "code": "CSD201",
+     "scored": true,
+     "scoringScale": 10,
+     "minAvgMarkToPass": 5,
+     "attendance": {
+      "minPercent": 80,
+      "source": "syllabus",
+      "evidence": "80% of contact"
+     },
+     "coursera": {
+      "required": false,
+      "bonus": false
+     },
+     "hasFinal": true,
+     "assessments": [
+      {
+       "index": 0,
+       "category": "Progress test (PT)",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 2,
+       "weight": 0.2,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 1,
+       "category": "Assignment (AS)",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 2,
+       "weight": 0.2,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 2,
+       "category": "Practical Exam",
+       "type": "final",
+       "finalKind": "PE",
+       "parts": 1,
+       "weight": 0.3,
+       "weightPerPart": 0.3,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 3,
+       "category": "Final exam",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 1,
+       "weight": 0.3,
+       "weightPerPart": 0.3,
+       "completion": {
+        "value": 4,
+        "inclusive": true
+       },
+       "parentIndex": null
+      }
+     ],
+     "weightSum": 1,
+     "bonus": 0,
+     "latePenaltyPercent": 0,
+     "flags": [],
+     "source": "fap-marksheet"
+    },
+    "scores": {
+     "0": [
+      6,
+      7
+     ],
+     "1": [
+      7,
+      7
+     ],
+     "2": [
+      6
+     ],
+     "3": [
+      6
+     ]
+    },
+    "mapping": [
+     {
+      "group": "Progress test (PT)",
+      "items": [
+       "Progress test (PT) 1",
+       "Progress test (PT) 2"
+      ],
+      "flmIndex": 0,
+      "flmCategory": "Progress test (PT)",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       0
+      ]
+     },
+     {
+      "group": "Assignment (AS)",
+      "items": [
+       "Assignment (AS) 1",
+       "Assignment (AS) 2"
+      ],
+      "flmIndex": 1,
+      "flmCategory": "Assignment (AS)",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       1
+      ]
+     },
+     {
+      "group": "Practical Exam",
+      "items": [
+       "Practical Exam"
+      ],
+      "flmIndex": 2,
+      "flmCategory": "Practical Exam",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       2
+      ]
+     },
+     {
+      "group": "Final exam",
+      "items": [
+       "Final exam"
+      ],
+      "flmIndex": 3,
+      "flmCategory": "Final exam",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       3
+      ],
+      "resitApplied": true
+     }
+    ],
+    "summary": {
+     "latePenaltyPercent": 0,
+     "bonus": null,
+     "average": 6.3,
+     "status": "passed"
+    }
+   },
+   "prediction": {
+    "code": "CSD201",
+    "scored": true,
+    "current": {
+     "weightedSoFar": 6.3,
+     "bonus": 0,
+     "gradedWeight": 1,
+     "remainingWeight": 0
+    },
+    "failed": false,
+    "issues": [],
+    "warnings": [],
+    "tiers": [
+     {
+      "tier": "pass",
+      "target": 5,
+      "reachable": true,
+      "final": 6.3,
+      "displayed": 6.3
+     },
+     {
+      "tier": "fair",
+      "target": 7,
+      "reachable": false,
+      "final": 6.3,
+      "displayed": 6.3
+     },
+     {
+      "tier": "good",
+      "target": 8,
+      "reachable": false,
+      "final": 6.3,
+      "displayed": 6.3
+     },
+     {
+      "tier": "excellent",
+      "target": 9,
+      "reachable": false,
+      "final": 6.3,
+      "displayed": 6.3
+     }
+    ]
+   }
+  },
+  {
+   "id": "unscored-lab211",
+   "category": "unscored",
+   "code": "LAB211",
+   "opts": {},
+   "rows": [
+    {
+     "kind": "item",
+     "group": "Lab",
+     "name": "Lab",
+     "weight": "100",
+     "value": "-"
+    },
+    {
+     "kind": "group-total",
+     "group": "Lab",
+     "name": "Total",
+     "weight": "100%",
+     "value": "-"
+    },
+    {
+     "kind": "summary",
+     "label": "Late penalty (%)",
+     "value": "0%",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Mark bonus",
+     "value": "-",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Course total",
+     "value": "0",
+     "status": "passed"
+    }
+   ],
+   "html": "<table class=\"table table-vcenter mb-0 student-mark-sheet\"><thead><tr><th scope=\"col\">Mark group</th><th scope=\"col\">Mark name</th><th scope=\"col\" class=\"student-mark-col-score\">Weight (%)</th><th scope=\"col\" class=\"student-mark-col-score\">Final mark</th><th scope=\"col\">Comment</th></tr></thead><tbody><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Lab</td><td>Lab</td><td class=\"text-center mark-score\">100</td><td class=\"text-center mark-score\">-</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">100%</td><td class=\"text-center mark-score\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Late penalty (%)</td><td class=\"text-center\" colspan=\"2\">0%</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Mark bonus</td><td class=\"text-center\" colspan=\"2\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Course total</td><td class=\"text-center\">Average</td><td class=\"text-center\"><span class=\"grade-average grade-status--passed\">0</span></td><td><span class=\"grade-status grade-status--passed\">passed</span></td></tr></tbody></table>",
+   "model": {
+    "subject": {
+     "code": "LAB211",
+     "scored": false,
+     "scoringScale": 10,
+     "minAvgMarkToPass": 5,
+     "attendance": {
+      "minPercent": 80,
+      "source": "syllabus",
+      "evidence": "80% of contact"
+     },
+     "coursera": {
+      "required": false,
+      "bonus": false
+     },
+     "hasFinal": false,
+     "assessments": [
+      {
+       "index": 0,
+       "category": "Lab",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 1,
+       "weight": 1,
+       "weightPerPart": 1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      }
+     ],
+     "weightSum": 1,
+     "bonus": 0,
+     "latePenaltyPercent": 0,
+     "flags": [
+      "unmatched-groups"
+     ],
+     "source": "fap-marksheet"
+    },
+    "scores": {
+     "0": [
+      null
+     ]
+    },
+    "mapping": [
+     {
+      "group": "Lab",
+      "items": [
+       "Lab"
+      ],
+      "flmIndex": null,
+      "flmCategory": null,
+      "confidence": 0,
+      "assessmentIndex": [
+       0
+      ]
+     }
+    ],
+    "summary": {
+     "latePenaltyPercent": 0,
+     "bonus": null,
+     "average": 0,
+     "status": "passed"
+    }
+   },
+   "prediction": {
+    "scored": false,
+    "note": "Subject is not scored (pass/fail by completion)."
+   }
+  },
+  {
+   "id": "in-progress-mae101",
+   "category": "in progress",
+   "code": "MAE101",
+   "opts": {
+    "attendance": {
+     "attended": 18,
+     "total": 20
+    }
+   },
+   "rows": [
+    {
+     "kind": "item",
+     "group": "Assignments/Exercises",
+     "name": "Assignment 1",
+     "weight": "10",
+     "value": "8"
+    },
+    {
+     "kind": "item",
+     "group": "Assignments/Exercises",
+     "name": "Assignment 2",
+     "weight": "10",
+     "value": "7"
+    },
+    {
+     "kind": "item",
+     "group": "Assignments/Exercises",
+     "name": "Assignment 3",
+     "weight": "10",
+     "value": "-"
+    },
+    {
+     "kind": "group-total",
+     "group": "Assignments/Exercises",
+     "name": "Total",
+     "weight": "30%",
+     "value": "-"
+    },
+    {
+     "kind": "item",
+     "group": "Progress Test",
+     "name": "Progress Test 1",
+     "weight": "10",
+     "value": "6"
+    },
+    {
+     "kind": "item",
+     "group": "Progress Test",
+     "name": "Progress Test 2",
+     "weight": "10",
+     "value": "-"
+    },
+    {
+     "kind": "item",
+     "group": "Progress Test",
+     "name": "Progress Test 3",
+     "weight": "10",
+     "value": "-"
+    },
+    {
+     "kind": "group-total",
+     "group": "Progress Test",
+     "name": "Total",
+     "weight": "30%",
+     "value": "-"
+    },
+    {
+     "kind": "item",
+     "group": "Final Exam",
+     "name": "Final Exam",
+     "weight": "40",
+     "value": "-"
+    },
+    {
+     "kind": "group-total",
+     "group": "Final Exam",
+     "name": "Total",
+     "weight": "40%",
+     "value": "-"
+    },
+    {
+     "kind": "summary",
+     "label": "Late penalty (%)",
+     "value": "0%",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Mark bonus",
+     "value": "-",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Course total",
+     "value": "0",
+     "status": "studying"
+    }
+   ],
+   "html": "<table class=\"table table-vcenter mb-0 student-mark-sheet\"><thead><tr><th scope=\"col\">Mark group</th><th scope=\"col\">Mark name</th><th scope=\"col\" class=\"student-mark-col-score\">Weight (%)</th><th scope=\"col\" class=\"student-mark-col-score\">Final mark</th><th scope=\"col\">Comment</th></tr></thead><tbody><tr><td rowspan=\"4\" class=\"sheet-group-cell\">Assignments/Exercises</td><td>Assignment 1</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">8</td><td>-</td></tr><tr><td>Assignment 2</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr><td>Assignment 3</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">-</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">-</td><td></td></tr><tr><td rowspan=\"4\" class=\"sheet-group-cell\">Progress Test</td><td>Progress Test 1</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">6</td><td>-</td></tr><tr><td>Progress Test 2</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">-</td><td>-</td></tr><tr><td>Progress Test 3</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">-</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">-</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Final Exam</td><td>Final Exam</td><td class=\"text-center mark-score\">40</td><td class=\"text-center mark-score\">-</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">40%</td><td class=\"text-center mark-score\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Late penalty (%)</td><td class=\"text-center\" colspan=\"2\">0%</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Mark bonus</td><td class=\"text-center\" colspan=\"2\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Course total</td><td class=\"text-center\">Average</td><td class=\"text-center\"><span class=\"grade-average grade-status--studying\">0</span></td><td><span class=\"grade-status grade-status--studying\">studying</span></td></tr></tbody></table>",
+   "model": {
+    "subject": {
+     "code": "MAE101",
+     "scored": true,
+     "scoringScale": 10,
+     "minAvgMarkToPass": 5,
+     "attendance": {
+      "minPercent": 80,
+      "source": "syllabus",
+      "evidence": "80% of contact"
+     },
+     "coursera": {
+      "required": false,
+      "bonus": false
+     },
+     "hasFinal": true,
+     "assessments": [
+      {
+       "index": 0,
+       "category": "Assignments/Exercises",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 3,
+       "weight": 0.3,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 1,
+       "category": "Progress Test",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 3,
+       "weight": 0.3,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 2,
+       "category": "Final Exam",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 1,
+       "weight": 0.4,
+       "weightPerPart": 0.4,
+       "completion": {
+        "value": 4,
+        "inclusive": true
+       },
+       "parentIndex": null
+      }
+     ],
+     "weightSum": 1,
+     "bonus": 0,
+     "latePenaltyPercent": 0,
+     "flags": [],
+     "source": "fap-marksheet"
+    },
+    "scores": {
+     "0": [
+      8,
+      7,
+      null
+     ],
+     "1": [
+      6,
+      null,
+      null
+     ],
+     "2": [
+      null
+     ]
+    },
+    "mapping": [
+     {
+      "group": "Assignments/Exercises",
+      "items": [
+       "Assignment 1",
+       "Assignment 2",
+       "Assignment 3"
+      ],
+      "flmIndex": 0,
+      "flmCategory": "Assignments/Exercises",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       0
+      ]
+     },
+     {
+      "group": "Progress Test",
+      "items": [
+       "Progress Test 1",
+       "Progress Test 2",
+       "Progress Test 3"
+      ],
+      "flmIndex": 1,
+      "flmCategory": "Progress Test",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       1
+      ]
+     },
+     {
+      "group": "Final Exam",
+      "items": [
+       "Final Exam"
+      ],
+      "flmIndex": 2,
+      "flmCategory": "Final Exam",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       2
+      ]
+     }
+    ],
+    "summary": {
+     "latePenaltyPercent": 0,
+     "bonus": null,
+     "average": 0,
+     "status": "studying"
+    }
+   },
+   "prediction": {
+    "code": "MAE101",
+    "scored": true,
+    "current": {
+     "weightedSoFar": 2.1,
+     "bonus": 0,
+     "gradedWeight": 0.3,
+     "remainingWeight": 0.7
+    },
+    "failed": false,
+    "issues": [],
+    "warnings": [
+     "Attendance: 2 more absences allowed."
+    ],
+    "tiers": [
+     {
+      "tier": "pass",
+      "target": 5,
+      "reachable": true,
+      "uniformScore": 4.2,
+      "required": [
+       {
+        "index": 0,
+        "part": 3,
+        "label": "Assignments/Exercises #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 4.2
+       },
+       {
+        "index": 1,
+        "part": 2,
+        "label": "Progress Test #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 4.2
+       },
+       {
+        "index": 1,
+        "part": 3,
+        "label": "Progress Test #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 4.2
+       },
+       {
+        "index": 2,
+        "part": 1,
+        "label": "Final Exam",
+        "kind": "FE",
+        "weight": 0.4,
+        "min": 4.2
+       }
+      ]
+     },
+     {
+      "tier": "fair",
+      "target": 7,
+      "reachable": true,
+      "uniformScore": 7,
+      "required": [
+       {
+        "index": 0,
+        "part": 3,
+        "label": "Assignments/Exercises #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 7
+       },
+       {
+        "index": 1,
+        "part": 2,
+        "label": "Progress Test #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 7
+       },
+       {
+        "index": 1,
+        "part": 3,
+        "label": "Progress Test #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 7
+       },
+       {
+        "index": 2,
+        "part": 1,
+        "label": "Final Exam",
+        "kind": "FE",
+        "weight": 0.4,
+        "min": 7
+       }
+      ]
+     },
+     {
+      "tier": "good",
+      "target": 8,
+      "reachable": true,
+      "uniformScore": 8.5,
+      "required": [
+       {
+        "index": 0,
+        "part": 3,
+        "label": "Assignments/Exercises #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 8.5
+       },
+       {
+        "index": 1,
+        "part": 2,
+        "label": "Progress Test #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 8.5
+       },
+       {
+        "index": 1,
+        "part": 3,
+        "label": "Progress Test #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 8.5
+       },
+       {
+        "index": 2,
+        "part": 1,
+        "label": "Final Exam",
+        "kind": "FE",
+        "weight": 0.4,
+        "min": 8.5
+       }
+      ]
+     },
+     {
+      "tier": "excellent",
+      "target": 9,
+      "reachable": true,
+      "uniformScore": 9.9,
+      "required": [
+       {
+        "index": 0,
+        "part": 3,
+        "label": "Assignments/Exercises #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 9.9
+       },
+       {
+        "index": 1,
+        "part": 2,
+        "label": "Progress Test #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 9.9
+       },
+       {
+        "index": 1,
+        "part": 3,
+        "label": "Progress Test #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 9.9
+       },
+       {
+        "index": 2,
+        "part": 1,
+        "label": "Final Exam",
+        "kind": "FE",
+        "weight": 0.4,
+        "min": 9.9
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "progress-zero-mae101",
+   "category": "fail on a zero progress score",
+   "code": "MAE101",
+   "opts": {},
+   "rows": [
+    {
+     "kind": "item",
+     "group": "Assignments/Exercises",
+     "name": "Assignment 1",
+     "weight": "10",
+     "value": "8"
+    },
+    {
+     "kind": "item",
+     "group": "Assignments/Exercises",
+     "name": "Assignment 2",
+     "weight": "10",
+     "value": "0"
+    },
+    {
+     "kind": "item",
+     "group": "Assignments/Exercises",
+     "name": "Assignment 3",
+     "weight": "10",
+     "value": "8"
+    },
+    {
+     "kind": "group-total",
+     "group": "Assignments/Exercises",
+     "name": "Total",
+     "weight": "30%",
+     "value": "5.3"
+    },
+    {
+     "kind": "item",
+     "group": "Progress Test",
+     "name": "Progress Test 1",
+     "weight": "10",
+     "value": "7"
+    },
+    {
+     "kind": "item",
+     "group": "Progress Test",
+     "name": "Progress Test 2",
+     "weight": "10",
+     "value": "7"
+    },
+    {
+     "kind": "item",
+     "group": "Progress Test",
+     "name": "Progress Test 3",
+     "weight": "10",
+     "value": "7"
+    },
+    {
+     "kind": "group-total",
+     "group": "Progress Test",
+     "name": "Total",
+     "weight": "30%",
+     "value": "7"
+    },
+    {
+     "kind": "item",
+     "group": "Final Exam",
+     "name": "Final Exam",
+     "weight": "40",
+     "value": "7"
+    },
+    {
+     "kind": "group-total",
+     "group": "Final Exam",
+     "name": "Total",
+     "weight": "40%",
+     "value": "7"
+    },
+    {
+     "kind": "summary",
+     "label": "Late penalty (%)",
+     "value": "0%",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Mark bonus",
+     "value": "-",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Course total",
+     "value": "6.5",
+     "status": "failed"
+    }
+   ],
+   "html": "<table class=\"table table-vcenter mb-0 student-mark-sheet\"><thead><tr><th scope=\"col\">Mark group</th><th scope=\"col\">Mark name</th><th scope=\"col\" class=\"student-mark-col-score\">Weight (%)</th><th scope=\"col\" class=\"student-mark-col-score\">Final mark</th><th scope=\"col\">Comment</th></tr></thead><tbody><tr><td rowspan=\"4\" class=\"sheet-group-cell\">Assignments/Exercises</td><td>Assignment 1</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">8</td><td>-</td></tr><tr><td>Assignment 2</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">0</td><td>-</td></tr><tr><td>Assignment 3</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">8</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">5.3</td><td></td></tr><tr><td rowspan=\"4\" class=\"sheet-group-cell\">Progress Test</td><td>Progress Test 1</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr><td>Progress Test 2</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr><td>Progress Test 3</td><td class=\"text-center mark-score\">10</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">30%</td><td class=\"text-center mark-score\">7</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Final Exam</td><td>Final Exam</td><td class=\"text-center mark-score\">40</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">40%</td><td class=\"text-center mark-score\">7</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Late penalty (%)</td><td class=\"text-center\" colspan=\"2\">0%</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Mark bonus</td><td class=\"text-center\" colspan=\"2\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Course total</td><td class=\"text-center\">Average</td><td class=\"text-center\"><span class=\"grade-average grade-status--failed\">6.5</span></td><td><span class=\"grade-status grade-status--failed\">failed</span></td></tr></tbody></table>",
+   "model": {
+    "subject": {
+     "code": "MAE101",
+     "scored": true,
+     "scoringScale": 10,
+     "minAvgMarkToPass": 5,
+     "attendance": {
+      "minPercent": 80,
+      "source": "syllabus",
+      "evidence": "80% of contact"
+     },
+     "coursera": {
+      "required": false,
+      "bonus": false
+     },
+     "hasFinal": true,
+     "assessments": [
+      {
+       "index": 0,
+       "category": "Assignments/Exercises",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 3,
+       "weight": 0.3,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 1,
+       "category": "Progress Test",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 3,
+       "weight": 0.3,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 2,
+       "category": "Final Exam",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 1,
+       "weight": 0.4,
+       "weightPerPart": 0.4,
+       "completion": {
+        "value": 4,
+        "inclusive": true
+       },
+       "parentIndex": null
+      }
+     ],
+     "weightSum": 1,
+     "bonus": 0,
+     "latePenaltyPercent": 0,
+     "flags": [],
+     "source": "fap-marksheet"
+    },
+    "scores": {
+     "0": [
+      8,
+      0,
+      8
+     ],
+     "1": [
+      7,
+      7,
+      7
+     ],
+     "2": [
+      7
+     ]
+    },
+    "mapping": [
+     {
+      "group": "Assignments/Exercises",
+      "items": [
+       "Assignment 1",
+       "Assignment 2",
+       "Assignment 3"
+      ],
+      "flmIndex": 0,
+      "flmCategory": "Assignments/Exercises",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       0
+      ]
+     },
+     {
+      "group": "Progress Test",
+      "items": [
+       "Progress Test 1",
+       "Progress Test 2",
+       "Progress Test 3"
+      ],
+      "flmIndex": 1,
+      "flmCategory": "Progress Test",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       1
+      ]
+     },
+     {
+      "group": "Final Exam",
+      "items": [
+       "Final Exam"
+      ],
+      "flmIndex": 2,
+      "flmCategory": "Final Exam",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       2
+      ]
+     }
+    ],
+    "summary": {
+     "latePenaltyPercent": 0,
+     "bonus": null,
+     "average": 6.5,
+     "status": "failed"
+    }
+   },
+   "prediction": {
+    "code": "MAE101",
+    "scored": true,
+    "current": {
+     "weightedSoFar": 6.5,
+     "bonus": 0,
+     "gradedWeight": 1,
+     "remainingWeight": 0
+    },
+    "failed": true,
+    "issues": [
+     "Assignments/Exercises #2: 0 does not meet > 0"
+    ],
+    "warnings": [],
+    "tiers": [
+     {
+      "tier": "pass",
+      "target": 5,
+      "reachable": false,
+      "final": 6.5,
+      "displayed": 6.5
+     },
+     {
+      "tier": "fair",
+      "target": 7,
+      "reachable": false,
+      "final": 6.5,
+      "displayed": 6.5
+     },
+     {
+      "tier": "good",
+      "target": 8,
+      "reachable": false,
+      "final": 6.5,
+      "displayed": 6.5
+     },
+     {
+      "tier": "excellent",
+      "target": 9,
+      "reachable": false,
+      "final": 6.5,
+      "displayed": 6.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "uneven-jpd113",
+   "category": "uneven groups",
+   "code": "JPD113",
+   "opts": {},
+   "rows": [
+    {
+     "kind": "item",
+     "group": "Kiểm tra nhỏ (small test)",
+     "name": "Small test 1",
+     "weight": "20",
+     "value": "7"
+    },
+    {
+     "kind": "item",
+     "group": "Kiểm tra nhỏ (small test)",
+     "name": "Small test 2",
+     "weight": "20",
+     "value": "8"
+    },
+    {
+     "kind": "group-total",
+     "group": "Kiểm tra nhỏ (small test)",
+     "name": "Total",
+     "weight": "40%",
+     "value": "7.5"
+    },
+    {
+     "kind": "item",
+     "group": "Tham gia giờ học tại giảng đường",
+     "name": "Participation",
+     "weight": "15",
+     "value": "9"
+    },
+    {
+     "kind": "group-total",
+     "group": "Tham gia giờ học tại giảng đường",
+     "name": "Total",
+     "weight": "15%",
+     "value": "9"
+    },
+    {
+     "kind": "item",
+     "group": "Thi cuối kỳ",
+     "name": "Từ vựng, ngữ pháp, chữ Hán",
+     "weight": "15",
+     "value": "6"
+    },
+    {
+     "kind": "item",
+     "group": "Thi cuối kỳ",
+     "name": "Nói",
+     "weight": "30",
+     "value": "-"
+    },
+    {
+     "kind": "group-total",
+     "group": "Thi cuối kỳ",
+     "name": "Total",
+     "weight": "45%",
+     "value": "-"
+    },
+    {
+     "kind": "summary",
+     "label": "Late penalty (%)",
+     "value": "0%",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Mark bonus",
+     "value": "-",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Course total",
+     "value": "0",
+     "status": "studying"
+    }
+   ],
+   "html": "<table class=\"table table-vcenter mb-0 student-mark-sheet\"><thead><tr><th scope=\"col\">Mark group</th><th scope=\"col\">Mark name</th><th scope=\"col\" class=\"student-mark-col-score\">Weight (%)</th><th scope=\"col\" class=\"student-mark-col-score\">Final mark</th><th scope=\"col\">Comment</th></tr></thead><tbody><tr><td rowspan=\"3\" class=\"sheet-group-cell\">Kiểm tra nhỏ (small test)</td><td>Small test 1</td><td class=\"text-center mark-score\">20</td><td class=\"text-center mark-score\">7</td><td>-</td></tr><tr><td>Small test 2</td><td class=\"text-center mark-score\">20</td><td class=\"text-center mark-score\">8</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">40%</td><td class=\"text-center mark-score\">7.5</td><td></td></tr><tr><td rowspan=\"2\" class=\"sheet-group-cell\">Tham gia giờ học tại giảng đường</td><td>Participation</td><td class=\"text-center mark-score\">15</td><td class=\"text-center mark-score\">9</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">15%</td><td class=\"text-center mark-score\">9</td><td></td></tr><tr><td rowspan=\"3\" class=\"sheet-group-cell\">Thi cuối kỳ</td><td>Từ vựng, ngữ pháp, chữ Hán</td><td class=\"text-center mark-score\">15</td><td class=\"text-center mark-score\">6</td><td>-</td></tr><tr><td>Nói</td><td class=\"text-center mark-score\">30</td><td class=\"text-center mark-score\">-</td><td>-</td></tr><tr class=\"sheet-row-total\"><td class=\"text-center\">Total</td><td class=\"text-center mark-score\">45%</td><td class=\"text-center mark-score\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Late penalty (%)</td><td class=\"text-center\" colspan=\"2\">0%</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Mark bonus</td><td class=\"text-center\" colspan=\"2\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Course total</td><td class=\"text-center\">Average</td><td class=\"text-center\"><span class=\"grade-average grade-status--studying\">0</span></td><td><span class=\"grade-status grade-status--studying\">studying</span></td></tr></tbody></table>",
+   "model": {
+    "subject": {
+     "code": "JPD113",
+     "scored": true,
+     "scoringScale": 10,
+     "minAvgMarkToPass": 5,
+     "attendance": {
+      "minPercent": 80,
+      "source": "syllabus",
+      "evidence": "80% số giờ học"
+     },
+     "coursera": {
+      "required": false,
+      "bonus": false
+     },
+     "hasFinal": true,
+     "assessments": [
+      {
+       "index": 0,
+       "category": "Kiểm tra nhỏ (small test)",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 2,
+       "weight": 0.4,
+       "weightPerPart": 0.2,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 1,
+       "category": "Tham gia giờ học tại giảng đường",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 1,
+       "weight": 0.15,
+       "weightPerPart": 0.15,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 2,
+       "category": "Thi cuối kỳ",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 2,
+       "weight": 0.45,
+       "weightPerPart": 0.225,
+       "completion": {
+        "value": 4,
+        "inclusive": true
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 3,
+       "category": "Thi cuối kỳ: Từ vựng, ngữ pháp, chữ Hán",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 1,
+       "weight": 0.15,
+       "weightPerPart": 0.15,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": 2
+      },
+      {
+       "index": 4,
+       "category": "Thi cuối kỳ: Nói",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 1,
+       "weight": 0.3,
+       "weightPerPart": 0.3,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": 2
+      }
+     ],
+     "weightSum": 1,
+     "bonus": 0,
+     "latePenaltyPercent": 0,
+     "flags": [
+      "has-subcomponents"
+     ],
+     "source": "fap-marksheet"
+    },
+    "scores": {
+     "0": [
+      7,
+      8
+     ],
+     "1": [
+      9
+     ],
+     "3": [
+      6
+     ],
+     "4": [
+      null
+     ]
+    },
+    "mapping": [
+     {
+      "group": "Kiểm tra nhỏ (small test)",
+      "items": [
+       "Small test 1",
+       "Small test 2"
+      ],
+      "flmIndex": 0,
+      "flmCategory": "Kiểm tra nhỏ (small test)",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       0
+      ]
+     },
+     {
+      "group": "Tham gia giờ học tại giảng đường",
+      "items": [
+       "Participation"
+      ],
+      "flmIndex": 1,
+      "flmCategory": "Tham gia giờ học tại giảng đường",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       1
+      ]
+     },
+     {
+      "group": "Thi cuối kỳ",
+      "items": [
+       "Từ vựng, ngữ pháp, chữ Hán",
+       "Nói"
+      ],
+      "flmIndex": 2,
+      "flmCategory": "Thi cuối kỳ",
+      "confidence": 1.75,
+      "assessmentIndex": [
+       3,
+       4
+      ]
+     }
+    ],
+    "summary": {
+     "latePenaltyPercent": 0,
+     "bonus": null,
+     "average": 0,
+     "status": "studying"
+    }
+   },
+   "prediction": {
+    "code": "JPD113",
+    "scored": true,
+    "current": {
+     "weightedSoFar": 5.25,
+     "bonus": 0,
+     "gradedWeight": 0.7,
+     "remainingWeight": 0.3
+    },
+    "failed": false,
+    "issues": [],
+    "warnings": [],
+    "tiers": [
+     {
+      "tier": "pass",
+      "target": 5,
+      "reachable": true,
+      "uniformScore": 0,
+      "required": [
+       {
+        "index": 4,
+        "part": 1,
+        "label": "Thi cuối kỳ: Nói",
+        "kind": "FE",
+        "weight": 0.3,
+        "min": 4
+       }
+      ]
+     },
+     {
+      "tier": "fair",
+      "target": 7,
+      "reachable": true,
+      "uniformScore": 5.9,
+      "required": [
+       {
+        "index": 4,
+        "part": 1,
+        "label": "Thi cuối kỳ: Nói",
+        "kind": "FE",
+        "weight": 0.3,
+        "min": 5.9
+       }
+      ]
+     },
+     {
+      "tier": "good",
+      "target": 8,
+      "reachable": true,
+      "uniformScore": 9.2,
+      "required": [
+       {
+        "index": 4,
+        "part": 1,
+        "label": "Thi cuối kỳ: Nói",
+        "kind": "FE",
+        "weight": 0.3,
+        "min": 9.2
+       }
+      ]
+     },
+     {
+      "tier": "excellent",
+      "target": 9,
+      "reachable": false,
+      "reason": "needs more than 10 on every remaining component"
+     }
+    ]
+   }
+  },
+  {
+   "id": "summary-only-mae101",
+   "category": "summary rows only",
+   "code": "MAE101",
+   "opts": {},
+   "rows": [
+    {
+     "kind": "summary",
+     "label": "Late penalty (%)",
+     "value": "0%",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Mark bonus",
+     "value": "-",
+     "status": null
+    },
+    {
+     "kind": "summary",
+     "label": "Course total",
+     "value": "0",
+     "status": "studying"
+    }
+   ],
+   "html": "<table class=\"table table-vcenter mb-0 student-mark-sheet\"><thead><tr><th scope=\"col\">Mark group</th><th scope=\"col\">Mark name</th><th scope=\"col\" class=\"student-mark-col-score\">Weight (%)</th><th scope=\"col\" class=\"student-mark-col-score\">Final mark</th><th scope=\"col\">Comment</th></tr></thead><tbody><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Late penalty (%)</td><td class=\"text-center\" colspan=\"2\">0%</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Mark bonus</td><td class=\"text-center\" colspan=\"2\">-</td><td></td></tr><tr class=\"sheet-grand-total\"><td></td><td class=\"text-end\">Course total</td><td class=\"text-center\">Average</td><td class=\"text-center\"><span class=\"grade-average grade-status--studying\">0</span></td><td><span class=\"grade-status grade-status--studying\">studying</span></td></tr></tbody></table>",
+   "model": {
+    "subject": {
+     "code": "MAE101",
+     "name": "Mathematics for Engineering",
+     "credits": 3,
+     "scored": true,
+     "scoringScale": 10,
+     "minAvgMarkToPass": 5,
+     "prerequisites": [],
+     "attendance": {
+      "minPercent": 80,
+      "source": "syllabus",
+      "evidence": "80% of contact"
+     },
+     "coursera": {
+      "required": false,
+      "bonus": false
+     },
+     "hasFinal": true,
+     "assessments": [
+      {
+       "index": 0,
+       "category": "Assignments/Exercises",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 3,
+       "weight": 0.3,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 1,
+       "category": "Progress Test",
+       "type": "ongoing",
+       "finalKind": null,
+       "parts": 3,
+       "weight": 0.3,
+       "weightPerPart": 0.1,
+       "completion": {
+        "value": 0,
+        "inclusive": false
+       },
+       "parentIndex": null
+      },
+      {
+       "index": 2,
+       "category": "Final Exam",
+       "type": "final",
+       "finalKind": "FE",
+       "parts": 1,
+       "weight": 0.4,
+       "weightPerPart": 0.4,
+       "completion": {
+        "value": 4,
+        "inclusive": true
+       },
+       "parentIndex": null
+      }
+     ],
+     "weightSum": 1,
+     "flags": [],
+     "sylId": 13137,
+     "bonus": 0,
+     "source": "flm-plan"
+    },
+    "scores": {},
+    "mapping": [],
+    "summary": {
+     "latePenaltyPercent": 0,
+     "bonus": null,
+     "average": 0,
+     "status": "studying"
+    }
+   },
+   "prediction": {
+    "code": "MAE101",
+    "scored": true,
+    "current": {
+     "weightedSoFar": 0,
+     "bonus": 0,
+     "gradedWeight": 0,
+     "remainingWeight": 1
+    },
+    "failed": false,
+    "issues": [],
+    "warnings": [],
+    "tiers": [
+     {
+      "tier": "pass",
+      "target": 5,
+      "reachable": true,
+      "uniformScore": 5,
+      "required": [
+       {
+        "index": 0,
+        "part": 1,
+        "label": "Assignments/Exercises #1",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 5
+       },
+       {
+        "index": 0,
+        "part": 2,
+        "label": "Assignments/Exercises #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 5
+       },
+       {
+        "index": 0,
+        "part": 3,
+        "label": "Assignments/Exercises #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 5
+       },
+       {
+        "index": 1,
+        "part": 1,
+        "label": "Progress Test #1",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 5
+       },
+       {
+        "index": 1,
+        "part": 2,
+        "label": "Progress Test #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 5
+       },
+       {
+        "index": 1,
+        "part": 3,
+        "label": "Progress Test #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 5
+       },
+       {
+        "index": 2,
+        "part": 1,
+        "label": "Final Exam",
+        "kind": "FE",
+        "weight": 0.4,
+        "min": 5
+       }
+      ]
+     },
+     {
+      "tier": "fair",
+      "target": 7,
+      "reachable": true,
+      "uniformScore": 7,
+      "required": [
+       {
+        "index": 0,
+        "part": 1,
+        "label": "Assignments/Exercises #1",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 7
+       },
+       {
+        "index": 0,
+        "part": 2,
+        "label": "Assignments/Exercises #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 7
+       },
+       {
+        "index": 0,
+        "part": 3,
+        "label": "Assignments/Exercises #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 7
+       },
+       {
+        "index": 1,
+        "part": 1,
+        "label": "Progress Test #1",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 7
+       },
+       {
+        "index": 1,
+        "part": 2,
+        "label": "Progress Test #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 7
+       },
+       {
+        "index": 1,
+        "part": 3,
+        "label": "Progress Test #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 7
+       },
+       {
+        "index": 2,
+        "part": 1,
+        "label": "Final Exam",
+        "kind": "FE",
+        "weight": 0.4,
+        "min": 7
+       }
+      ]
+     },
+     {
+      "tier": "good",
+      "target": 8,
+      "reachable": true,
+      "uniformScore": 8,
+      "required": [
+       {
+        "index": 0,
+        "part": 1,
+        "label": "Assignments/Exercises #1",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 8
+       },
+       {
+        "index": 0,
+        "part": 2,
+        "label": "Assignments/Exercises #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 8
+       },
+       {
+        "index": 0,
+        "part": 3,
+        "label": "Assignments/Exercises #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 8
+       },
+       {
+        "index": 1,
+        "part": 1,
+        "label": "Progress Test #1",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 8
+       },
+       {
+        "index": 1,
+        "part": 2,
+        "label": "Progress Test #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 8
+       },
+       {
+        "index": 1,
+        "part": 3,
+        "label": "Progress Test #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 8
+       },
+       {
+        "index": 2,
+        "part": 1,
+        "label": "Final Exam",
+        "kind": "FE",
+        "weight": 0.4,
+        "min": 8
+       }
+      ]
+     },
+     {
+      "tier": "excellent",
+      "target": 9,
+      "reachable": true,
+      "uniformScore": 9,
+      "required": [
+       {
+        "index": 0,
+        "part": 1,
+        "label": "Assignments/Exercises #1",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 9
+       },
+       {
+        "index": 0,
+        "part": 2,
+        "label": "Assignments/Exercises #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 9
+       },
+       {
+        "index": 0,
+        "part": 3,
+        "label": "Assignments/Exercises #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 9
+       },
+       {
+        "index": 1,
+        "part": 1,
+        "label": "Progress Test #1",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 9
+       },
+       {
+        "index": 1,
+        "part": 2,
+        "label": "Progress Test #2",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 9
+       },
+       {
+        "index": 1,
+        "part": 3,
+        "label": "Progress Test #3",
+        "kind": "ongoing",
+        "weight": 0.1,
+        "min": 9
+       },
+       {
+        "index": 2,
+        "part": 1,
+        "label": "Final Exam",
+        "kind": "FE",
+        "weight": 0.4,
+        "min": 9
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

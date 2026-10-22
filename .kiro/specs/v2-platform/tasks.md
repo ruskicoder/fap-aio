@@ -58,7 +58,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - `runOnFapTab(job)`: sends `timer.run` to `focusedTab`, falls back to the latest `tab-ready` sender, and skips when no FAP tab is open.
   - _Requirements: 3.4, 3.5, 3.8; core R11.2_
 
-- [ ] 5. [PLT-5] Test fixture pipeline
+- [x] 5. [PLT-5] Test fixture pipeline
 - [x] 5.1 [PLT-5.1] Build the anonymizer and deny-list check, then generate the committed fixtures
   - `tools/fixtures/anonymize.mjs` and `fields.json`: linkedom parse, seeded PRNG, value replacement per kind with a consistent mapping per run, same-length filler for other text, a kept list of structural labels for the vi and en constant tests.
   - `tools/fixtures/check-denylist.mjs`, `.githooks/pre-commit` using `ignore/fixture-denylist.txt`, and the CI step reading the `FIXTURE_DENYLIST` secret; a notice and pass when no list exists.
@@ -66,7 +66,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - Tests: the same seed gives the same output; element, class and attribute sets are unchanged.
   - _Gate: G-CAPTURE_
   - _Requirements: 8.1, 8.2, 8.3, 7.6_
-- [ ] 5.2 [PLT-5.2] Write `tools/fixtures/grade-cases.mjs`
+- [x] 5.2 [PLT-5.2] Write `tools/fixtures/grade-cases.mjs`
   - Synthetic mark sheets for the validation categories (pass, fail with an average of 5 or more, bonus, resit, unscored, uneven groups, summary rows only); expected results from `tools/flm-scraper/marksheet.mjs` and `predict.mjs`, written to `test/fixtures/grades/golden.json`.
   - _Requirements: 8.4; grades R4, R5_
 
