@@ -82,7 +82,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | ID | Title | Spec | Milestone | Depends on | Gates | Status |
 |---|---|---|---|---|---|---|
 | PLT-1 | Repository scaffold, manifest and CI | v2-platform | M1 | - | G-APPROVE | done |
-| PLT-2 | Message contract and service worker router | v2-platform | M1 | PLT-1 | - | todo |
+| PLT-2 | Message contract and service worker router | v2-platform | M1 | PLT-1 | - | doing |
 | PLT-3 | Storage catalog, migrations and pruning | v2-platform | M1 | PLT-1 | - | todo |
 | PLT-4 | Shared request budget | v2-platform | M1 | PLT-2, PLT-3 | - | todo |
 | PLT-5 | Test fixture pipeline | v2-platform | M1 | PLT-1 | - | todo |
@@ -189,3 +189,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-23 | G-APPROVE | owner approved the compacted task lists, milestones and this file; G-APPROVE passed; `paused` stays true until the next session, which runs M1, M2 and M3 | `orchestrator.mjs check` passes | committed
 - 2026-10-23 | PLT-1.1 | toolchain (Vite 5.4.21, CRXJS 2.7.1 with standalone IIFE content scripts so no web_accessible_resources, React 18.3.1, TS 5.9.3 strict, Tailwind 3.4.19, ESLint 9, Vitest 2.1.9, zod 3.25.76, linkedom), manifest from src/manifest.ts with optional key file, empty entries, grant page, extension-key, zip, check-version and deny-list tools | typecheck, lint, 3 tests, build, check:version, check:fixtures, zip pass | committed
 - 2026-10-23 | PLT-1.2 | ci.yml (npm ci, typecheck, lint, test, deny-list check from secret FIXTURE_DENYLIST, build, report-only audit); ESLint no-eval, no-implied-eval, no-new-func, FAP localStorage and sessionStorage restricted outside src/features/legacy | lint rejects a probe file with all three; lint clean | committed
+- 2026-10-23 | PLT-2.1 | src/shared/messages.ts (zod discriminated union, protocol 1, strict shapes, timeout table; adds data.clearCaches for core R5.5), src/shared/call.ts (call with timeout, typed onMessage), test/helpers/fake-chrome.ts | typecheck, lint, 11 tests pass | committed

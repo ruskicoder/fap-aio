@@ -20,7 +20,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - _Requirements: 7.5, 9.1, 4.7_
 
 - [ ] 2. [PLT-2] Message contract and service worker router
-- [ ] 2.1 [PLT-2.1] Define `src/shared/messages.ts` and the content-script client
+- [x] 2.1 [PLT-2.1] Define `src/shared/messages.ts` and the content-script client
   - The `Msg` union and `Reply<T>` from the design, protocol version 1, with one zod schema per message type and a per-type timeout table (default 10 s; `perm.request` 120 s; `flm.refresh` 60 s).
   - `src/shared/call.ts`: `call(msg, timeoutMs?)` returning `Reply<T>`, with `{ kind: 'timeout' }` on no reply; a typed `onMessage` subscription for service-worker-to-tab messages.
   - Unit tests: every type has a schema; a wrong `v` or an unknown `type` is rejected; a missing reply resolves to `timeout`.
