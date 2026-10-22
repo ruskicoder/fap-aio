@@ -2,18 +2,19 @@
 
 The single place that says what is done, what is next, what is blocked and what needs fixing across the six specs in `.kiro/specs/`. Each spec's `tasks.md` holds the work (phases and subtasks with requirement references). This file holds the order (dependencies), the human checkpoints (gates), the fix queue and the loop rules.
 
-Checker (read-only, Node standard library): `node tools/orchestrator/orchestrator.mjs check | next | waves | status`. It validates this file against every `tasks.md` (ids, dependencies, cycles, gates, status against checkboxes) and computes the next ready subtasks, so the order does not depend on the agent's judgment.
+Checker (read-only, Node standard library): `node tools/orchestrator/orchestrator.mjs check | next | waves | status`. It validates this file against every `tasks.md` (ids, milestones, dependencies, cycles, gates, status against checkboxes) and computes the next ready subtasks in milestone order, so the order does not depend on the agent's judgment.
 
-Status as of 2026-10-11: specs approved (requirements and design for all six); task lists written, awaiting owner evaluation. No code exists yet.
+Status as of 2026-10-22: specs approved (requirements and design for all six). Task lists compacted from 140 to 91 subtasks (same 50 phases, no requirement dropped) and grouped into five milestones; the previous task lists and this file's previous version are kept in `.kiro/specs/*/.deprecated/tasks.md` and `.kiro/.deprecated/orchestrator.md` for rollback. Owner approved the compacted lists on 2026-10-23 (G-APPROVE passed); the loop stays paused until the next session starts M1. No code exists yet.
 
 ## Loop control
 
 Owner-set switches. The agent reads them at the start of every iteration and never changes them.
 
 ```text
-mode: step          # step: stop after each subtask | phase: stop after each phase | auto: run until a gate, a fix cap or an error
-autocommit: false   # true: commit after each verified subtask (message names the task id) | false: leave changes for the owner
+mode: phase         # step: stop after each subtask | phase: stop after each phase | auto: run until a gate, a fix cap or an error
+autocommit: true    # true: commit after each verified subtask (message names the task id) | false: leave changes for the owner
 max_attempts: 2     # failed attempts per subtask before it moves to the fix queue as blocking
+context_stop: 65    # percent of the context window; after a finished subtask at or above this, close the session (target about 75% at most)
 paused: true        # true until the owner approves the task lists
 ```
 
@@ -22,7 +23,7 @@ paused: true        # true until the owner approves the task lists
 One iteration handles one subtask. The protocol follows the Kiro task execution rules (read all three spec documents, one task at a time, verify against requirements) and the long-running agent guidance in [Anthropic's harness article](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents): pick the highest-priority unfinished item, work on one feature at a time, verify end to end, record progress, and only flip status fields in the tracking file.
 
 1. Orient. Read this file. Run `check`; if it fails, the only work this iteration is fixing the orchestrator or task file it names. Stop if `paused: true`.
-2. Pick. Open fixes with severity `blocking` come first. Otherwise take the first line of `next`. Never pick a subtask whose gate is open or whose dependencies are not done.
+2. Pick. Open fixes with severity `blocking` come first. Otherwise take the first line of `next` (milestone first, then wave, spec and number). Never pick a subtask whose gate is open or whose dependencies are not done.
 3. Load context. Read `requirements.md`, `design.md` and `tasks.md` of the subtask's spec, the requirement ids it cites (including cross-spec ones), `docs/10-context/constraints.md` for grade work, and `docs/20-architecture/fap-v2/` for FAP facts. Read every file the subtask will change.
 4. Mark. Set the phase row to `doing` here.
 5. Implement only that subtask, at the minimum that meets its criteria. No FAP POST; FAP and FLM reads only inside gates or through the extension's own paced access layer.
@@ -31,12 +32,14 @@ One iteration handles one subtask. The protocol follows the Kiro task execution 
    - Tick the subtask checkbox in its `tasks.md`; when all subtasks of a phase are ticked, tick the phase and set its row to `done`.
    - Append one line to the log below.
    - Append a docs-scaffold session journal entry.
-   - Commit only if `autocommit: true`.
-8. On failure: undo the partial change (`git checkout` of the touched files) and add a fix row with what was tried. After `max_attempts` failures, mark it `blocking`, set the phase `blocked`, and stop.
+   - Commit only if `autocommit: true`, on the current local branch, with a message that starts with the task id (`feat(PLT-1.1): ...`). Never push.
+8. On failure: undo only this subtask's change and add a fix row with what was tried. With `autocommit: true` every earlier subtask is committed, so `git checkout` and `git clean` of the touched paths return to the last commit. With `autocommit: false`, save `git diff` to `ignore/orchestrator/pre-<task>.patch` before step 5 and restore from it instead. After `max_attempts` failures, mark it `blocking`, set the phase `blocked`, and stop.
 9. Continue or stop:
    - `step` stops after each subtask;
    - `phase` stops after the last subtask of a phase;
    - `auto` continues until `next` shows nothing ready (all remaining work waits on gates, fixes or dependencies), or until a decision is needed.
+   - In every mode, stop when a milestone is complete (`status` shows it complete): run `npm run build`, report how to load `dist/` unpacked and what the owner can now use and check.
+   - After any finished subtask, read the context usage (`get_usage`). At or above `context_stop`, close the session: record step 7, then write the continuity summary with a start prompt for the next session. Never stop in the middle of a subtask.
    - At every stop, report: done this iteration, test output, what `next` shows, open gates and fixes.
 
 Edit rules for this file:
@@ -50,84 +53,96 @@ A gate is a checkpoint that needs the owner or a live check in the owner's brows
 
 | Gate | Kind | Needs | Unblocks | Status |
 |---|---|---|---|---|
-| G-APPROVE | owner | Owner approves the six task lists and this file, then sets `paused: false` | every task | open |
-| G-CAPTURE | owner, live | Raw FAP pages saved under `ignore/fixtures-raw/` and `ignore/fixture-denylist.txt` written (page list below); read-only GETs, paced at least 2.5 s, under 30 per 5 minutes | PLT-5.4 | passed |
-| G-SELECTORS | live | STATUS item 14 confirmed on live FAP: Jidox top bar, footer, sidebar and wrapper selectors; `/Report/Attendance` partial with absences; `/News` list columns; transcript `bg-danger` status | PNL-4.2, APP-7.2, INF-1.3, INF-1.4 | open |
-| G-EXT-KEY | owner | Owner runs `tools/release/extension-key.mjs`, keeps the private key offline, confirms the public key in the manifest | G-RELEASE | open |
+| G-APPROVE | owner | Owner approves the six task lists and this file, then sets `paused: false` | every task | passed |
+| G-CAPTURE | owner, live | Raw FAP pages saved under `ignore/fixtures-raw/` and `ignore/fixture-denylist.txt` written (page list below); read-only GETs, paced at least 2.5 s, under 30 per 5 minutes | PLT-5.1 | passed |
+| G-SELECTORS | live | STATUS item 14 confirmed on live FAP: Jidox top bar, footer, sidebar and wrapper selectors; `/Report/Attendance` partial with absences; `/News` list columns; transcript `bg-danger` status | PNL-4.2, APP-7.4, INF-1.2 (and through INF-1: INF-3, INF-5) | open |
+| G-EXT-KEY | owner | Owner runs `tools/release/extension-key.mjs`, keeps the private key offline, commits `src/manifest-key.txt` (public key) so the unpacked id stays stable | G-RELEASE | open |
 | G-FLM-COOKIE | live | Owner runs the PLT-9.1 probe with FLM signed in and records the result in the decision queue | PLT-9.2 | open |
 | G-DATA-KEYS | owner | Two recovery phrases created and stored offline; public keys in `src/shared/keyring.ts`; `data/live` and the first `data/<date>` snapshot published | G-RELEASE | open |
 | G-RELEASE | owner | Every phase done; manual verification lists from all six designs run and recorded as a test-run document; tag `v2.0.0`; publish the draft release | end | open |
 
 Pages for G-CAPTURE: home, weekly timetable page and week partial (vi and en, one week with sessions, one empty), exam schedule, transcript (vi and en), grade page and three mark-sheet partials (regular, resit, summary rows only), attendance page and partial with absences, news list, one news detail, bell list, curriculum, documents, a 404 page and the login page. The deny list holds the owner's name, roll number, email and the lecturer shortcodes seen.
 
+## Milestones
+
+Each milestone ends in a build the owner can load unpacked and use. The loop works through milestones in order and stops at the end of each one (loop protocol step 9).
+
+| Milestone | Usable deliverable | Subtasks |
+|---|---|---|
+| M1 Schedule | Panel on FAP pages: sync this week or the term, Week and Exams views, `.ics` calendar export, status strip with the request budget | 25 |
+| M2 Grades | GPA summary on the transcript, pass prediction and required scores under each mark sheet, Courses and GPA views, Today view and first run, command palette, alerts inbox, Settings | 25 |
+| M3 Info and background | Subjects and syllabus with the learning path, lecturers, Status, background refresh, reminders, keep-alive, docked mode, keybinds, what-if and planner, legacy cleanup, diagnostics; news, documents and attendance after G-SELECTORS | 20 |
+| M4 Appearance | Eleven themes, colour editor, CSS editor, background images, layout tweaks, Classic FAP layout (top navigation after G-SELECTORS), visual regression checks | 13 |
+| M5 Release | Signed data updates, live FLM refresh, Data and privacy and About sections, release workflow; then G-EXT-KEY, G-DATA-KEYS, G-FLM-COOKIE and G-RELEASE for v2.0.0 | 8 |
+
 ## Task registry
 
-One row per phase, plus a row for any subtask with extra dependencies or gates. `Depends on` lists ids that must be done first (a phase id means the whole phase). Wave numbers come from `waves`.
+One row per phase, plus a row for any subtask with extra dependencies, gates or a different milestone. `Depends on` lists ids that must be done first (a phase id means the whole phase, a subtask id only that subtask). A subtask row inherits its phase's dependencies. `Milestone` on a subtask row overrides the phase's. Wave numbers come from `waves`.
 
-| ID | Title | Spec | Depends on | Gates | Status |
-|---|---|---|---|---|---|
-| PLT-1 | Repository scaffold, manifest and CI | v2-platform | - | G-APPROVE | todo |
-| PLT-2 | Message contract and service worker router | v2-platform | PLT-1 | - | todo |
-| PLT-3 | Storage catalog, migrations and pruning | v2-platform | PLT-1 | - | todo |
-| PLT-4 | Shared request budget | v2-platform | PLT-2, PLT-3 | - | todo |
-| PLT-5 | Test fixture pipeline | v2-platform | PLT-1 | - | todo |
-| PLT-5.4 | Generate the committed fixtures | v2-platform | PLT-5.3 | G-CAPTURE | todo |
-| PLT-6 | Packaged data and IndexedDB data service | v2-platform | PLT-2, PLT-3 | - | todo |
-| PLT-7 | Signed data channel | v2-platform | PLT-6 | - | todo |
-| PLT-8 | Optional permissions | v2-platform | PLT-2 | - | todo |
-| PLT-9 | Live FLM read | v2-platform | PLT-6, PLT-8 | - | todo |
-| PLT-9.2 | Implement flm.refresh | v2-platform | PLT-9.1 | G-FLM-COOKIE | todo |
-| PLT-10 | Privacy, diagnostics and release | v2-platform | PLT-2, PLT-3 | - | todo |
-| CORE-1 | Content bootstrap and page guard | v2-core-scheduler | PLT-2 | - | todo |
-| CORE-2 | Read-only FAP access layer | v2-core-scheduler | CORE-1, PLT-4 | - | todo |
-| CORE-3 | Source registry, constants and scheduler parsers | v2-core-scheduler | CORE-2, PLT-5.4 | - | todo |
-| CORE-4 | Panel host | v2-core-scheduler | CORE-1, PLT-3 | - | todo |
-| CORE-5 | Timetable and exam sync | v2-core-scheduler | CORE-3 | - | todo |
-| CORE-6 | Schedule views | v2-core-scheduler | CORE-5, PNL-2, PNL-5, PNL-9 | - | todo |
-| CORE-7 | Calendar export | v2-core-scheduler | CORE-6 | - | todo |
-| CORE-8 | Reminders | v2-core-scheduler | CORE-5, PLT-8, PNL-6 | - | todo |
-| CORE-9 | Session keep-alive | v2-core-scheduler | CORE-2, PLT-4 | - | todo |
-| CORE-10 | Legacy storage cleanup | v2-core-scheduler | CORE-4, PNL-8.2 | - | todo |
-| CORE-11 | Settings and data controls | v2-core-scheduler | PNL-8.2, PLT-6 | - | todo |
-| PNL-1 | Panel state and shell | v2-panel-ux | CORE-4 | - | todo |
-| PNL-1.3 | Add the status strip | v2-panel-ux | CORE-2 | - | todo |
-| PNL-2 | Navigation: router, tabs, sub-views and view registry | v2-panel-ux | PNL-1 | - | todo |
-| PNL-3 | Visual system and accessibility | v2-panel-ux | PNL-2 | - | todo |
-| PNL-3.1 | Add density tokens and theme variables | v2-panel-ux | APP-1 | - | todo |
-| PNL-4 | Docked mode | v2-panel-ux | PNL-1, APP-1 | - | todo |
-| PNL-4.2 | Reserve the width through the appearance pipeline | v2-panel-ux | PNL-4.1 | G-SELECTORS | todo |
-| PNL-5 | Command palette | v2-panel-ux | PNL-2 | - | todo |
-| PNL-6 | Alerts inbox | v2-panel-ux | PNL-2, PLT-8 | - | todo |
-| PNL-7 | Keyboard shortcuts and keybinds | v2-panel-ux | PNL-5, PNL-6, PNL-8.2 | - | todo |
-| PNL-8 | Settings registry and Settings view | v2-panel-ux | PNL-2 | - | todo |
-| PNL-8.4 | Build the Data and privacy and About sections | v2-panel-ux | PLT-3.4, PLT-7.3, PLT-10.1 | - | todo |
-| PNL-9 | Today view and first run | v2-panel-ux | PNL-2, CORE-5 | - | todo |
-| GRD-1 | Grade sources and parsers | v2-grades | CORE-3 | - | todo |
-| GRD-2 | Calculation engines | v2-grades | GRD-1, PLT-6 | - | todo |
-| GRD-2.3 | Implement Predictor | v2-grades | PLT-5.3 | - | todo |
-| GRD-3 | Grade settings | v2-grades | PNL-8.2 | - | todo |
-| GRD-4 | Inline page enhancements | v2-grades | GRD-2, GRD-3, CORE-4 | - | todo |
-| GRD-5 | Panel views | v2-grades | GRD-2, GRD-3, PNL-5, PNL-6, PNL-9 | - | todo |
-| GRD-5.3 | Build the What-if and Planner views | v2-grades | INF-1.2 | - | todo |
-| GRD-6 | Export | v2-grades | GRD-2 | - | todo |
-| INF-1 | Info sources and parsers | v2-info | CORE-3 | - | todo |
-| INF-1.3 | News and document sources | v2-info | - | G-SELECTORS | todo |
-| INF-1.4 | Attendance sources | v2-info | - | G-SELECTORS | todo |
-| INF-2 | Analyzers and lecturer directory | v2-info | INF-1, CORE-5, PLT-6 | - | todo |
-| INF-3 | Background refresh | v2-info | INF-2, PLT-4 | - | todo |
-| INF-4 | Subjects and syllabus | v2-info | INF-1, GRD-1, PNL-3, PLT-6 | - | todo |
-| INF-4.3 | Add "Refresh from FLM" | v2-info | PLT-9 | - | todo |
-| INF-5 | Info views and integrations | v2-info | INF-2, INF-3, CORE-6, GRD-2, PNL-5, PNL-9 | - | todo |
-| INF-6 | Alerts and settings | v2-info | INF-2, PNL-6, PNL-8.2, PLT-8 | - | todo |
-| APP-1 | Style pipeline and early application | v2-appearance | PLT-3 | - | todo |
-| APP-2 | Colour engine | v2-appearance | PLT-1 | - | todo |
-| APP-3 | Theme model and presets | v2-appearance | APP-2 | - | todo |
-| APP-4 | Theme view and editors | v2-appearance | APP-1, APP-3, PNL-2 | - | todo |
-| APP-5 | Theme management and import or export | v2-appearance | APP-4 | - | todo |
-| APP-6 | Layout tweaks | v2-appearance | APP-1, PNL-8.2 | - | todo |
-| APP-7 | Classic FAP layout | v2-appearance | APP-1, PNL-8.2, CORE-2, PLT-5.4 | - | todo |
-| APP-7.2 | Build the classic top navigation and centred column | v2-appearance | APP-7.1 | G-SELECTORS | todo |
-| APP-8 | Visual regression checks | v2-appearance | APP-3, APP-7 | - | todo |
+| ID | Title | Spec | Milestone | Depends on | Gates | Status |
+|---|---|---|---|---|---|---|
+| PLT-1 | Repository scaffold, manifest and CI | v2-platform | M1 | - | G-APPROVE | todo |
+| PLT-2 | Message contract and service worker router | v2-platform | M1 | PLT-1 | - | todo |
+| PLT-3 | Storage catalog, migrations and pruning | v2-platform | M1 | PLT-1 | - | todo |
+| PLT-4 | Shared request budget | v2-platform | M1 | PLT-2, PLT-3 | - | todo |
+| PLT-5 | Test fixture pipeline | v2-platform | M1 | PLT-1 | - | todo |
+| PLT-5.1 | Anonymizer, deny-list check and committed fixtures | v2-platform | M1 | - | G-CAPTURE | todo |
+| PLT-6 | Packaged data and IndexedDB data service | v2-platform | M2 | PLT-2, PLT-3 | - | todo |
+| PLT-7 | Signed data channel | v2-platform | M5 | PLT-6 | - | todo |
+| PLT-8 | Optional permissions | v2-platform | M2 | PLT-2 | - | todo |
+| PLT-9 | Live FLM read | v2-platform | M5 | PLT-6, PLT-8 | - | todo |
+| PLT-9.2 | Implement flm.refresh | v2-platform | M5 | PLT-9.1 | G-FLM-COOKIE | todo |
+| PLT-10 | Privacy, diagnostics and release | v2-platform | M3 | PLT-2, PLT-3 | - | todo |
+| PLT-10.2 | Release workflow | v2-platform | M5 | - | - | todo |
+| CORE-1 | Content bootstrap and page guard | v2-core-scheduler | M1 | PLT-2, PLT-5.1 | - | todo |
+| CORE-2 | Read-only FAP access layer | v2-core-scheduler | M1 | CORE-1, PLT-4 | - | todo |
+| CORE-3 | Source registry, constants and scheduler parsers | v2-core-scheduler | M1 | CORE-2, PLT-5.1 | - | todo |
+| CORE-4 | Panel host | v2-core-scheduler | M1 | CORE-1, PLT-3 | - | todo |
+| CORE-5 | Timetable and exam sync | v2-core-scheduler | M1 | CORE-3 | - | todo |
+| CORE-6 | Schedule views | v2-core-scheduler | M1 | CORE-5, PNL-2 | - | todo |
+| CORE-6.2 | Scheduler commands and Today providers | v2-core-scheduler | M2 | PNL-5, PNL-9 | - | todo |
+| CORE-7 | Calendar export | v2-core-scheduler | M1 | CORE-6.1 | - | todo |
+| CORE-8 | Reminders | v2-core-scheduler | M3 | CORE-5, PLT-8, PNL-6, CORE-11 | - | todo |
+| CORE-9 | Session keep-alive | v2-core-scheduler | M3 | CORE-2, PLT-4, PNL-6, CORE-11 | - | todo |
+| CORE-10 | Legacy storage cleanup | v2-core-scheduler | M3 | CORE-4, PNL-8.1 | - | todo |
+| CORE-11 | Settings and data controls | v2-core-scheduler | M3 | PNL-8.1, PLT-6 | - | todo |
+| PNL-1 | Panel state and shell | v2-panel-ux | M1 | CORE-4 | - | todo |
+| PNL-1.2 | Status strip | v2-panel-ux | M1 | CORE-2 | - | todo |
+| PNL-2 | Navigation: router, tabs, sub-views and view registry | v2-panel-ux | M1 | PNL-1 | - | todo |
+| PNL-3 | Visual system and accessibility | v2-panel-ux | M2 | PNL-2, APP-1 | - | todo |
+| PNL-4 | Docked mode | v2-panel-ux | M3 | PNL-1, APP-1 | - | todo |
+| PNL-4.2 | Reserve the width through the appearance pipeline | v2-panel-ux | M3 | PNL-4.1 | G-SELECTORS | todo |
+| PNL-5 | Command palette | v2-panel-ux | M2 | PNL-2 | - | todo |
+| PNL-6 | Alerts inbox | v2-panel-ux | M2 | PNL-2, PLT-8 | - | todo |
+| PNL-7 | Keyboard shortcuts and keybinds | v2-panel-ux | M3 | PNL-5, PNL-6, PNL-8.1 | - | todo |
+| PNL-8 | Settings registry and Settings view | v2-panel-ux | M2 | PNL-2 | - | todo |
+| PNL-8.3 | Data and privacy and About sections | v2-panel-ux | M5 | PLT-3.1, PLT-7.3, PLT-10.1 | - | todo |
+| PNL-9 | Today view and first run | v2-panel-ux | M2 | PNL-2, CORE-5 | - | todo |
+| GRD-1 | Grade sources and parsers | v2-grades | M2 | CORE-3 | - | todo |
+| GRD-2 | Calculation engines | v2-grades | M2 | GRD-1, PLT-6 | - | todo |
+| GRD-2.3 | Implement Predictor | v2-grades | M2 | PLT-5.2 | - | todo |
+| GRD-3 | Grade settings | v2-grades | M2 | PNL-8.1 | - | todo |
+| GRD-4 | Inline page enhancements | v2-grades | M2 | GRD-2, GRD-3, CORE-4 | - | todo |
+| GRD-5 | Panel views | v2-grades | M2 | GRD-2, GRD-3, PNL-5, PNL-6, PNL-9 | - | todo |
+| GRD-5.3 | What-if and Planner views | v2-grades | M3 | INF-1.1 | - | todo |
+| GRD-6 | Export and rubric guard | v2-grades | M2 | GRD-2 | - | todo |
+| INF-1 | Info sources and parsers | v2-info | M3 | CORE-3 | - | todo |
+| INF-1.2 | News, document and attendance sources | v2-info | M3 | - | G-SELECTORS | todo |
+| INF-2 | Analyzers and lecturer directory | v2-info | M3 | INF-1.1, CORE-5, PLT-6 | - | todo |
+| INF-3 | Background refresh | v2-info | M3 | INF-1, INF-2, PLT-4 | - | todo |
+| INF-4 | Subjects and syllabus | v2-info | M3 | INF-1.1, GRD-1, PNL-3, PLT-6 | - | todo |
+| INF-4.2 | Refresh from FLM | v2-info | M5 | PLT-9 | - | todo |
+| INF-5 | Info views and integrations | v2-info | M3 | INF-1, INF-2, INF-3, CORE-6, GRD-2, PNL-5, PNL-9 | - | todo |
+| INF-6 | Alerts and settings | v2-info | M3 | INF-2, PNL-6, PNL-8.1, PLT-8 | - | todo |
+| APP-1 | Style pipeline and early application | v2-appearance | M2 | PLT-3 | - | todo |
+| APP-2 | Colour engine | v2-appearance | M4 | PLT-1 | - | todo |
+| APP-3 | Theme model and presets | v2-appearance | M4 | APP-2 | - | todo |
+| APP-4 | Theme view and editors | v2-appearance | M4 | APP-1, APP-3, PNL-2 | - | todo |
+| APP-5 | Theme management and import or export | v2-appearance | M4 | APP-4 | - | todo |
+| APP-6 | Layout tweaks | v2-appearance | M4 | APP-1, PNL-8.1 | - | todo |
+| APP-7 | Classic FAP layout | v2-appearance | M4 | APP-1, PNL-5, PNL-8.1, CORE-2, PLT-5.1 | - | todo |
+| APP-7.4 | Classic top navigation and centred column | v2-appearance | M4 | - | G-SELECTORS | todo |
+| APP-8 | Visual regression checks | v2-appearance | M4 | APP-3, APP-7 | - | todo |
 
 ## Waves
 
@@ -139,11 +154,13 @@ Output of `waves`: phases in the same wave have no dependency on each other and 
 | 1 | PLT-2, PLT-3, PLT-5, APP-2 |
 | 2 | PLT-4, PLT-6, PLT-8, PLT-10, CORE-1, APP-1, APP-3 |
 | 3 | PLT-7, PLT-9, CORE-2, CORE-4 |
-| 4 | CORE-3, CORE-9, PNL-1 |
+| 4 | CORE-3, PNL-1 |
 | 5 | CORE-5, PNL-2, PNL-4, GRD-1, INF-1 |
 | 6 | PNL-3, PNL-5, PNL-6, PNL-8, PNL-9, GRD-2, INF-2, APP-4 |
-| 7 | CORE-6, CORE-8, CORE-10, CORE-11, PNL-7, GRD-3, GRD-6, INF-3, INF-4, INF-6, APP-5, APP-6, APP-7 |
-| 8 | CORE-7, GRD-4, GRD-5, INF-5, APP-8 |
+| 7 | CORE-6, CORE-10, CORE-11, PNL-7, GRD-3, GRD-6, INF-3, INF-4, INF-6, APP-5, APP-6, APP-7 |
+| 8 | CORE-7, CORE-8, CORE-9, GRD-4, GRD-5, INF-5, APP-8 |
+
+Waves show which phases could run in parallel; the loop runs one subtask at a time in milestone order, so a later-wave phase of M1 (CORE-7) runs before an earlier-wave phase of M2.
 
 ## Fix queue
 
@@ -167,3 +184,6 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-11 | setup | task lists for six specs and this orchestrator written | `orchestrator.mjs check` passes | uncommitted
 - 2026-10-13 | G-CAPTURE | 63 en and 25 vi raw pages in `ignore/fixtures-raw/`, deny list (16 entries) in `ignore/fixture-denylist.txt`, catalog `tools/fixtures/catalog.json`; missing: login page, attendance with an absence, transcript `bg-danger` row | split-capture lists all 200 except the intended 404 | uncommitted; gate left `open` for the owner to mark
 - 2026-10-13 | G-CAPTURE | login page captured signed out; owner marked G-CAPTURE passed (attendance absence and transcript `bg-danger` remain unobserved, tracked under G-SELECTORS) | catalog updated | committed
+- 2026-10-22 | correction | the deny list written for G-CAPTURE has 15 entries, not 16 as logged on 2026-10-13 | `wc -l ignore/fixture-denylist.txt` | uncommitted
+- 2026-10-22 | plan | owner-approved compaction: 140 to 91 subtasks (50 phases kept, no requirement dropped), milestones M1 to M5, dependency fixes (CORE-1 on fixtures, CORE-8 and CORE-9 on alerts and settings, CORE-6 split so M1 does not wait on the palette and Today view), panel state schema moved to CORE-4.1, manifest key from a file, GetFormSchema reads user-triggered, network check scoped to request targets, gated subtasks last in their phase; mode phase, autocommit true; previous files in `.deprecated/` | `orchestrator.mjs check` passes; milestone order tested on a copy | committed with the approval below
+- 2026-10-23 | G-APPROVE | owner approved the compacted task lists, milestones and this file; G-APPROVE passed; `paused` stays true until the next session, which runs M1, M2 and M3 | `orchestrator.mjs check` passes | committed

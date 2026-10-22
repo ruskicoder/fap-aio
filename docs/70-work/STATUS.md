@@ -40,6 +40,10 @@ Approved 2026-10-11 (session 2): v2-platform requirements and design, decision 0
 
 Done 2026-10-11 (session 2, later): `tasks.md` written for all six specs (50 phases, 140 subtasks, coding only) and linked through the central orchestrator [`.kiro/orchestrator.md`](../../.kiro/orchestrator.md) (gates, dependencies, waves, fix and decision queues, loop protocol), checked by `tools/orchestrator/orchestrator.mjs`. Convention evaluation for the global prompt orchestrator: [record](investigations/2026-10-11-task-orchestrator-convention.md). Awaiting owner evaluation (gate G-APPROVE); the loop is paused.
 
+Done 2026-10-22: task lists compacted from 140 to 91 subtasks (50 phases kept, every acceptance criterion still cited) and grouped into milestones M1 to M5, each ending in a usable build; loop switches set to `mode: phase`, `autocommit: true`. Previous task lists in `.kiro/specs/*/.deprecated/tasks.md` and the previous orchestrator in `.kiro/.deprecated/orchestrator.md` for rollback. Awaiting owner review (gate G-APPROVE); the loop is paused.
+
+Approved 2026-10-23: owner approved the compacted task lists and milestones; G-APPROVE passed. Next session: run the loop for M1, M2 and M3 (set `paused: false`, start at PLT-1.1).
+
 Done 2026-10-13: fixture capture for gate G-CAPTURE: 63 en and 25 vi raw FAP pages under `ignore/fixtures-raw/` (12 mark sheets covering bonus, failed, retake, uneven, unscored, non-GPA, summary-only), deny list, committed route catalog `tools/fixtures/catalog.json`, splitter `tools/fixtures/split-capture.py`. G-SELECTORS partly answered offline: Jidox layout selectors and news columns confirmed; attendance with absences and transcript `bg-danger` still unobserved. Cloudflare challenged slow-paced reads; observations in [platform.md](../20-architecture/fap-v2/platform.md). Login page captured signed out; owner marked G-CAPTURE passed.
 
 Done 2026-10-11 (later): Cloudflare managed challenge identified as the cause of the 403s ([platform.md](../20-architecture/fap-v2/platform.md)); request budget and `challenge` error added to the specs. FAP news studied (600 items) and classification convention written ([news.md](../20-architecture/fap-v2/news.md), `data/news/news-rules.json`, `tools/news/`). Panel layout co-designed: `.kiro/specs/v2-panel-ux/` requirements and design, [decision 0003](../60-decisions/0003-v2-panel-ux-and-news.md). Owner approved the v2-grades, v2-info and v2-appearance requirements and the four designs.
@@ -57,8 +61,8 @@ Done 2026-10-04: scheduler comparison and v2.0.0 module feasibility ([record](in
 ## Last sync
 
 <!-- docs-scaffold:sync:start -->
-- last_sync: 2026-10-13T23:53:12+07:00
-- head: 6a7ba65
-- journal: 20261011-005835.md entry 009 hash e69d40e4e5daa1fe
+- last_sync: 2026-10-23T03:12:58+07:00
+- head: ecc1289
+- journal: 20261013-235533.md entry 004 hash cdb51a045c67c6f8
 - health: 0 error, 0 warn, 11 info
 <!-- docs-scaffold:sync:end -->

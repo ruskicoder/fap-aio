@@ -1,16 +1,16 @@
 # Implementation Plan
 
-Spec prefix `GRD`. Phases are numbered `N.`, subtasks `N.M`; the global id is `GRD-N` or `GRD-N.M`. Dependencies, gates and status live in the orchestrator: [`.kiro/orchestrator.md`](../../orchestrator.md). Requirement references point to `requirements.md` in this folder unless prefixed with a spec. The platform amendments apply: rubric entries come from the service worker (`data.rules`), exports use blob links, golden cases use synthetic marks.
+Spec prefix `GRD`. Phases are numbered `N.`, subtasks `N.M`; the global id is `GRD-N` or `GRD-N.M`. Dependencies, gates, milestones and status live in the orchestrator: [`.kiro/orchestrator.md`](../../orchestrator.md). Requirement references point to `requirements.md` in this folder unless prefixed with a spec. The platform amendments apply: rubric entries come from the service worker (`data.rules`), exports use blob links, golden cases use synthetic marks.
+
+Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the four calculation engines stay separate. The previous list is in [`.deprecated/tasks.md`](.deprecated/tasks.md).
 
 - [ ] 1. [GRD-1] Grade sources and parsers
-- [ ] 1.1 [GRD-1.1] Write the transcript parser and source
+- [ ] 1.1 [GRD-1.1] Write the transcript and term list parsers and sources
   - `src/features/grades/parse/transcript.ts`: the 10-column main table and the 7-column replaced table by position; status from badge class plus constants (`bg-danger` marked unverified); `-` grade as `null`; unknown status kept raw. Register `grades.transcript` (6 h).
-  - Tests on the vi and en transcript fixtures.
-  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
-- [ ] 1.2 [GRD-1.2] Write the term and course list parser and source
   - `grades.termCourses` from `#grade-report-term` and `#grade-report-course` options (6 h).
-  - _Requirements: 8.1, 8.2_
-- [ ] 1.3 [GRD-1.3] Port the mark sheet reader and source
+  - Tests on the vi and en transcript fixtures and the grade page fixture.
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 8.1, 8.2_
+- [ ] 1.2 [GRD-1.2] Port the mark sheet reader and source
   - TypeScript port of `rowsFromTable` from `tools/flm-scraper/marksheet.mjs` and the `.fap-result-card__*` header; register `grades.markSheet` as a partial (30 min).
   - Tests on the regular, resit and summary-only mark sheet fixtures.
   - _Requirements: 4.1, 4.5_
@@ -47,24 +47,20 @@ Spec prefix `GRD`. Phases are numbered `N.`, subtasks `N.M`; the global id is `G
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 4.9, 4.10_
 
 - [ ] 5. [GRD-5] Panel views
-- [ ] 5.1 [GRD-5.1] Build the Courses view
+- [ ] 5.1 [GRD-5.1] Build the Courses and GPA views
   - Grades, Courses: current-term courses with code, name, average, status, effective goal and required scores; failed first; refresh one course at a time when the cache is stale; course detail with components, marks, criteria, warnings and the FLM link; rubric date.
-  - _Requirements: 8.1, 8.2, 8.4, 8.5, 12.1_
-- [ ] 5.2 [GRD-5.2] Build the GPA view
   - Grades, GPA: cumulative and per-semester GPA, GPA goal and reachability, the replaced-subjects table as information only.
-  - _Requirements: 8.3, 2.4, 1.2_
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 12.1, 2.4, 1.2_
+- [ ] 5.2 [GRD-5.2] Register grade commands, search and Today provider
+  - Palette commands (open course, open GPA, open what-if), the `courses` search provider, the `gradeRisk` Today provider (failed or below goal), inbox alerts for grade failures and goal changes.
+  - _Requirements: panel-ux R3.1, R5.2, R6.1_
 - [ ] 5.3 [GRD-5.3] Build the What-if and Planner views
   - What-if: expected averages or component marks per in-progress course, hypothetical future courses, instant term and cumulative GPA, clear in one action, nothing persisted.
   - Planner: target GPA and remaining credits (default from `info.curriculum` not passed, minus the non-GPA list), needed average, unreachable handling.
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 10.1, 10.2, 10.3_
-- [ ] 5.4 [GRD-5.4] Register grade commands, search and Today provider
-  - Palette commands (open course, open GPA, open what-if), the `courses` search provider, the `gradeRisk` Today provider (failed or below goal), inbox alerts for grade failures and goal changes.
-  - _Requirements: panel-ux R3.1, R5.2, R6.1_
 
-- [ ] 6. [GRD-6] Export
-- [ ] 6.1 [GRD-6.1] Implement the exporter
+- [ ] 6. [GRD-6] Export and rubric guard
+- [ ] 6.1 [GRD-6.1] Implement the exporter and the rubric schema guard
   - CSV (UTF-8 with BOM) and JSON with transcript rows, per-semester and cumulative GPA, the non-GPA list used and the export date, downloaded through a blob link.
-  - _Requirements: 11.1, 11.2, 11.3; platform amendment (no `downloads`)_
-- [ ] 6.2 [GRD-6.2] Guard the rubric schema
   - Reject a `subject-rules` file whose schema major is not 1 unless a migration exists; show the rubric scrape date and the active data version.
-  - _Requirements: 12.1, 12.3; platform R5.4_
+  - _Requirements: 11.1, 11.2, 11.3, 12.1, 12.3; platform R5.4; platform amendment (no `downloads`)_

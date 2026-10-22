@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Task orchestrator checker for .kiro/orchestrator.md and .kiro/specs/*/tasks.md.
-// Commands: check (validate), next (next ready subtasks), waves (phase waves), status (progress per spec).
+// Commands: check (validate), next (next ready subtasks), waves (phase waves), status (progress per spec and milestone).
+// Order of work: milestone (M1 first), then wave, then spec order, then number.
 // Node standard library only. Read-only: it never edits the orchestrator or the task files.
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
@@ -12,6 +13,7 @@ const specsDir = join(root, '.kiro', 'specs');
 const SPEC_ORDER = ['PLT', 'CORE', 'PNL', 'GRD', 'INF', 'APP'];
 const STATUSES = new Set(['todo', 'doing', 'done', 'blocked', 'fix']);
 const GATE_STATUSES = new Set(['open', 'passed', 'waived']);
+const MILESTONE = /^M\d+$/;
 
 function section(md, heading) {
   const start = md.indexOf(`\n## ${heading}\n`);
@@ -71,6 +73,8 @@ function validate(s) {
     if (rows.has(r.id)) errors.push(`registry: duplicate id ${r.id}`);
     rows.set(r.id, r);
     if (!STATUSES.has(r.status)) errors.push(`registry: ${r.id} has unknown status "${r.status}"`);
+    if (!r.id.includes('.') && !MILESTONE.test(r.milestone ?? '')) errors.push(`registry: ${r.id} needs a milestone (M1, M2, ...)`);
+    if (r.id.includes('.') && r.milestone && r.milestone !== '-' && !MILESTONE.test(r.milestone)) errors.push(`registry: ${r.id} has invalid milestone "${r.milestone}"`);
   }
   const gateIds = new Set(s.gates.map((g) => g.gate));
   for (const g of s.gates) if (!GATE_STATUSES.has(g.status)) errors.push(`gates: ${g.gate} has unknown status "${g.status}"`);
@@ -127,7 +131,15 @@ function waves(s) {
   return wave;
 }
 
-const order = (a, b, wave) => (wave.get(a.phase) - wave.get(b.phase)) || (SPEC_ORDER.indexOf(a.spec) - SPEC_ORDER.indexOf(b.spec)) || (parseInt(a.phase.split('-')[1]) - parseInt(b.phase.split('-')[1])) || (parseInt(a.sub ?? 0) - parseInt(b.sub ?? 0));
+// Milestone of a task: its own registry row when that row names one, else its phase row.
+function milestoneOf(s, u) {
+  const rows = new Map(s.registry.map((r) => [r.id, r]));
+  const own = rows.get(u.id)?.milestone;
+  return own && own !== '-' ? own : rows.get(u.phase)?.milestone ?? 'M99';
+}
+const mnum = (m) => parseInt(String(m).slice(1)) || 99;
+
+const order = (a, b, wave) => (mnum(a.milestone) - mnum(b.milestone)) || (wave.get(a.phase) - wave.get(b.phase)) || (SPEC_ORDER.indexOf(a.spec) - SPEC_ORDER.indexOf(b.spec)) || (parseInt(a.phase.split('-')[1]) - parseInt(b.phase.split('-')[1])) || (parseInt(a.sub ?? 0) - parseInt(b.sub ?? 0));
 
 function next(s, limit = 5) {
   const wave = waves(s);
@@ -138,7 +150,7 @@ function next(s, limit = 5) {
   const ready = [];
   const waiting = [];
   for (const phase of [...rows.values()].filter((r) => !r.id.includes('.') && r.status !== 'done')) {
-    const subs = [...s.units.values()].filter((u) => u.phase === phase.id && u.sub && !u.done).sort((a, b) => order(a, b, wave));
+    const subs = [...s.units.values()].filter((u) => u.phase === phase.id && u.sub && !u.done).map((u) => ({ ...u, milestone: milestoneOf(s, u) })).sort((a, b) => (parseInt(a.sub) - parseInt(b.sub)));
     const u = subs[0];
     if (!u) continue;
     const deps = [...list(phase['depends on']), ...list(rows.get(u.id)?.['depends on'])].filter((d) => !isDone(d));
@@ -171,7 +183,7 @@ if (cmd === 'check') {
   console.log(`mode: ${s.control.mode ?? 'step'}${s.control.paused === 'true' ? ', paused: true (the loop stops; owner sets paused: false)' : ''}`);
   if (n.fixes.length) console.log(`open fixes: ${n.fixes.map((f) => `${f.fix} (${f.severity}, ${f.task})`).join('; ')}`);
   console.log('ready:');
-  for (const u of n.ready) console.log(`  ${u.id}  ${u.file}:${u.line}`);
+  for (const u of n.ready) console.log(`  ${u.id}  ${u.milestone}  ${u.file}:${u.line}`);
   if (!n.ready.length) console.log('  none');
   const gated = n.waiting.filter((u) => u.gates.length && !u.deps.length);
   if (gated.length) console.log(`waiting on gates: ${gated.map((u) => `${u.id} [${u.gates.join(', ')}]`).join('; ')}`);
@@ -179,6 +191,12 @@ if (cmd === 'check') {
   for (const spec of SPEC_ORDER) {
     const subs = [...s.units.values()].filter((u) => u.spec === spec && u.sub);
     console.log(`${spec.padEnd(5)} ${subs.filter((u) => u.done).length}/${subs.length} subtasks`);
+  }
+  const subs = [...s.units.values()].filter((u) => u.sub).map((u) => ({ ...u, milestone: milestoneOf(s, u) }));
+  for (const m of [...new Set(subs.map((u) => u.milestone))].sort((a, b) => mnum(a) - mnum(b))) {
+    const ms = subs.filter((u) => u.milestone === m);
+    const done = ms.filter((u) => u.done).length;
+    console.log(`${m.padEnd(5)} ${done}/${ms.length} subtasks${done === ms.length ? ' (complete: usable build)' : ''}`);
   }
 } else {
   console.log('usage: orchestrator.mjs check | next [n] | waves | status');
