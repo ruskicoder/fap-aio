@@ -48,12 +48,12 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - Unit tests: ordered steps, missing step, throwing step.
   - _Requirements: 4.3, 4.4; core R5.3, R5.4_
 
-- [ ] 4. [PLT-4] Shared request budget
+- [x] 4. [PLT-4] Shared request budget
 - [x] 4.1 [PLT-4.1] Implement the budget ledger
   - `src/background/budget.ts`: the `Ledger` in `chrome.storage.session` and the six-step `acquire` decision from the design (challenge, inflight lease of 15 s, 400 ms or 1.5 s gap, 30 per rolling 5 minutes, background cap 12 and user priority window of 5 s).
   - Unit tests with a fake clock for every step, including a service worker restart between grants.
   - _Requirements: 3.1, 3.2, 3.3, 3.6, 3.7_
-- [ ] 4.2 [PLT-4.2] Wire acquire, release, stop, resume and timer routing
+- [x] 4.2 [PLT-4.2] Wire acquire, release, stop, resume and timer routing
   - Handlers for `budget.acquire` and `budget.release`; `outcome: 'challenge'` sets `challenged` and broadcasts `reads.stop` to every known FAP tab; the next `tab-ready` clears it and broadcasts `reads.resume`.
   - `runOnFapTab(job)`: sends `timer.run` to `focusedTab`, falls back to the latest `tab-ready` sender, and skips when no FAP tab is open.
   - _Requirements: 3.4, 3.5, 3.8; core R11.2_

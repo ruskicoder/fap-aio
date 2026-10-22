@@ -84,7 +84,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | PLT-1 | Repository scaffold, manifest and CI | v2-platform | M1 | - | G-APPROVE | done |
 | PLT-2 | Message contract and service worker router | v2-platform | M1 | PLT-1 | - | done |
 | PLT-3 | Storage catalog, migrations and pruning | v2-platform | M1 | PLT-1 | - | done |
-| PLT-4 | Shared request budget | v2-platform | M1 | PLT-2, PLT-3 | - | doing |
+| PLT-4 | Shared request budget | v2-platform | M1 | PLT-2, PLT-3 | - | done |
 | PLT-5 | Test fixture pipeline | v2-platform | M1 | PLT-1 | - | doing |
 | PLT-5.1 | Anonymizer, deny-list check and committed fixtures | v2-platform | M1 | - | G-CAPTURE | todo |
 | PLT-6 | Packaged data and IndexedDB data service | v2-platform | M2 | PLT-2, PLT-3 | - | todo |
@@ -196,3 +196,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-23 | PLT-3.2 | src/shared/storage/migrations.ts (ordered steps per key and for cache:*, runMigrations on onInstalled update, discard on missing or throwing step with storage.discarded flag, readMigrated waits for the rewrite) | 35 tests pass | committed
 - 2026-10-23 | PLT-5.1 | tools/fixtures/anonymize.mjs and fields.json (linkedom, seeded and consistent per value, dates shifted by whole weeks, codes, rooms, logins and long numbers remapped per character, synthetic marks, same-length filler, vi and en labels kept, inline scripts and comments dropped), .githooks/pre-commit, 89 fixtures in test/fixtures | 40 tests incl. determinism and per-page element, class and attribute sets on all raw pages; deny-list check 89 files, 15 entries, no match | committed; owner enables the hook with git config core.hooksPath .githooks
 - 2026-10-23 | PLT-4.1 | src/background/budget.ts (ledger in storage.session, six-step acquire: challenge, 15 s lease, 400 ms or 1.5 s gap, 30 per rolling 5 min, background cap 12 and 5 s user priority; release, clearChallenge) | 8 fake-clock tests incl. restart | committed
+- 2026-10-23 | PLT-4.2 | budget-handlers.ts: budget.acquire and budget.release handlers, reads.stop broadcast on challenge, reads.resume on the next tab-ready, runOnFapTab to the focused or latest tab, skipped without a FAP tab | 50 tests pass | committed

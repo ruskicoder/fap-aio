@@ -31,9 +31,13 @@ const empty = (): Ledger => ({ grants: [], inflight: null, lastEndAt: 0, lastOut
 export class Budget {
   private chain: Promise<unknown> = Promise.resolve()
   constructor(
-    private area: chrome.storage.StorageArea = chrome.storage.session,
+    private areaOverride?: chrome.storage.StorageArea,
     private newId: () => string = () => crypto.randomUUID(),
   ) {}
+
+  private get area(): chrome.storage.StorageArea {
+    return this.areaOverride ?? chrome.storage.session
+  }
 
   private async load(): Promise<Ledger> {
     return ((await this.area.get(KEY))[KEY] as Ledger | undefined) ?? empty()
