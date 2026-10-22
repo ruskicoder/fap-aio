@@ -30,7 +30,7 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - `src/content/fap/parse/constants.ts`: normalized-text tables (lowercase, NFC, trimmed) for attendance and exam types, `verified: false` marks, unknown values kept raw and logged once.
   - Tests: registry cache and `layout-changed`; one test per constant entry in each culture.
   - _Requirements: 4.1, 4.2, 4.3, 2.2, 2.3, 2.4_
-- [ ] 3.2 [CORE-3.2] Write the timetable parser
+- [x] 3.2 [CORE-3.2] Write the timetable parser
   - Week dates from column headers and `data-reference-date`; rejection when the requested Monday is missing; `.fap-empty-state` as an empty week; cells read by class; slot from the row index; cells without a readable time counted as unreadable.
   - Tests on the vi and en week fixtures and the empty week; both cultures give the same records.
   - _Requirements: 2.5, 6.4, 6.5, 6.8, 6.10_
