@@ -97,7 +97,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | CORE-1 | Content bootstrap and page guard | v2-core-scheduler | M1 | PLT-2, PLT-5.1 | - | done |
 | CORE-2 | Read-only FAP access layer | v2-core-scheduler | M1 | CORE-1, PLT-4 | - | done |
 | CORE-3 | Source registry, constants and scheduler parsers | v2-core-scheduler | M1 | CORE-2, PLT-5.1 | - | todo |
-| CORE-4 | Panel host | v2-core-scheduler | M1 | CORE-1, PLT-3 | - | todo |
+| CORE-4 | Panel host | v2-core-scheduler | M1 | CORE-1, PLT-3 | - | done |
 | CORE-5 | Timetable and exam sync | v2-core-scheduler | M1 | CORE-3 | - | todo |
 | CORE-6 | Schedule views | v2-core-scheduler | M1 | CORE-5, PNL-2 | - | todo |
 | CORE-6.2 | Scheduler commands and Today providers | v2-core-scheduler | M2 | PNL-5, PNL-9 | - | todo |
@@ -201,3 +201,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-23 | CORE-1.1 | src/content/modules.ts (FeatureModule, addModule, mount and resume boot hooks), guard.ts (Jidox .wrapper .content-page, login form), bootstrap.ts (top frame, guard, settings via readMigrated, mount, module sources, views and page hooks, resume, tab-ready) | 56 tests incl. home, vi timetable, login and 404 fixtures | committed
 - 2026-10-23 | CORE-2.1 | src/content/fap/access.ts: fapGet and fapGetJson, GET only with no method parameter, site-relative paths only, same-origin credentials, partial header, 12 s timeout, mapping to session-expired, feedback-required, unavailable, challenge, forbidden, network with one retry after 1.5 s | 11 mocked-fetch tests, 67 total | committed
 - 2026-10-23 | CORE-2.2 | src/content/fap/queue.ts: per-tab FapQueue (one at a time, budget.acquire with user or background priority, waits on wait replies, budget.release with outcome, local stop on challenge, reads.stop and reads.resume wired at bootstrap, observable waiting state), queuedGet and queuedGetJson | 72 tests pass | committed
+- 2026-10-23 | CORE-4.1 | panel host: #fap-aio-root, open shadow root, Tailwind compiled with ?inline and adopted with replaceSync, :host all: initial and z-index 2147483000, host positioned through CSSOM, React root registered as the mount hook; header drag with clamping, resize clamping, minimize to a 40 px handle; PanelState v2 zod schema and Route in src/shared/panel-state.ts, 250 ms debounced writes; build now defines NODE_ENV so React ships its production build (content bundle 548 to 218 kB) | 76 tests incl. happy-dom: no style element in the page, computed style unchanged, clamping after resize | committed

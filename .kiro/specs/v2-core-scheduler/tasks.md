@@ -39,8 +39,8 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Register `timetable.week` and `exam.list`.
   - _Requirements: 4.4, 7.1, 7.4, 7.5_
 
-- [ ] 4. [CORE-4] Panel host
-- [ ] 4.1 [CORE-4.1] Create the Shadow DOM host with drag, clamping and minimize
+- [x] 4. [CORE-4] Panel host
+- [x] 4.1 [CORE-4.1] Create the Shadow DOM host with drag, clamping and minimize
   - `src/content/panel/host.ts`: `#fap-aio-root` on `document.body`, open shadow root, `all: initial`, z-index 2147483000, the compiled Tailwind CSS imported with `?inline` and adopted with `replaceSync`, React root; registers itself as the bootstrap's panel mount hook.
   - Pointer-event drag on the header, viewport clamping on drag and on `resize`, a minimize handle restored by click or Enter.
   - `src/shared/panel-state.ts`: the `PanelState` v2 zod schema from the panel-ux design, written through the catalog with a 250 ms debounce (the v1 migration and prefs come in PNL-1.1).

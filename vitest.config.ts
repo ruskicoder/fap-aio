@@ -5,6 +5,7 @@ export default defineConfig({
   resolve: { alias: { '@': resolve(__dirname, 'src') } },
   test: {
     include: ['test/**/*.test.ts', 'test/**/*.test.tsx', 'tools/**/*.test.mjs'],
+    css: false,
     environment: 'node',
   },
 })
