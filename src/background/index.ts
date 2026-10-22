@@ -1,9 +1,11 @@
 import { runMigrations } from '../shared/storage/migrations'
+import { registerMigrationSteps } from '../shared/storage/steps'
 import { installRouter } from './router'
 import { installTabs } from './tabs'
 import { installStatus } from './status'
 import { installBudget } from './budget-handlers'
 
+registerMigrationSteps()
 installRouter()
 installTabs()
 installStatus()

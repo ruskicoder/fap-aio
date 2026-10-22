@@ -106,7 +106,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | CORE-9 | Session keep-alive | v2-core-scheduler | M3 | CORE-2, PLT-4, PNL-6, CORE-11 | - | todo |
 | CORE-10 | Legacy storage cleanup | v2-core-scheduler | M3 | CORE-4, PNL-8.1 | - | todo |
 | CORE-11 | Settings and data controls | v2-core-scheduler | M3 | PNL-8.1, PLT-6 | - | todo |
-| PNL-1 | Panel state and shell | v2-panel-ux | M1 | CORE-4 | - | todo |
+| PNL-1 | Panel state and shell | v2-panel-ux | M1 | CORE-4 | - | doing |
 | PNL-1.2 | Status strip | v2-panel-ux | M1 | CORE-2 | - | todo |
 | PNL-2 | Navigation: router, tabs, sub-views and view registry | v2-panel-ux | M1 | PNL-1 | - | todo |
 | PNL-3 | Visual system and accessibility | v2-panel-ux | M2 | PNL-2, APP-1 | - | todo |
@@ -205,3 +205,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-23 | CORE-3.1 | src/content/fap/registry.ts (register, read with force and priority, cache:<id> keyed by params with fetchedAt, peek, LayoutChangedError to layout-changed naming the source, last good copy kept), parse/constants.ts (normalized vi and en attendance table with verified marks, unknown kept raw and logged once) | 93 tests incl. one per constant entry per culture | committed
 - 2026-10-23 | CORE-3.2 | parse/timetable.ts: week dates from dd/MM headers with the year nearest the requested Monday (the partial carries no year), rejection when the requested Monday is missing (WeekResult.rejected), .fap-empty-state as an empty week, cells read by class and icon (ri-time-line, ri-map-pin-line, ri-user-line, ri-wifi-off-line, ri-bookmark-line), slot from the row header with the row index as fallback, unreadable count; shared/dates.ts; scheduler types | 100 tests incl. en and vi giving the same records | committed
 - 2026-10-23 | CORE-3.3 | parse/exams.ts (table.fap-sheet by position; nine columns observed with Exam format, eight still accepted; FE, PE, 2NDFE, 2NDPE, other; empty, - or TBA room as null; past from the Vietnam date), scheduler sources timetable.week and exam.list registered by the scheduler module | 104 tests incl. vi and en giving the same ids | committed
+- 2026-10-23 | PNL-1.1 | PanelShell (header with handle, palette button, bell with unread count, dock toggle, gear menu Theme, Settings, Help, Shortcuts, minimize; floating resize grip within 320 to 720 by 360 to viewport height; docked full height on the right; pill and 48 px rail), panel.toggle wired to collapse, PanelPrefs under panel.prefs, panel.state v1 to v2 migration step registered in the service worker | 110 tests | committed

@@ -7,6 +7,8 @@ import css from './panel.css?inline'
 import { PanelApp } from './PanelApp'
 import { loadPanelState } from './store'
 import { onBoot } from '../modules'
+import { onMessage } from '../../shared/call'
+import type { PanelState } from '../../shared/panel-state'
 
 export const HOST_ID = 'fap-aio-root'
 
@@ -30,7 +32,10 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   doc.body.appendChild(host)
   const initial = await loadPanelState({ width: window.innerWidth, height: window.innerHeight })
   const root = createRoot(mountPoint)
-  root.render(createElement(PanelApp, { initial, host }))
+  let updater: ((fn: (s: PanelState) => PanelState) => void) | null = null
+  root.render(createElement(PanelApp, { initial, host, bind: (u) => { updater = u } }))
+  // Toolbar button and the toggle-panel command (panel-ux R7.1).
+  onMessage('panel.toggle', () => updater?.((s) => ({ ...s, collapsed: !s.collapsed })))
   return { host, shadow, root }
 }
 
