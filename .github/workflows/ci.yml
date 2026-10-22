@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - name: Fixture deny-list check
+        env:
+          FIXTURE_DENYLIST: ${{ secrets.FIXTURE_DENYLIST }}
+        run: |
+          if [ -n "$FIXTURE_DENYLIST" ]; then
+            list="$RUNNER_TEMP/fixture-denylist.txt"
+            printf '%s\n' "$FIXTURE_DENYLIST" > "$list"
+            FIXTURE_DENYLIST_FILE="$list" npm run check:fixtures
+          else
+            echo "notice: FIXTURE_DENYLIST secret not set; fixture check skipped"
+          fi
+      - run: npm run build
+      - name: npm audit (report only)
+        continue-on-error: true
+        run: npm audit --audit-level=high

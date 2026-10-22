@@ -4,7 +4,7 @@ Spec prefix `PLT`. Phases are numbered `N.`, subtasks `N.M`; the global id is `P
 
 Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the previous list is in [`.deprecated/tasks.md`](.deprecated/tasks.md).
 
-- [ ] 1. [PLT-1] Repository scaffold, manifest and CI
+- [x] 1. [PLT-1] Repository scaffold, manifest and CI
 - [x] 1.1 [PLT-1.1] Create the toolchain, manifest, entry points and key tool
   - `package.json` with exact versions: Vite 5, `@crxjs/vite-plugin` 2, React 18, TypeScript strict, Tailwind 3, ESLint, Vitest, zod, linkedom (dev); `.nvmrc` with Node 22 LTS; `package-lock.json` committed.
   - Scripts: `typecheck`, `lint`, `test`, `build`, `zip`, `check:version`, `check:fixtures`.
@@ -14,7 +14,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - `tools/release/extension-key.mjs`: generates an RSA 2048 key pair with Node's `crypto`, writes the private key to `ignore/keys/extension-key.pem`, writes the base64 SPKI public key to `src/manifest-key.txt` and prints the resulting extension id.
   - A unit test that reads the built manifest and fails on any forbidden key (`downloads`, `tabs`, `scripting`, `<all_urls>`, `externally_connectable`, `web_accessible_resources`, a `content_security_policy` override).
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.8, 7.5, 9.5 (design: stable extension id)_
-- [ ] 1.2 [PLT-1.2] Add `.github/workflows/ci.yml`
+- [x] 1.2 [PLT-1.2] Add `.github/workflows/ci.yml`
   - On `pull_request` and `push`: `npm ci`, typecheck, lint, test, `check:fixtures`, build, then `npm audit --audit-level=high` as a non-failing step.
   - ESLint rules: `no-eval`, `no-implied-eval`, `no-new-func`; `no-restricted-globals` for `localStorage` and `sessionStorage` outside `src/features/legacy/`.
   - _Requirements: 7.5, 9.1, 4.7_
