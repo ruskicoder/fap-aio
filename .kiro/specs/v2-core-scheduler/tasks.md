@@ -11,14 +11,14 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Tests on the committed fixtures of the home page, the login page and a 404 page.
   - _Requirements: 1.1, 1.7, 4.1; platform R2.4_
 
-- [ ] 2. [CORE-2] Read-only FAP access layer
+- [x] 2. [CORE-2] Read-only FAP access layer
 - [x] 2.1 [CORE-2.1] Implement `fapGet` and its error mapping
   - `src/content/fap/access.ts`: GET only (no method parameter), `credentials: 'same-origin'`, `X-Requested-With` for partials, 12 s timeout.
   - Maps login redirect or login form to `session-expired`, `X-Feedback-Required: 1` to `feedback-required`, 404 to `unavailable`, 403 with `cf-mitigated: challenge` to `challenge`, other 403 to `forbidden`; one network retry after 1.5 s.
   - `fapGetJson` for JSON routes with the same mapping.
   - Tests with a mocked `fetch` for every mapping.
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
-- [ ] 2.2 [CORE-2.2] Add the per-tab queue and budget grant
+- [x] 2.2 [CORE-2.2] Add the per-tab queue and budget grant
   - One queue per tab; before each request `call({ type: 'budget.acquire' })` with `user` or `background` priority, waiting on `wait` replies; `budget.release` with the outcome after the response.
   - On `reads.stop` reject queued work with `challenge`; on `reads.resume` accept work again.
   - Expose the waiting state (remaining budget, wait time) for the status strip.

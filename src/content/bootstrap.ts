@@ -4,6 +4,7 @@ import { isAuthenticatedPage } from './guard'
 import { bootHooks, modules, type PageContext } from './modules'
 import { announceReady } from './tab'
 import { readMigrated } from '../shared/storage/migrations'
+import { wireQueue } from './fap/queue'
 
 export type BootResult = 'not-top-frame' | 'not-authenticated' | 'ready'
 
@@ -12,6 +13,7 @@ export async function bootstrap(win: Window = window): Promise<BootResult> {
   const doc = win.document
   if (!isAuthenticatedPage(doc)) return 'not-authenticated'
   const ctx: PageContext = { path: win.location.pathname, doc }
+  wireQueue()
   await readMigrated('settings')
   for (const h of bootHooks.mount) await h(ctx)
   for (const m of modules) {
