@@ -19,7 +19,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - ESLint rules: `no-eval`, `no-implied-eval`, `no-new-func`; `no-restricted-globals` for `localStorage` and `sessionStorage` outside `src/features/legacy/`.
   - _Requirements: 7.5, 9.1, 4.7_
 
-- [ ] 2. [PLT-2] Message contract and service worker router
+- [x] 2. [PLT-2] Message contract and service worker router
 - [x] 2.1 [PLT-2.1] Define `src/shared/messages.ts` and the content-script client
   - The `Msg` union and `Reply<T>` from the design, protocol version 1, with one zod schema per message type and a per-type timeout table (default 10 s; `perm.request` 120 s; `flm.refresh` 60 s).
   - `src/shared/call.ts`: `call(msg, timeoutMs?)` returning `Reply<T>`, with `{ kind: 'timeout' }` on no reply; a typed `onMessage` subscription for service-worker-to-tab messages.
@@ -30,7 +30,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - Invalid messages are dropped and counted in `diag.counters`.
   - Unit tests with forged senders (other origin, sub-frame, other extension id).
   - _Requirements: 2.2, 2.3, 2.4_
-- [ ] 2.3 [PLT-2.3] Track FAP tabs, toolbar action and global command
+- [x] 2.3 [PLT-2.3] Track FAP tabs, toolbar action and global command
   - Content side: send `tab-ready` after bootstrap and `tab-focus` on `focus` and visible `visibilitychange`.
   - Service worker: keep known FAP tabs and `focusedTab`; the toolbar action sends `panel.toggle` to an active FAP tab or opens `https://fap.fpt.edu.vn/`; `chrome.commands` `toggle-panel` sends `panel.toggle`; `commands.list` returns `chrome.commands.getAll()`.
   - _Requirements: 3.8, 1.5; panel-ux R7.1, R7.4_

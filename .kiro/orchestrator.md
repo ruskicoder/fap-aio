@@ -82,7 +82,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | ID | Title | Spec | Milestone | Depends on | Gates | Status |
 |---|---|---|---|---|---|---|
 | PLT-1 | Repository scaffold, manifest and CI | v2-platform | M1 | - | G-APPROVE | done |
-| PLT-2 | Message contract and service worker router | v2-platform | M1 | PLT-1 | - | doing |
+| PLT-2 | Message contract and service worker router | v2-platform | M1 | PLT-1 | - | done |
 | PLT-3 | Storage catalog, migrations and pruning | v2-platform | M1 | PLT-1 | - | todo |
 | PLT-4 | Shared request budget | v2-platform | M1 | PLT-2, PLT-3 | - | todo |
 | PLT-5 | Test fixture pipeline | v2-platform | M1 | PLT-1 | - | todo |
@@ -191,3 +191,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-23 | PLT-1.2 | ci.yml (npm ci, typecheck, lint, test, deny-list check from secret FIXTURE_DENYLIST, build, report-only audit); ESLint no-eval, no-implied-eval, no-new-func, FAP localStorage and sessionStorage restricted outside src/features/legacy | lint rejects a probe file with all three; lint clean | committed
 - 2026-10-23 | PLT-2.1 | src/shared/messages.ts (zod discriminated union, protocol 1, strict shapes, timeout table; adds data.clearCaches for core R5.5), src/shared/call.ts (call with timeout, typed onMessage), test/helpers/fake-chrome.ts | typecheck, lint, 11 tests pass | committed
 - 2026-10-23 | PLT-2.2 | src/background/router.ts (sender id, FAP origin, frameId 0, grant.html only for perm.result, zod validation, typed errors), diag counters, wired in the service worker entry | 16 tests pass incl. forged origin, sub-frame, other extension, lookalike host | committed
+- 2026-10-23 | PLT-2.3 | background/tabs.ts (known tabs and focused tab in storage.session, targetTab, broadcast, toolbar action, toggle-panel command, commands.list), content/tab.ts (tab-ready, tab-focus) | 19 tests pass | committed
