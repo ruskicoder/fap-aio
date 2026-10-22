@@ -36,7 +36,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - _Requirements: 3.8, 1.5; panel-ux R7.1, R7.4_
 
 - [ ] 3. [PLT-3] Storage catalog, migrations and pruning
-- [ ] 3.1 [PLT-3.1] Implement the storage catalog with pruning and usage
+- [x] 3.1 [PLT-3.1] Implement the storage catalog with pruning and usage
   - `src/shared/storage/catalog.ts`: one typed entry per key in the design's catalog (owner, version, retention), `Versioned<T>`, and typed `read(key)`, `write(key, value)` and `subscribe(key)` built on `chrome.storage.local` and `storage.onChanged`.
   - Age and count limits per catalog entry applied inside `write`: alerts (200 or 60 days), timetable and exams (400 days), cache (30 days), news seen (30 days).
   - `data.status` includes `getBytesInUse` per key and `navigator.storage.estimate()` for IndexedDB.
