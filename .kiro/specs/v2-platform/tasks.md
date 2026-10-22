@@ -5,7 +5,7 @@ Spec prefix `PLT`. Phases are numbered `N.`, subtasks `N.M`; the global id is `P
 Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the previous list is in [`.deprecated/tasks.md`](.deprecated/tasks.md).
 
 - [ ] 1. [PLT-1] Repository scaffold, manifest and CI
-- [ ] 1.1 [PLT-1.1] Create the toolchain, manifest, entry points and key tool
+- [x] 1.1 [PLT-1.1] Create the toolchain, manifest, entry points and key tool
   - `package.json` with exact versions: Vite 5, `@crxjs/vite-plugin` 2, React 18, TypeScript strict, Tailwind 3, ESLint, Vitest, zod, linkedom (dev); `.nvmrc` with Node 22 LTS; `package-lock.json` committed.
   - Scripts: `typecheck`, `lint`, `test`, `build`, `zip`, `check:version`, `check:fixtures`.
   - Source layout: `src/background/`, `src/content/`, `src/features/`, `src/shared/`, `src/pages/grant/`, `test/`.
