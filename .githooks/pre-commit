@@ -1,0 +1,3 @@
+#!/bin/sh
+# Fixture deny-list check (platform R8.3). Enable once per clone: git config core.hooksPath .githooks
+exec node tools/fixtures/check-denylist.mjs

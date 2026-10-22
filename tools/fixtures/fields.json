@@ -1,0 +1,256 @@
+{
+  "about": "Anonymizer rules (platform R8.1, R8.2). Modes: raw keeps text as is; label (title attributes and the selectors below) keeps letter-only words (dates shift, numbers of 3 or more digits and codes are replaced); mark replaces numbers with synthetic marks 0 to 10; every other text node uses text mode, which also replaces letter words with same-length filler unless listed below.",
+  "selectors": [
+    {
+      "select": "table.student-mark-sheet td.mark-score:nth-last-child(2)",
+      "mode": "mark"
+    },
+    {
+      "select": ".grade-average",
+      "mode": "mark"
+    },
+    {
+      "select": "table.fap-sheet td .badge.bg-success",
+      "mode": "mark"
+    },
+    {
+      "select": "table.student-mark-sheet td.mark-score",
+      "mode": "raw"
+    },
+    {
+      "select": "table.student-mark-sheet td:nth-last-child(4)",
+      "mode": "label"
+    },
+    {
+      "select": "th",
+      "mode": "label"
+    },
+    {
+      "select": "thead",
+      "mode": "label"
+    },
+    {
+      "select": ".badge",
+      "mode": "label"
+    },
+    {
+      "select": ".weekly-timetable-attendance-status",
+      "mode": "label"
+    },
+    {
+      "select": "[class*=\"attendance-status--\"]",
+      "mode": "label"
+    },
+    {
+      "select": ".grade-status",
+      "mode": "label"
+    },
+    {
+      "select": "[title=\"Online\"]",
+      "mode": "label"
+    },
+    {
+      "select": "[title=\"Slot\"]",
+      "mode": "label"
+    },
+    {
+      "select": ".sheet-group-cell",
+      "mode": "label"
+    },
+    {
+      "select": "label",
+      "mode": "label"
+    },
+    {
+      "select": "button",
+      "mode": "label"
+    },
+    {
+      "select": ".fap-detail-field__label",
+      "mode": "label"
+    },
+    {
+      "select": ".fap-page-title__crumb-item",
+      "mode": "label"
+    },
+    {
+      "select": ".fap-empty-state",
+      "mode": "label"
+    },
+    {
+      "select": ".side-nav-link",
+      "mode": "label"
+    },
+    {
+      "select": ".side-nav-title",
+      "mode": "label"
+    }
+  ],
+  "labelAttributes": [
+    "title"
+  ],
+  "textAttributes": [
+    "alt",
+    "placeholder",
+    "aria-label",
+    "value",
+    "content",
+    "data-*"
+  ],
+  "keepAttributes": [
+    "class",
+    "id",
+    "name",
+    "type",
+    "role",
+    "scope",
+    "rowspan",
+    "colspan",
+    "style",
+    "for",
+    "rel",
+    "method",
+    "tabindex",
+    "width",
+    "height",
+    "lang",
+    "dir",
+    "charset",
+    "http-equiv",
+    "data-bs-toggle",
+    "data-bs-target",
+    "data-bs-dismiss",
+    "data-bs-placement",
+    "aria-hidden",
+    "aria-expanded",
+    "aria-controls",
+    "aria-labelledby",
+    "aria-describedby",
+    "aria-current",
+    "aria-selected",
+    "selected",
+    "checked",
+    "disabled",
+    "hidden",
+    "async",
+    "defer",
+    "crossorigin",
+    "integrity",
+    "autocomplete",
+    "target",
+    "min",
+    "max",
+    "step",
+    "maxlength",
+    "multiple",
+    "required",
+    "readonly",
+    "colspan",
+    "nonce",
+    "data-culture",
+    "data-report-term-param",
+    "data-report-course-param",
+    "data-label",
+    "data-home-slot",
+    "data-bs-auto-close",
+    "data-simplebar",
+    "data-load-payment",
+    "data-has-pinned",
+    "data-searching",
+    "data-required"
+  ],
+  "keepExact": [
+    "Present",
+    "Absent",
+    "Not yet",
+    "Not taken",
+    "Attendance exempt",
+    "Có mặt",
+    "Vắng mặt",
+    "Vắng",
+    "Chưa điểm danh",
+    "Miễn điểm danh",
+    "Passed",
+    "Not passed",
+    "Failed",
+    "In progress",
+    "Studying",
+    "Exempt",
+    "Đạt",
+    "Không đạt",
+    "Đang học",
+    "Trượt",
+    "Miễn",
+    "Online",
+    "Offline",
+    "Total",
+    "Course total",
+    "Average",
+    "Status",
+    "Slot",
+    "Mark group",
+    "Mark name",
+    "Weight (%)",
+    "Final mark",
+    "Comment"
+  ],
+  "keepWords": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun",
+    "Thứ",
+    "Chủ",
+    "nhật",
+    "Slot",
+    "Total",
+    "Online",
+    "Offline",
+    "FE",
+    "PE",
+    "RE",
+    "2NDFE",
+    "2NDPE",
+    "TBA",
+    "Present",
+    "Absent",
+    "Passed",
+    "Failed",
+    "Exempt",
+    "Studying",
+    "Average",
+    "Status",
+    "Spring",
+    "Summer",
+    "Fall",
+    "Half1",
+    "Half2",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+    "Hai",
+    "Ba",
+    "Tư",
+    "Năm",
+    "Sáu",
+    "Bảy"
+  ],
+  "keepPrefixes": [
+    "GDQP",
+    "ENT",
+    "VOV",
+    "TRS",
+    "TMI",
+    "LAB",
+    "OJS",
+    "OJT",
+    "SYB"
+  ]
+}

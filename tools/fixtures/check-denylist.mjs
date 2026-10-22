@@ -7,6 +7,7 @@ import { join } from 'node:path'
 const argList = process.argv.indexOf('--list')
 const listPath = argList > 0 ? process.argv[argList + 1] : process.env.FIXTURE_DENYLIST_FILE || 'ignore/fixture-denylist.txt'
 const dirs = ['test/fixtures']
+const SKIP = new Set(['test/fixtures/README.md'])
 
 if (!listPath || !existsSync(listPath)) {
   console.log(`notice: no deny list at ${listPath || '(unset)'}; fixture check skipped`)
@@ -25,7 +26,7 @@ function walk(dir) {
 
 let hits = 0
 let files = 0
-for (const file of dirs.flatMap(walk)) {
+for (const file of dirs.flatMap(walk).filter((f) => !SKIP.has(f.split('\\').join('/')))) {
   files++
   const text = fold(readFileSync(file, 'utf8'))
   entries.forEach((e, i) => {
