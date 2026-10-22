@@ -25,7 +25,7 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - _Requirements: 3.8; platform R3.1, R3.4, R3.5, R3.9_
 
 - [ ] 3. [CORE-3] Source registry, constants and scheduler parsers
-- [ ] 3.1 [CORE-3.1] Implement the source registry and the vi and en constant tables
+- [x] 3.1 [CORE-3.1] Implement the source registry and the vi and en constant tables
   - `src/content/fap/registry.ts`: `register`, `read` with `force`, cache in `cache:<sourceId>` keyed by params with `fetchedAt`, parser exceptions mapped to `layout-changed` naming the source, last good copy kept.
   - `src/content/fap/parse/constants.ts`: normalized-text tables (lowercase, NFC, trimmed) for attendance and exam types, `verified: false` marks, unknown values kept raw and logged once.
   - Tests: registry cache and `layout-changed`; one test per constant entry in each culture.
