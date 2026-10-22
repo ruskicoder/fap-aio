@@ -24,7 +24,7 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Expose the waiting state (remaining budget, wait time) for the status strip.
   - _Requirements: 3.8; platform R3.1, R3.4, R3.5, R3.9_
 
-- [ ] 3. [CORE-3] Source registry, constants and scheduler parsers
+- [x] 3. [CORE-3] Source registry, constants and scheduler parsers
 - [x] 3.1 [CORE-3.1] Implement the source registry and the vi and en constant tables
   - `src/content/fap/registry.ts`: `register`, `read` with `force`, cache in `cache:<sourceId>` keyed by params with `fetchedAt`, parser exceptions mapped to `layout-changed` naming the source, last good copy kept.
   - `src/content/fap/parse/constants.ts`: normalized-text tables (lowercase, NFC, trimmed) for attendance and exam types, `verified: false` marks, unknown values kept raw and logged once.
@@ -34,7 +34,7 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Week dates from column headers and `data-reference-date`; rejection when the requested Monday is missing; `.fap-empty-state` as an empty week; cells read by class; slot from the row index; cells without a readable time counted as unreadable.
   - Tests on the vi and en week fixtures and the empty week; both cultures give the same records.
   - _Requirements: 2.5, 6.4, 6.5, 6.8, 6.10_
-- [ ] 3.3 [CORE-3.3] Write the exam parser and register both sources
+- [x] 3.3 [CORE-3.3] Write the exam parser and register both sources
   - `table.fap-sheet` on `/ExamSchedule` by column position; type mapping FE, PE, 2NDFE, 2NDPE, other; empty, `-` or `TBA` room as `null`.
   - Register `timetable.week` and `exam.list`.
   - _Requirements: 4.4, 7.1, 7.4, 7.5_
