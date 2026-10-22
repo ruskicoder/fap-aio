@@ -1,3 +1,3 @@
-import { announceReady } from './tab'
+import { bootstrap } from './bootstrap'
 
-if (window.top === window) announceReady()
+void bootstrap()

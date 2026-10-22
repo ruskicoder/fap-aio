@@ -4,8 +4,8 @@ Spec prefix `CORE`. Phases are numbered `N.`, subtasks `N.M`; the global id is `
 
 Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the previous list is in [`.deprecated/tasks.md`](.deprecated/tasks.md).
 
-- [ ] 1. [CORE-1] Content bootstrap and page guard
-- [ ] 1.1 [CORE-1.1] Define the feature module contract and the bootstrap
+- [x] 1. [CORE-1] Content bootstrap and page guard
+- [x] 1.1 [CORE-1.1] Define the feature module contract and the bootstrap
   - `src/content/modules.ts`: the `FeatureModule` interface (`id`, `registerSources`, `views`, `onPage`) and a module list the bootstrap iterates.
   - `src/content/index.ts`: top-frame check, structural page guard (no `.content-page` in the Jidox wrapper, or the login form present, or a 404 page) that skips mounting, load settings, call the panel mount hook (a no-op until CORE-4 registers the panel host), register modules, resume a range sync job, then send `tab-ready`.
   - Tests on the committed fixtures of the home page, the login page and a 404 page.
