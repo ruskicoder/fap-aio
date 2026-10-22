@@ -4,12 +4,12 @@ Spec prefix `PNL`. Phases are numbered `N.`, subtasks `N.M`; the global id is `P
 
 Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the previous list is in [`.deprecated/tasks.md`](.deprecated/tasks.md).
 
-- [ ] 1. [PNL-1] Panel state and shell
+- [x] 1. [PNL-1] Panel state and shell
 - [x] 1.1 [PNL-1.1] Add the `PanelState` migration and build `PanelShell`
   - `PanelPrefs` and the migration from `PanelState` v1 (x, y, width, height, minimized, view) to the v2 schema defined in CORE-4.1 (mode, floating rectangle, docked width, collapsed, route, density).
   - Header with drag handle and title, palette button, bell with unread count, dock toggle, gear menu (Theme, Settings, Help, Shortcuts) and minimize; floating resize with the size limits; pill (floating) and 48 px rail (docked) collapsed states.
   - _Requirements: 1.1, 1.4, 1.6, 1.7, 1.8, 2.3; core R1.4_
-- [ ] 1.2 [PNL-1.2] Add the status strip
+- [x] 1.2 [PNL-1.2] Add the status strip
   - Last sync of the current tab's main source, running job progress, the budget wait state from the access layer, the "Syncing data" and data version state from `data.progress`, and the challenge reload banner.
   - _Requirements: 3.4; platform R3.9, R5.5; core error table_
 

@@ -58,6 +58,8 @@ Done 2026-10-05: owner decisions recorded in [decision 0001](../60-decisions/000
 
 Done 2026-10-04: scheduler comparison and v2.0.0 module feasibility ([record](investigations/2026-10-04-scheduler-comparison-and-v2-scope.md)). Third-party FPTU Schedule 4.0.0 analyzed ([record](investigations/2026-10-04-fptu-schedule-extension.md)). Five student data domains verified at field level in [data-model.md](../20-architecture/fap-v2/data-model.md). `chrome-devtools` MCP attached to the owner's Chrome; page scripts, globals, DOM events and the function-to-endpoint matrix recorded in [scripts.md](../20-architecture/fap-v2/scripts.md).
 
+Done 2026-10-23 (loop session 1): owner set `paused: false` and asked for M1 to M3. Completed PLT-1 to PLT-5, CORE-1 to CORE-4, CORE-3, PNL-1 (22 subtasks, 114 tests, one commit each on `version2/scaffold`). Findings: CRXJS adds `web_accessible_resources` for content scripts unless they are built as standalone IIFE bundles (now configured); the IIFE build needs `process.env.NODE_ENV` defined or React ships its dev build; FAP's exam table has nine columns (an Exam format column), and the week partial carries no year. Paused at about 85% of the plan's 5-hour window; next: PNL-2.1, then CORE-5.1.
+
 ## Last sync
 
 <!-- docs-scaffold:sync:start -->

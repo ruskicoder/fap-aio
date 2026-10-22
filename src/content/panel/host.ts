@@ -5,6 +5,7 @@ import { createElement } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import css from './panel.css?inline'
 import { PanelApp } from './PanelApp'
+import { StatusStrip } from './StatusStrip'
 import { loadPanelState } from './store'
 import { onBoot } from '../modules'
 import { onMessage } from '../../shared/call'
@@ -33,7 +34,7 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   const initial = await loadPanelState({ width: window.innerWidth, height: window.innerHeight })
   const root = createRoot(mountPoint)
   let updater: ((fn: (s: PanelState) => PanelState) => void) | null = null
-  root.render(createElement(PanelApp, { initial, host, bind: (u) => { updater = u } }))
+  root.render(createElement(PanelApp, { initial, host, bind: (u) => { updater = u } }, createElement('div', { className: 'min-h-0 flex-1 overflow-auto' }), createElement(StatusStrip)))
   // Toolbar button and the toggle-panel command (panel-ux R7.1).
   onMessage('panel.toggle', () => updater?.((s) => ({ ...s, collapsed: !s.collapsed })))
   return { host, shadow, root }
