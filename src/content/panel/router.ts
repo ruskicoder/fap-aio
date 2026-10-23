@@ -26,7 +26,8 @@ export class PanelRouter {
 
   go(r: Route, opts: { source?: RouteSource } = {}): void {
     if (JSON.stringify(r) === JSON.stringify(this.route)) return
-    if (isOverlay(r) || isOverlay(this.route) || opts.source === 'deeplink') this.stack.push(this.route)
+    if (opts.source === 'page') this.stack = []
+    else if (isOverlay(r) || isOverlay(this.route) || opts.source === 'deeplink') this.stack.push(this.route)
     else this.stack = []
     this.set(r, opts.source ?? 'user')
   }

@@ -13,12 +13,12 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - Last sync of the current tab's main source, running job progress, the budget wait state from the access layer, the "Syncing data" and data version state from `data.progress`, and the challenge reload banner.
   - _Requirements: 3.4; platform R3.9, R5.5; core error table_
 
-- [ ] 2. [PNL-2] Navigation: router, tabs, sub-views and view registry
+- [x] 2. [PNL-2] Navigation: router, tabs, sub-views and view registry
 - [x] 2.1 [PNL-2.1] Implement `PanelRouter`, the view registry and `ViewOutlet`
   - The `Route` type, `go`, `back`, persistence in `panel.state.route`, overlay routes for Theme, Settings, Help and Shortcuts with a back control.
   - `ViewDef` with lazy components and count callbacks; the previous view stays mounted until the next is ready; skeletons, not spinners; an inline "Try again" when a chunk fails.
   - _Requirements: 2.4, 1.8, 10.6_
-- [ ] 2.2 [PNL-2.2] Build the tab bar, segmented sub-views and the page-aware map
+- [x] 2.2 [PNL-2.2] Build the tab bar, segmented sub-views and the page-aware map
   - Four tabs with icons and one-word labels in sentence case; APG manual activation (arrows, Home, End, Enter, Space; click activates); segmented sub-view control with counts.
   - Pathname table to routes, the course from `#grade-report-course`, applied once per page load when the setting is on; a manual pick wins until the next load.
   - _Requirements: 2.1, 2.2, 2.5, 4.1, 4.2, 4.3; core R1.8_

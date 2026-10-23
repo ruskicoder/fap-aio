@@ -125,6 +125,7 @@ describe('route persistence', () => {
   })
 
   it('writes the route to panel.state and restores it on the next mount', async () => {
+    await c.storage.local.set({ 'panel.prefs': { schemaVersion: 1, updatedAt: 0, data: { pageAware: false, keybinds: {}, recents: [], firstRun: 'done' } } })
     let m!: Awaited<ReturnType<typeof mountPanel>>
     await act(async () => { m = await mountPanel(document, '') })
     act(() => m.shadow.querySelector<HTMLButtonElement>('[aria-label="Menu"]')!.click())

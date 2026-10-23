@@ -8,6 +8,9 @@ import { PanelApp } from './PanelApp'
 import { StatusStrip } from './StatusStrip'
 import { PanelRouter } from './router'
 import { ViewOutlet } from './views'
+import { Navigation, RailTabs, routeOf } from './nav'
+import { pageRoute } from './page-aware'
+import { readPrefs } from '../../shared/panel-prefs'
 import { loadPanelState } from './store'
 import { onBoot } from '../modules'
 import { onMessage } from '../../shared/call'
@@ -44,8 +47,11 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   panelRouter = router
   // The route persists in panel.state.route (panel-ux R1.8).
   router.subscribe((route) => updater?.((s) => ({ ...s, route })))
-  root.render(createElement(PanelApp, { initial, host, bind: (u) => { updater = u }, onMenu: (overlay) => router.go({ overlay }) },
-    createElement(ViewOutlet, { router }), createElement(StatusStrip)))
+  // Page-aware tab, once per page load (panel-ux R4.1, R4.2).
+  if ((await readPrefs()).pageAware) router.go(pageRoute(doc.location?.pathname ?? '/', doc), { source: 'page' })
+  const railItems = createElement(RailTabs, { onPick: (tab) => { router.go(routeOf(tab)); updater?.((s) => ({ ...s, collapsed: false })) } })
+  root.render(createElement(PanelApp, { initial: { ...initial, route: router.current() }, host, railItems, bind: (u) => { updater = u }, onMenu: (overlay) => router.go({ overlay }) },
+    createElement(Navigation, { router }), createElement(ViewOutlet, { router }), createElement(StatusStrip)))
   // Toolbar button and the toggle-panel command (panel-ux R7.1).
   onMessage('panel.toggle', () => updater?.((s) => ({ ...s, collapsed: !s.collapsed })))
   return { host, shadow, root, router }

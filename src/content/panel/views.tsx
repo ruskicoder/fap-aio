@@ -2,7 +2,7 @@
 // lazy views per tab and sub-view or overlay. A loaded view is cached, so a later switch renders at
 // once; while the next view loads, the previous one stays mounted, and only a first load shows a
 // skeleton. A chunk that fails shows an inline "Try again"; the rest of the panel keeps working.
-import { useEffect, useState, type ComponentType } from 'react'
+import { useEffect, useState, useSyncExternalStore, type ComponentType } from 'react'
 import type { Route } from '../../shared/panel-state'
 import { isOverlay, routeKey, useRoute, type OverlayId, type PanelRouter, type TabId } from './router'
 
@@ -24,6 +24,17 @@ export function registerView(def: ViewDef): void {
 }
 export const viewFor = (r: Route): ViewDef | undefined => defs.get(routeKey(r))
 export const viewsOf = (tab: TabId): ViewDef[] => [...defs.values()].filter((d) => 'tab' in d && d.tab === tab)
+let countsVersion = 0
+const countListeners = new Set<() => void>()
+/** Views call this when a badge count changes, so the segmented control re-reads it (R2.2). */
+export function notifyCounts(): void {
+  countsVersion++
+  for (const l of countListeners) l()
+}
+export function useCounts(): number {
+  return useSyncExternalStore((cb) => { countListeners.add(cb); return () => countListeners.delete(cb) }, () => countsVersion)
+}
+
 /** Test hook. */
 export function clearViews(): void {
   defs.clear()
