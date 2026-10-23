@@ -60,6 +60,8 @@ Done 2026-10-04: scheduler comparison and v2.0.0 module feasibility ([record](in
 
 Done 2026-10-23 (loop session 1): owner set `paused: false` and asked for M1 to M3. Completed PLT-1 to PLT-5, CORE-1 to CORE-4 and PNL-1 (20 of the 25 M1 subtasks, 114 tests, one commit each on `version2/scaffold`). Findings: CRXJS adds `web_accessible_resources` for content scripts unless they are built as standalone IIFE bundles (now configured); the IIFE build needs `process.env.NODE_ENV` defined or React ships its dev build; FAP's exam table has nine columns (an Exam format column), and the week partial carries no year. Paused at about 85% of the plan's 5-hour window; next: CORE-5.1, PNL-2.1, PNL-2.2, CORE-6.1, CORE-7.1 to finish M1.
 
+Done 2026-10-23 (loop session 2): M1 complete (25 of 25 subtasks, 149 tests). Added CORE-5.1 sync engine (resumable range jobs with a per-tab lease, exam sync), PNL-2.1 router, view registry and view outlet, PNL-2.2 tab bar, segmented sub-views and the page-aware tab, CORE-6.1 Week and Exams views, CORE-7.1 ICS exporter and Export view. Findings: views use static loaders because the content script is one IIFE bundle without code splitting; the page-aware tab overrides the restored route on every load while the setting is on, as R4.1 requires. Owner check: load `dist/` unpacked, then sync a week, the term and the exams, and import an `.ics` into a calendar app. Next: M2, starting at PLT-6.1.
+
 ## Last sync
 
 <!-- docs-scaffold:sync:start -->
