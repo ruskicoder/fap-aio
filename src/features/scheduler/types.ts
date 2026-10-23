@@ -44,3 +44,39 @@ export interface Exam {
   past: boolean
   syncedAt: number
 }
+
+export interface TimetableStore {
+  sessions: Session[]
+  /** Synced weeks by Monday; `empty` records FAP's empty state (core R6.5). */
+  weeks: Record<string, { syncedAt: number; empty: boolean }>
+  lastSync: number | null
+}
+
+export interface ExamStore {
+  exams: Exam[]
+  lastSync: number | null
+}
+
+/** A range sync written before the first request so a reload can resume it (core R6.2, R6.6). */
+export interface SyncJob {
+  kind: 'range'
+  mondays: string[]
+  /** Weeks processed so far; the next week to read is `mondays[next]`. */
+  next: number
+  failed: string[]
+  added: number
+  updated: number
+  unreadable: number
+  startedAt: number
+  /** Lease of the content script running the job, cleared on pagehide. */
+  runner?: string
+  beatAt?: number
+}
+
+declare module '../../shared/storage/catalog' {
+  interface StoreMap {
+    timetable: TimetableStore
+    exams: ExamStore
+    'sync.job': SyncJob
+  }
+}

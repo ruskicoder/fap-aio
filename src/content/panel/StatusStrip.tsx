@@ -8,9 +8,6 @@ import { subscribe, read } from '../../shared/storage/catalog'
 import type { MsgOf } from '../../shared/messages'
 
 export interface SyncJobView { mondays: string[]; next: number }
-declare module '../../shared/storage/catalog' {
-  interface StoreMap { 'sync.job': SyncJobView & Record<string, unknown> }
-}
 
 export function ago(ts: number, now = Date.now()): string {
   const s = Math.max(0, Math.round((now - ts) / 1000))

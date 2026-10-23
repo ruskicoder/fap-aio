@@ -98,7 +98,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | CORE-2 | Read-only FAP access layer | v2-core-scheduler | M1 | CORE-1, PLT-4 | - | done |
 | CORE-3 | Source registry, constants and scheduler parsers | v2-core-scheduler | M1 | CORE-2, PLT-5.1 | - | done |
 | CORE-4 | Panel host | v2-core-scheduler | M1 | CORE-1, PLT-3 | - | done |
-| CORE-5 | Timetable and exam sync | v2-core-scheduler | M1 | CORE-3 | - | todo |
+| CORE-5 | Timetable and exam sync | v2-core-scheduler | M1 | CORE-3 | - | done |
 | CORE-6 | Schedule views | v2-core-scheduler | M1 | CORE-5, PNL-2 | - | todo |
 | CORE-6.2 | Scheduler commands and Today providers | v2-core-scheduler | M2 | PNL-5, PNL-9 | - | todo |
 | CORE-7 | Calendar export | v2-core-scheduler | M1 | CORE-6.1 | - | todo |
@@ -207,3 +207,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-23 | CORE-3.3 | parse/exams.ts (table.fap-sheet by position; nine columns observed with Exam format, eight still accepted; FE, PE, 2NDFE, 2NDPE, other; empty, - or TBA room as null; past from the Vietnam date), scheduler sources timetable.week and exam.list registered by the scheduler module | 104 tests incl. vi and en giving the same ids | committed
 - 2026-10-23 | PNL-1.1 | PanelShell (header with handle, palette button, bell with unread count, dock toggle, gear menu Theme, Settings, Help, Shortcuts, minimize; floating resize grip within 320 to 720 by 360 to viewport height; docked full height on the right; pill and 48 px rail), panel.toggle wired to collapse, PanelPrefs under panel.prefs, panel.state v1 to v2 migration step registered in the service worker | 110 tests | committed
 - 2026-10-23 | PNL-1.2 | StatusStrip: last sync, range-sync progress from sync.job, budget wait (remaining and seconds) from the queue, Syncing data and data version from data.progress, challenge banner with Reload; mounted under the panel body | 114 tests, build ok | committed
+- 2026-10-23 | CORE-5.1 | src/features/scheduler/sync.ts: SyncEngine (syncWeek, syncRange with the sync.job written before the first request, each week stored at once, weeks map with the empty flag, report synced, failed, added, updated, unreadable; fatal errors challenge, session-expired, feedback-required and forbidden stop and keep the job, other errors fail the week; resume on boot with a 60 s lease, 20 s heartbeat and release on pagehide so two tabs never run one job), term presets, mergeSessions on code, date and start, syncExams with mergeExams on code, type and date keeping unlisted exams and recomputing past; timetable, exams and sync.job store types now declared by the scheduler | 124 tests incl. resume after interruption, wrong week, empty week, lease, merges | committed

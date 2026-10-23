@@ -47,8 +47,8 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Tests: no style element is inserted into the page and FAP elements keep their computed styles; clamping after a resize.
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8_
 
-- [ ] 5. [CORE-5] Timetable and exam sync
-- [ ] 5.1 [CORE-5.1] Implement `SyncEngine` and `ExamSync`
+- [x] 5. [CORE-5] Timetable and exam sync
+- [x] 5.1 [CORE-5.1] Implement `SyncEngine` and `ExamSync`
   - `syncWeek(date)`, `syncRange(start, end)` with the `SyncJob` written before the first request, each week stored immediately, progress done out of total, term presets, final report (synced, failed, added, updated, unreadable).
   - Session merge on `code|date|start`, updating room, lecturer, online flag and attendance.
   - `ExamSync`: merge on `code|type|date`; exams missing from FAP are kept; `past` from the date.
