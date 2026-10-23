@@ -21,9 +21,11 @@ const keyOf = (d: ViewDef) => ('overlay' in d ? `overlay/${d.overlay}` : d.sub ?
 
 export function registerView(def: ViewDef): void {
   defs.set(keyOf(def), def)
+  notifyCounts() // views register after the panel mounts
 }
 export const viewFor = (r: Route): ViewDef | undefined => defs.get(routeKey(r))
 export const viewsOf = (tab: TabId): ViewDef[] => [...defs.values()].filter((d) => 'tab' in d && d.tab === tab)
+// Bumped when a view registers or a badge count changes.
 let countsVersion = 0
 const countListeners = new Set<() => void>()
 /** Views call this when a badge count changes, so the segmented control re-reads it (R2.2). */
@@ -55,6 +57,7 @@ type Shown = { key: string; Comp: ComponentType } | null
 
 export function ViewOutlet({ router }: { router: PanelRouter }) {
   const route = useRoute(router)
+  useCounts()
   const key = routeKey(route)
   const def = viewFor(route)
   const [shown, setShown] = useState<Shown>(() => (loaded.has(key) ? { key, Comp: loaded.get(key)! } : null))

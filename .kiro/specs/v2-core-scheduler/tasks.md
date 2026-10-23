@@ -56,7 +56,7 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - _Requirements: 6.1, 6.2, 6.3, 6.6, 6.7, 6.9, 7.2, 7.3_
 
 - [ ] 6. [CORE-6] Schedule views
-- [ ] 6.1 [CORE-6.1] Build the Week and Exams views
+- [x] 6.1 [CORE-6.1] Build the Week and Exams views
   - Schedule, Week through the panel view registry: sessions grouped by day, range filters (today, this week, next two weeks, this month, all), sync week and sync term actions with progress, last-sync stamp, empty state with the sync action.
   - Schedule, Exams with a count badge: upcoming and past, days left, type filter, last-sync stamp, empty state.
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6; panel-ux R2.1, R2.2, R9.3_
