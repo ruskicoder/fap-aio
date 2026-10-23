@@ -64,8 +64,8 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Commands `schedule.syncWeek`, `schedule.syncTerm`, `schedule.syncExams`, `schedule.exportClasses`, `schedule.exportExams`; Today providers `nextClass`, `todayClasses`, `examsSoon`.
   - _Requirements: panel-ux R3.1, R5.2, R5.6_
 
-- [ ] 7. [CORE-7] Calendar export
-- [ ] 7.1 [CORE-7.1] Implement `IcsExporter` and the Export view
+- [x] 7. [CORE-7] Calendar export
+- [x] 7.1 [CORE-7.1] Implement `IcsExporter` and the Export view
   - Pure exporter: `VTIMEZONE` for `Asia/Ho_Chi_Minh`, UID `sha1(code|date|start[|type])@fap-aio`, escaping, 75-octet folding on UTF-8 boundaries, optional `VALARM`s, session filters (all, offline, online), exams with an assigned room only.
   - Schedule, Export: range and filter choice, export reminders, download through an `a[download]` blob link inside the shadow root.
   - Tests: escaping, folding of Vietnamese text, UID stability, TZID.

@@ -6,6 +6,7 @@ import { registerSchedulerSources } from './sources'
 import { engine } from './sync'
 import { WeekView } from './views/WeekView'
 import { ExamsView } from './views/ExamsView'
+import { ExportView } from './views/ExportView'
 import type { ExamStore } from './types'
 
 // Upcoming exams for the segmented-control badge (panel-ux R2.2).
@@ -21,6 +22,7 @@ export function registerSchedulerViews(): void {
   // Static loaders: the content script is one IIFE bundle without code splitting.
   registerView({ tab: 'schedule', sub: 'week', label: 'Week', icon: 'calendar', component: async () => WeekView })
   registerView({ tab: 'schedule', sub: 'exams', label: 'Exams', icon: 'school', component: async () => ExamsView, count: () => upcoming })
+  registerView({ tab: 'schedule', sub: 'export', label: 'Export', icon: 'download', component: async () => ExportView })
   void read('exams').then(countExams)
   subscribe('exams', countExams)
 }
