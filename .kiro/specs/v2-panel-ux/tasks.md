@@ -14,7 +14,7 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - _Requirements: 3.4; platform R3.9, R5.5; core error table_
 
 - [ ] 2. [PNL-2] Navigation: router, tabs, sub-views and view registry
-- [ ] 2.1 [PNL-2.1] Implement `PanelRouter`, the view registry and `ViewOutlet`
+- [x] 2.1 [PNL-2.1] Implement `PanelRouter`, the view registry and `ViewOutlet`
   - The `Route` type, `go`, `back`, persistence in `panel.state.route`, overlay routes for Theme, Settings, Help and Shortcuts with a back control.
   - `ViewDef` with lazy components and count callbacks; the previous view stays mounted until the next is ready; skeletons, not spinners; an inline "Try again" when a chunk fails.
   - _Requirements: 2.4, 1.8, 10.6_

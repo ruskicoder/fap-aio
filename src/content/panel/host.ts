@@ -6,6 +6,8 @@ import { createRoot, type Root } from 'react-dom/client'
 import css from './panel.css?inline'
 import { PanelApp } from './PanelApp'
 import { StatusStrip } from './StatusStrip'
+import { PanelRouter } from './router'
+import { ViewOutlet } from './views'
 import { loadPanelState } from './store'
 import { onBoot } from '../modules'
 import { onMessage } from '../../shared/call'
@@ -17,7 +19,11 @@ export interface MountedPanel {
   host: HTMLElement
   shadow: ShadowRoot
   root: Root
+  router: PanelRouter
 }
+
+/** The router of the mounted panel, for modules that deep-link (Today, inbox, palette). */
+export let panelRouter: PanelRouter | null = null
 
 export async function mountPanel(doc: Document = document, cssText: string = css): Promise<MountedPanel> {
   doc.getElementById(HOST_ID)?.remove()
@@ -34,10 +40,15 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   const initial = await loadPanelState({ width: window.innerWidth, height: window.innerHeight })
   const root = createRoot(mountPoint)
   let updater: ((fn: (s: PanelState) => PanelState) => void) | null = null
-  root.render(createElement(PanelApp, { initial, host, bind: (u) => { updater = u } }, createElement('div', { className: 'min-h-0 flex-1 overflow-auto' }), createElement(StatusStrip)))
+  const router = new PanelRouter(initial.route)
+  panelRouter = router
+  // The route persists in panel.state.route (panel-ux R1.8).
+  router.subscribe((route) => updater?.((s) => ({ ...s, route })))
+  root.render(createElement(PanelApp, { initial, host, bind: (u) => { updater = u }, onMenu: (overlay) => router.go({ overlay }) },
+    createElement(ViewOutlet, { router }), createElement(StatusStrip)))
   // Toolbar button and the toggle-panel command (panel-ux R7.1).
   onMessage('panel.toggle', () => updater?.((s) => ({ ...s, collapsed: !s.collapsed })))
-  return { host, shadow, root }
+  return { host, shadow, root, router }
 }
 
 export function registerPanelHost(): void {
