@@ -10,6 +10,8 @@ Owner decisions (2026-10-11):
 - A command palette, an alerts inbox, keyboard shortcuts with customizable keybinds, and a page-aware default tab.
 - First run opens docked, at comfortable density.
 
+Owner decisions (2026-10-26, shell audit, gate G-UI-SHELL; agreed visual in [`ui/shell.html`](ui/shell.html), rounds in [`ui/shell-audit.md`](ui/shell-audit.md)) replace parts of the above: no command palette and no search; the header holds Sync, Dock, Settings and Minimize; minimize leaves a draggable edge tab; tabs appear only for shipped views. Requirements 1, 2, 5 and 7 were revised; the earlier text is in [`.deprecated/2026-10-26-shell-audit/`](.deprecated/2026-10-26-shell-audit/requirements.md).
+
 What the legacy panel did well is kept: main tabs with sub-tabs and counts, a persistent sync progress bar, and sync and export actions next to the data. The rest follows published guidance:
 - tabs (NN/g "Tabs, Used Right"; Material 3 tabs for compact panes);
 - keyboard tabs (WAI-ARIA APG Tabs pattern);
@@ -25,15 +27,15 @@ Sources are cited in the design.
 
 #### Acceptance Criteria
 
-1. The panel SHALL have two layout modes: floating (a movable, resizable card) and docked (full viewport height against the right edge, resizable in width).
-2. WHEN the user drags a floating panel so that its right edge comes within 24 px of the viewport's right edge THEN the panel SHALL show a dock preview and SHALL dock on release.
-3. WHEN the user drags a docked panel's header away from the edge by more than 48 px THEN the panel SHALL undock to floating at the pointer position.
-4. The header SHALL offer a dock or undock toggle as a button, so that both modes are reachable without dragging.
-5. WHILE docked THEN the extension SHALL reserve the panel's width so that FAP content is not covered. Reserving SHALL adjust FAP's layout through the appearance pipeline, and SHALL NOT overlay FAP's content.
-6. A floating panel SHALL minimize to a pill showing the alert count. A docked panel SHALL collapse to a 48 px rail showing the tab icons and the alert count.
-7. Floating size limits SHALL be 320 to 720 px wide and 360 px to the viewport height. Docked width limits SHALL be 320 to 640 px. Default sizes SHALL be 400 by 600 px floating and 400 px docked.
-8. Mode, position, size, collapsed state, active tab and active sub-view SHALL persist across reloads and FAP pages (core Requirement 1.4).
-9. WHEN the viewport is narrower than 900 px THEN a docked panel SHALL turn into an overlay drawer that does not reserve width, and SHALL close when the user clicks outside it.
+1. The panel SHALL have two layout modes: floating (a movable, resizable card) and docked (full viewport height against the right edge, resizable in width). The header's Dock button SHALL switch between them.
+2. The whole header SHALL drag a floating panel, except its buttons. WHILE the user drags or resizes a floating panel THEN the panel SHALL stay fully inside the viewport, and SHALL snap to a viewport edge that comes within 10 px of it.
+3. WHEN the user drags a docked panel's header more than 48 px to the left THEN the panel SHALL undock to floating at the pointer position.
+4. A floating panel SHALL resize from all four edges and all four corners. A docked panel SHALL resize from its left edge. Every resize edge SHALL show a resize cursor.
+5. WHILE docked THEN by default the FAP page SHALL narrow by the panel's width, so that no FAP content is covered. A setting SHALL let the user choose to cover the page instead.
+6. WHEN the user minimizes the panel, in either mode, THEN a vertical tab labelled FAP-AIO SHALL remain on the right viewport edge. The user SHALL be able to drag the tab up and down the edge, and its position SHALL persist. A click on the tab SHALL reopen the panel: a floating panel at the bottom-right corner with its last size, a docked panel docked.
+7. Floating size limits SHALL be 320 to 720 px wide and 400 px to the viewport height. Docked width limits SHALL be 320 to 640 px. Default sizes SHALL be 400 by 600 px floating and 400 px docked.
+8. Mode, position, size, minimized state, the edge tab position and the active view SHALL persist across reloads and FAP pages (core Requirement 1.4).
+9. WHEN the viewport is narrower than 900 px THEN a docked panel SHALL turn into an overlay drawer that does not narrow the page, and SHALL close when the user clicks outside it.
 
 ### Requirement 2: Information architecture
 
@@ -41,15 +43,12 @@ Sources are cited in the design.
 
 #### Acceptance Criteria
 
-1. The panel SHALL have four primary tabs, in this order:
-   - Today: what matters now, across modules.
-   - Schedule: Week, Exams, Export.
-   - Grades: Courses, GPA, What-if, Planner.
-   - Info: Subjects, Lecturers, News, Status.
-2. Each primary tab SHALL show its sub-views as a segmented control under the tab bar, with counts where meaningful (for example Exams 3, News 5 unread).
-3. The header SHALL hold: the drag handle and title, the command palette button, the alerts inbox bell with an unread count, the dock toggle, a gear menu (Theme, Settings, Help, Shortcuts) and minimize.
-4. Theme and Settings SHALL open as full views inside the panel with a back control, and SHALL NOT be primary tabs.
-5. Tab labels SHALL be one word, in sentence case, each with an icon.
+1. In M1 the panel SHALL have three tabs, in this order: Classes, Exams, Export. Tabs for other modules SHALL appear only when that module ships; their names and placement are decided in that module's UI audit.
+2. The panel SHALL NOT show any tab, button or menu item for a feature that is not shipped.
+3. The header SHALL be one draggable bar holding, on the left, the title `FAP-AIO` with the extension version (from the manifest) as subtext, and on the right the buttons Sync, Dock, Settings and Minimize. Sync SHALL sync this week's classes and the exams in one action; the whole-term sync stays an action in Classes.
+4. Settings SHALL open as a full view inside the panel with a back control, and SHALL NOT be a tab.
+5. Tab labels SHALL be one word, in sentence case.
+6. A status strip SHALL always show at the bottom of the panel: the last sync of the open view's data, the progress of a running sync, the request budget wait, and the Cloudflare challenge banner (platform R3.9).
 
 ### Requirement 3: Today view
 
@@ -85,21 +84,7 @@ Sources are cited in the design.
 
 ### Requirement 5: Command palette
 
-**User Story:** As a student who uses the keyboard, I want to search and run actions from one box, so that I reach anything in a few keystrokes.
-
-#### Acceptance Criteria
-
-1. WHEN the user presses the palette shortcut (default Ctrl+K, Cmd+K on macOS) on a FAP page, or clicks the header button, THEN the command palette SHALL open with focus in its input.
-2. The palette SHALL search:
-   - commands: sync week, sync term, sync exams, export classes, export exams, switch theme, toggle Classic layout, open any tab or sub-view, open settings;
-   - subjects by code or name;
-   - lecturers by shortcode;
-   - news by title;
-   - current courses.
-3. Results SHALL be grouped (Actions, Navigate, Subjects, Lecturers, News, Courses), fuzzy matched, diacritic-insensitive, with recent items first and each command's shortcut shown.
-4. Arrow keys SHALL move the selection, Enter SHALL run it, and Escape SHALL close. A secondary action (copy an email, open on FLM) SHALL run with Ctrl+Enter.
-5. The palette SHALL follow the ARIA combobox pattern: focus stays in the input and the active option is exposed through `aria-activedescendant`.
-6. Every module SHALL register its own commands with stable ids, so that recents survive label changes.
+Removed 2026-10-26 by the owner (decision D-3): no command palette, no search and no palette shortcut. Ctrl+K is Chrome's own search shortcut. The earlier criteria are in [`.deprecated/2026-10-26-shell-audit/requirements.md`](.deprecated/2026-10-26-shell-audit/requirements.md).
 
 ### Requirement 6: Alerts inbox
 
@@ -121,8 +106,7 @@ Sources are cited in the design.
 
 1. The extension SHALL provide these actions with default keybinds:
    - toggle panel: Alt+Shift+F, through `chrome.commands` so that it works in any FAP tab;
-   - command palette: Ctrl+K, or Cmd+K on macOS;
-   - tabs Today, Schedule, Grades, Info: Alt+1 to Alt+4, or Ctrl+1 to Ctrl+4 on macOS;
+   - tabs in order: Alt+1 to Alt+9, or Ctrl+1 to Ctrl+9 on macOS;
    - next and previous sub-view: Alt+] and Alt+[;
    - refresh current view: Alt+R;
    - dock toggle: Alt+D;
@@ -131,7 +115,7 @@ Sources are cited in the design.
 2. Settings SHALL list every action with its current keybind, and SHALL let the user record a new keybind, clear it or reset it.
 3. WHEN a recorded keybind is already used by another FAP-AIO action, or is reserved by the browser (Ctrl+T, Ctrl+W, Ctrl+N, Ctrl+Tab and similar), THEN Settings SHALL refuse it and name the conflict.
 4. The toggle-panel keybind SHALL be changed on Chrome's own shortcuts page, which Settings SHALL link to, because `chrome.commands` bindings are managed by the browser.
-5. Page-level shortcuts SHALL NOT fire while focus is in an input, a textarea, a select or a contenteditable element, on FAP or in the panel. The only exceptions are the palette and toggle keys.
+5. Page-level shortcuts SHALL NOT fire while focus is in an input, a textarea, a select or a contenteditable element, on FAP or in the panel. The only exception is the toggle key.
 6. A shortcuts sheet SHALL show all current keybinds.
 
 ### Requirement 8: Settings view

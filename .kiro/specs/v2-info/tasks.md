@@ -53,8 +53,8 @@ Compacted on 2026-10-22 from 21 to 12 subtasks with no requirement dropped; the 
 - [ ] 5.1 [INF-5.1] Build the Lecturers and News views and register providers
   - Info, Lecturers: shortcode, both addresses with copy and mail-to, subjects and groups, last session date, the shortcode explanation, notes and display names.
   - Info, News: news and documents lists, read marking and unread counts, filters by family group and priority, deadlines with days left, opening FAP detail pages; virtualized.
-  - Today providers `attendanceRisk`, `newsP1`, `courseraDue`; search providers `subjects`, `lecturers` (secondary: copy email), `news`.
-  - _Requirements: 3.3, 3.4, 3.5, 3.7, 7.1, 7.2, 7.3, 7.10, 1.2, 1.3; panel-ux R3.1, R5.2, R5.4_
+  - Today providers `attendanceRisk`, `newsP1`, `courseraDue`.
+  - _Requirements: 3.3, 3.4, 3.5, 3.7, 7.1, 7.2, 7.3, 7.10, 1.2, 1.3; panel-ux R3.1_
 - [ ] 5.2 [INF-5.2] Build the Status view and extend Schedule, Exams
   - Info, Status: current courses with the grades module's status, average and effective goal; attendance per course with risk; Coursera items with checkboxes and FE warnings; unread state and latest bell notifications with links.
   - Schedule, Exams: grade publication date, resit marking, a link to the course's grade status, and "Refresh mark sheet" once the publication date has passed.

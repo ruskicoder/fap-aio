@@ -60,9 +60,9 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Schedule, Week through the panel view registry: sessions grouped by day, range filters (today, this week, next two weeks, this month, all), sync week and sync term actions with progress, last-sync stamp, empty state with the sync action.
   - Schedule, Exams with a count badge: upcoming and past, days left, type filter, last-sync stamp, empty state.
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6; panel-ux R2.1, R2.2, R9.3_
-- [ ] 6.2 [CORE-6.2] Register scheduler commands and Today providers
-  - Commands `schedule.syncWeek`, `schedule.syncTerm`, `schedule.syncExams`, `schedule.exportClasses`, `schedule.exportExams`; Today providers `nextClass`, `todayClasses`, `examsSoon`.
-  - _Requirements: panel-ux R3.1, R5.2, R5.6_
+- [ ] 6.2 [CORE-6.2] Register scheduler Today providers
+  - Today providers `nextClass`, `todayClasses`, `examsSoon`. (Palette commands removed 2026-10-26 with panel-ux requirement 5.)
+  - _Requirements: panel-ux R3.1_
 
 - [x] 7. [CORE-7] Calendar export
 - [x] 7.1 [CORE-7.1] Implement `IcsExporter` and the Export view

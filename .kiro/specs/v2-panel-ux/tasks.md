@@ -42,11 +42,7 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - The `dock` layer (`html.fap-aio-docked body { margin-right }`, top bar and footer `right`) with the selectors confirmed in gate G-SELECTORS; `--fap-aio-dock-w` updated with `requestAnimationFrame`; fallback to overlay with a notice when selectors are missing.
   - _Requirements: 1.5; Gate: G-SELECTORS_
 
-- [ ] 5. [PNL-5] Command palette
-- [ ] 5.1 [PNL-5.1] Implement `CommandRegistry`, search providers and the palette UI
-  - Stable command ids, groups Actions and Navigate, secondary actions, `SearchProvider` interface; navigation commands for every tab and sub-view and for Settings.
-  - Modal overlay with `cmdk` in the shadow root; grouped, diacritic-insensitive fuzzy results; recents (10) first; shortcuts shown; Enter runs, Ctrl+Enter runs the secondary action, Escape closes; ARIA combobox semantics verified in tests.
-  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
+5. PNL-5 Command palette: removed 2026-10-26 (decision D-3). The earlier phase is in [`.deprecated/2026-10-26-shell-audit/tasks.md`](.deprecated/2026-10-26-shell-audit/tasks.md).
 
 - [ ] 6. [PNL-6] Alerts inbox
 - [ ] 6.1 [PNL-6.1] Implement `AlertStore` and the inbox popover
@@ -56,7 +52,7 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
 
 - [ ] 7. [PNL-7] Keyboard shortcuts and keybinds
 - [ ] 7.1 [PNL-7.1] Implement `KeybindEngine`, keybind recording and the shortcuts sheet
-  - One capture-phase `keydown` listener; the input, IME and contenteditable guard with the palette and toggle exceptions; platform defaults for macOS; actions from R7.1 wired to router, overlays and shell.
+  - One capture-phase `keydown` listener; the input, IME and contenteditable guard with the toggle exception; platform defaults for macOS; actions from R7.1 wired to router, overlays and shell.
   - Settings rows that record, clear and reset; refusal with the conflicting action or the reserved browser chord named; overrides only in `panel.prefs`; the toggle-panel row shows `commands.list` output and links to `chrome://extensions/shortcuts`; the `?` sheet lists all current keybinds.
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
 

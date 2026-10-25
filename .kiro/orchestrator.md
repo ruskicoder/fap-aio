@@ -59,7 +59,7 @@ A gate is a checkpoint that needs the owner or a live check in the owner's brows
 | G-EXT-KEY | owner | Owner runs `tools/release/extension-key.mjs`, keeps the private key offline, commits `src/manifest-key.txt` (public key) so the unpacked id stays stable | G-RELEASE | open |
 | G-FLM-COOKIE | live | Owner runs the PLT-9.1 probe with FLM signed in and records the result in the decision queue | PLT-9.2 | open |
 | G-DATA-KEYS | owner | Two recovery phrases created and stored offline; public keys in `src/shared/keyring.ts`; `data/live` and the first `data/<date>` snapshot published | G-RELEASE | open |
-| G-UI-SHELL | owner, chat audit | Agreed visuals for the panel shell: header, floating and docked frames, minimized state and its corner, resize affordances, tab bar and sub-view bar, status strip, hiding of controls outside the milestone; saved as `.kiro/specs/v2-panel-ux/ui/shell.html` plus a decision list folded into the spec as acceptance criteria | F-1, F-2, F-4, F-5, F-6, PNL-3, PNL-4, PNL-6, PNL-7 | open |
+| G-UI-SHELL | owner, chat audit | Agreed visuals for the panel shell: header, floating and docked frames, minimized state and its corner, resize affordances, tab bar and sub-view bar, status strip, hiding of controls outside the milestone; saved as `.kiro/specs/v2-panel-ux/ui/shell.html` plus a decision list folded into the spec as acceptance criteria | F-1, F-2, F-4, F-5, F-6, PNL-3, PNL-4, PNL-6, PNL-7 | passed |
 | G-UI-SCHEDULE | owner, chat audit | Agreed visuals for Schedule Week, Exams and Export (cards, fields, tags, actions, empty and error states, progress), checked against the legacy fap-scheduler; saved as `.kiro/specs/v2-core-scheduler/ui/schedule.html` | F-3, CORE-6 | open |
 | G-UI-TODAY | owner, chat audit | Agreed visuals for Today and the first-run welcome | PNL-9 | open |
 | G-UI-SETTINGS | owner, chat audit | Agreed visuals for Settings and its sections, including the data controls | PNL-8, CORE-11, GRD-3, INF-6 | open |
@@ -81,7 +81,7 @@ Each milestone ends in a build the owner can load unpacked and use. The loop wor
 | Milestone | Usable deliverable | Subtasks |
 |---|---|---|
 | M1 Schedule | Panel on FAP pages: sync this week or the term, Week and Exams views, `.ics` calendar export, status strip with the request budget | 25 |
-| M2 Grades | GPA summary on the transcript, pass prediction and required scores under each mark sheet, Courses and GPA views, Today view and first run, command palette, alerts inbox, Settings | 25 |
+| M2 Grades | GPA summary on the transcript, pass prediction and required scores under each mark sheet, Courses and GPA views, Today view and first run, alerts inbox, Settings | 24 |
 | M3 Info and background | Subjects and syllabus with the learning path, lecturers, Status, background refresh, reminders, keep-alive, docked mode, keybinds, what-if and planner, legacy cleanup, diagnostics; news, documents and attendance after G-SELECTORS | 20 |
 | M4 Appearance | Eleven themes, colour editor, CSS editor, background images, layout tweaks, Classic FAP layout (top navigation after G-SELECTORS), visual regression checks | 13 |
 | M5 Release | Signed data updates, live FLM refresh, Data and privacy and About sections, release workflow; then G-EXT-KEY, G-DATA-KEYS, G-FLM-COOKIE and G-RELEASE for v2.0.0 | 8 |
@@ -111,7 +111,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | CORE-4 | Panel host | v2-core-scheduler | M1 | CORE-1, PLT-3 | - | done |
 | CORE-5 | Timetable and exam sync | v2-core-scheduler | M1 | CORE-3 | - | done |
 | CORE-6 | Schedule views | v2-core-scheduler | M1 | CORE-5, PNL-2 | G-UI-SCHEDULE | doing |
-| CORE-6.2 | Scheduler commands and Today providers | v2-core-scheduler | M2 | PNL-5, PNL-9 | G-UAT-M1 | todo |
+| CORE-6.2 | Scheduler Today providers | v2-core-scheduler | M2 | PNL-9 | G-UAT-M1 | todo |
 | CORE-7 | Calendar export | v2-core-scheduler | M1 | CORE-6.1 | - | done |
 | CORE-8 | Reminders | v2-core-scheduler | M3 | CORE-5, PLT-8, PNL-6, CORE-11 | G-UAT-M2 | todo |
 | CORE-9 | Session keep-alive | v2-core-scheduler | M3 | CORE-2, PLT-4, PNL-6, CORE-11 | G-UAT-M2 | todo |
@@ -123,9 +123,8 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | PNL-3 | Visual system and accessibility | v2-panel-ux | M2 | PNL-2, APP-1 | G-UI-SHELL, G-UAT-M1 | todo |
 | PNL-4 | Docked mode | v2-panel-ux | M3 | PNL-1, APP-1 | G-UI-SHELL, G-UAT-M2 | todo |
 | PNL-4.2 | Reserve the width through the appearance pipeline | v2-panel-ux | M3 | PNL-4.1 | G-SELECTORS, G-UAT-M2 | todo |
-| PNL-5 | Command palette | v2-panel-ux | M2 | PNL-2 | G-UAT-M1 | blocked |
 | PNL-6 | Alerts inbox | v2-panel-ux | M2 | PNL-2, PLT-8 | G-UI-SHELL, G-UAT-M1 | todo |
-| PNL-7 | Keyboard shortcuts and keybinds | v2-panel-ux | M3 | PNL-5, PNL-6, PNL-8.1 | G-UI-SHELL, G-UAT-M2 | todo |
+| PNL-7 | Keyboard shortcuts and keybinds | v2-panel-ux | M3 | PNL-6, PNL-8.1 | G-UI-SHELL, G-UAT-M2 | todo |
 | PNL-8 | Settings registry and Settings view | v2-panel-ux | M2 | PNL-2 | G-UI-SETTINGS, G-UAT-M1 | todo |
 | PNL-8.3 | Data and privacy and About sections | v2-panel-ux | M5 | PLT-3.1, PLT-7.3, PLT-10.1 | G-UAT-M4 | todo |
 | PNL-9 | Today view and first run | v2-panel-ux | M2 | PNL-2, CORE-5 | G-UI-TODAY, G-UAT-M1 | todo |
@@ -134,7 +133,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | GRD-2.3 | Implement Predictor | v2-grades | M2 | PLT-5.2 | G-UAT-M1 | todo |
 | GRD-3 | Grade settings | v2-grades | M2 | PNL-8.1 | G-UI-SETTINGS, G-UAT-M1 | todo |
 | GRD-4 | Inline page enhancements | v2-grades | M2 | GRD-2, GRD-3, CORE-4 | G-UI-GRADES, G-UAT-M1 | todo |
-| GRD-5 | Panel views | v2-grades | M2 | GRD-2, GRD-3, PNL-5, PNL-6, PNL-9 | G-UI-GRADES, G-UAT-M1 | todo |
+| GRD-5 | Panel views | v2-grades | M2 | GRD-2, GRD-3, PNL-6, PNL-9 | G-UI-GRADES, G-UAT-M1 | todo |
 | GRD-5.3 | What-if and Planner views | v2-grades | M3 | INF-1.1 | G-UAT-M2 | todo |
 | GRD-6 | Export and rubric guard | v2-grades | M2 | GRD-2 | G-UI-GRADES, G-UAT-M1 | todo |
 | INF-1 | Info sources and parsers | v2-info | M3 | CORE-3 | G-UAT-M2 | todo |
@@ -143,7 +142,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | INF-3 | Background refresh | v2-info | M3 | INF-1, INF-2, PLT-4 | G-UAT-M2 | todo |
 | INF-4 | Subjects and syllabus | v2-info | M3 | INF-1.1, GRD-1, PNL-3, PLT-6 | G-UI-INFO, G-UAT-M2 | todo |
 | INF-4.2 | Refresh from FLM | v2-info | M5 | PLT-9 | G-UAT-M4 | todo |
-| INF-5 | Info views and integrations | v2-info | M3 | INF-1, INF-2, INF-3, CORE-6, GRD-2, PNL-5, PNL-9 | G-UI-INFO, G-UAT-M2 | todo |
+| INF-5 | Info views and integrations | v2-info | M3 | INF-1, INF-2, INF-3, CORE-6, GRD-2, PNL-9 | G-UI-INFO, G-UAT-M2 | todo |
 | INF-6 | Alerts and settings | v2-info | M3 | INF-2, PNL-6, PNL-8.1, PLT-8 | G-UI-SETTINGS, G-UAT-M2 | todo |
 | APP-1 | Style pipeline and early application | v2-appearance | M2 | PLT-3 | G-UAT-M1 | todo |
 | APP-2 | Colour engine | v2-appearance | M4 | PLT-1 | G-UAT-M3 | todo |
@@ -151,7 +150,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | APP-4 | Theme view and editors | v2-appearance | M4 | APP-1, APP-3, PNL-2 | G-UI-APPEARANCE, G-UAT-M3 | todo |
 | APP-5 | Theme management and import or export | v2-appearance | M4 | APP-4 | G-UI-APPEARANCE, G-UAT-M3 | todo |
 | APP-6 | Layout tweaks | v2-appearance | M4 | APP-1, PNL-8.1 | G-UI-APPEARANCE, G-UAT-M3 | todo |
-| APP-7 | Classic FAP layout | v2-appearance | M4 | APP-1, PNL-5, PNL-8.1, CORE-2, PLT-5.1 | G-UI-APPEARANCE, G-UAT-M3 | todo |
+| APP-7 | Classic FAP layout | v2-appearance | M4 | APP-1, PNL-8.1, CORE-2, PLT-5.1 | G-UI-APPEARANCE, G-UAT-M3 | todo |
 | APP-7.4 | Classic top navigation and centred column | v2-appearance | M4 | - | G-SELECTORS, G-UAT-M3 | todo |
 | APP-8 | Visual regression checks | v2-appearance | M4 | APP-3, APP-7 | G-UAT-M3 | todo |
 
@@ -167,7 +166,7 @@ Output of `waves`: phases in the same wave have no dependency on each other and 
 | 3 | PLT-7, PLT-9, CORE-2, CORE-4 |
 | 4 | CORE-3, PNL-1 |
 | 5 | CORE-5, PNL-2, PNL-4, GRD-1, INF-1 |
-| 6 | PNL-3, PNL-5, PNL-6, PNL-8, PNL-9, GRD-2, INF-2, APP-4 |
+| 6 | PNL-3, PNL-6, PNL-8, PNL-9, GRD-2, INF-2, APP-4 |
 | 7 | CORE-6, CORE-10, CORE-11, PNL-7, GRD-3, GRD-6, INF-3, INF-4, INF-6, APP-5, APP-6, APP-7 |
 | 8 | CORE-7, CORE-8, CORE-9, GRD-4, GRD-5, INF-5, APP-8 |
 
@@ -193,7 +192,7 @@ Questions the loop cannot answer from the specs. A decision row stops the affect
 | Decision | Question | Raised by | Blocks | Status |
 |---|---|---|---|---|
 | D-1 | FLM cookie result from G-FLM-COOKIE: service worker fetch or content-script fallback (adds `scripting`)? | PLT-9.1 | PLT-9.2 | open |
-| D-2 | Panel layout: audit with the owner, visuals in chat, iterated until agreed of the shell, collapsed states, resize, tab bar, Week, Exams, Export and the status strip, against the legacy fap-scheduler (conventions rule 9) | owner UAT 2026-10-25 | F-1 to F-5, every view task in M2 and M3 | open |
+| D-2 | Panel layout (shell part answered 2026-10-26, G-UI-SHELL passed; the Schedule part continues under G-UI-SCHEDULE): audit with the owner, visuals in chat, iterated until agreed of the shell, collapsed states, resize, tab bar, Week, Exams, Export and the status strip, against the legacy fap-scheduler (conventions rule 9) | owner UAT 2026-10-25 | F-1 to F-5, every view task in M2 and M3 | open |
 | D-3 | Command palette shortcut: Ctrl+K collides with Chrome's search shortcut. Another chord, no default chord, or none at all? | owner UAT 2026-10-25 | F-4, PNL-5.1, PNL-7.1 | answered 2026-10-25: no shortcut, and the owner does not need a search; the palette is to be dropped (PNL-5 set `blocked`; spec and task changes for PNL-5 and its dependants CORE-6.2, PNL-7, GRD-5, INF-5, APP-7 come with the G-UI-SHELL spec revision) |
 
 ## Log
@@ -233,3 +232,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-23 | CORE-7.1 | src/features/scheduler/ics.ts (pure writer: fixed +07:00 VTIMEZONE and TZID Asia/Ho_Chi_Minh, UID sha1 of code, date, start and exam type through crypto.subtle, escaping, folding at 75 octets on code point boundaries with CRLF, optional VALARMs: classes at the chosen offset, exams 1 day and 1 hour; session filter all, offline, online; upcoming exams with a room only; blob-link download inside the panel), Schedule Export view (range, filter, reminders in the file, export counts) | 149 tests incl. escaping, Vietnamese folding, UID stability, TZID; lint caught an unescaped semicolon before commit | committed; M1 complete
 - 2026-10-25 | M1 UAT | execution failure recorded: owner UAT of the M1 build found the pill placement, no usable resize, clipped rows, a Ctrl+K collision and dead controls for later milestones (F-1 to F-5), plus the status strip sync stamp (F-6). Cause: UI and interaction choices were made by the agent from the approved requirements and an ASCII sketch, without a live layout audit, without reading the legacy fap-scheduler UI, and without loading the build in a browser before reporting it usable. Conventions rules 9 and 10 added; D-2 and D-3 raised; owner to set `paused: true` until D-2 is settled | none | uncommitted
 - 2026-10-25 | workflow | owner asked for a revised workflow with gates so UAT passes first time: added `G-UI-*` chat-audit gates (agreed visuals saved under each spec's `ui/` folder and folded into acceptance criteria before any UI subtask) and `G-UAT-M1` to `G-UAT-M4` (agent browser check, then owner UAT, before the next milestone); loop protocol steps 5 and 9 extended; D-3 answered (no shortcut, palette dropped, PNL-5 blocked pending spec revision) | `orchestrator.mjs check` | uncommitted
+- 2026-10-26 | G-UI-SHELL | owner approved the shell after three rounds and an interactive prototype (`.kiro/specs/v2-panel-ux/ui/shell.html`, rounds in `ui/shell-audit.md`); gate passed. Spec revised with the old copies in `.deprecated/2026-10-26-shell-audit/`: panel-ux requirements 1, 2, 5 and 7 and the design layout; PNL-5 removed from tasks and registry with its dependencies (CORE-6.2, PNL-7, GRD-5, INF-5, APP-7) and palette commands and search providers dropped from CORE-6.2, GRD-5.2, INF-5.1 and APP-7; M2 now 24 subtasks | `orchestrator.mjs check` | committed

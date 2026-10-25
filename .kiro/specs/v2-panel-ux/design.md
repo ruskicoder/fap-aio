@@ -5,7 +5,7 @@
 This design gives the panel its layout and interaction model:
 - a floating and docked hybrid;
 - four primary tabs with segmented sub-views;
-- the Today view, page-aware selection, a command palette and an alerts inbox;
+- the Today view, page-aware selection and an alerts inbox (the command palette was removed on 2026-10-26);
 - customizable keybinds and a registry-driven Settings view.
 
 It replaces the panel section of `v2-core-scheduler/design.md` for layout, which keeps the host mechanics: Shadow DOM, constructable stylesheet, persistence and clamping. All feature views plug in through registries, so modules stay independent.
@@ -17,7 +17,6 @@ Research used:
 | Tabs | Few tabs, 1 to 2 word labels, no all caps, clear selected state; tabs for sibling views at one level | [NN/g, Tabs Used Right](https://www.nngroup.com/articles/tabs-used-right/), [Material 3 tabs](https://m3.material.io/components/tabs/guidelines) |
 | Navigation in a compact pane | Tabs or a bar in compact widths; a rail for 3 to 7 destinations in wider panes | [Material 3 navigation rail](https://m3.material.io/components/navigation-rail/guidelines) |
 | Keyboard tabs | Arrow keys move, Home and End jump, Space or Enter activates; manual activation when panels fetch data | [WAI-ARIA APG Tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) |
-| Command palette | Ctrl or Cmd+K; grouped, fuzzy results; recents; actions, not only navigation; combobox with `aria-activedescendant`; stable command ids; modules register commands | [Setproduct command palette guide](https://www.setproduct.com/blog/command-palette-ui-design-guide), [Command palette UX patterns](https://medium.com/design-bootcamp/command-palette-ux-patterns-1-d6b6e68f30c1) |
 | Target size | At least 24 by 24 CSS px (WCAG 2.2 SC 2.5.8) | [WCAG 2.2](https://www.w3.org/TR/WCAG22/) |
 | Legacy lessons | Main tabs with sub-tabs and counts, persistent progress bar, actions next to data (legacy `fptu-panel`); a drawer for long lists (legacy redesign) | `.deprecated/fap-aio/src/contentScript/features/scheduler/ui.ts`, `.deprecated/SCHEDULER_REDESIGN_SUMMARY.md` |
 
@@ -26,47 +25,49 @@ Research used:
 ```mermaid
 flowchart TB
   Host[PanelHost\nshadow root, stylesheet] --> Shell[PanelShell\nlayout mode, size, collapse]
-  Shell --> Header[Header\nhandle, palette, bell, dock, gear, minimize]
-  Shell --> Tabs[TabBar\nToday Schedule Grades Info]
-  Shell --> Sub[SubViewBar\nsegmented, counts]
+  Shell --> Header[Header\ndraggable bar: title and version, Sync, Dock, Settings, Minimize]
+  Shell --> Tabs[TabBar\nshipped views only]
   Shell --> Body[ViewOutlet\nlazy views, skeletons]
   Shell --> Status[StatusStrip\nsync progress, last sync, budget]
-  Shell --> Overlays[Overlays\npalette, inbox, sheets, dialogs]
+  Shell --> Edge[EdgeTab\nminimized state]
+  Shell --> Overlays[Overlays\ninbox, sheets, dialogs]
   Router[PanelRouter\ntab, subview, params] --> Body
   PageMap[PageAwareMap] --> Router
   Keys[KeybindEngine] --> Router & Overlays & Shell
-  Cmd[CommandRegistry] --> Overlays
   Inbox[AlertStore] --> Header & Overlays
   SetReg[SettingsRegistry] --> SettingsView
 ```
 
 ## Layout
 
-Floating mode (default 400 × 600):
+Agreed with the owner on 2026-10-26 (gate G-UI-SHELL). The interactive visual is [`ui/shell.html`](ui/shell.html); the rounds are in [`ui/shell-audit.md`](ui/shell-audit.md). The earlier layout text is in [`.deprecated/2026-10-26-shell-audit/design.md`](.deprecated/2026-10-26-shell-audit/design.md).
 
 ```text
 +--------------------------------------------------+
-| ::  FAP-AIO        [Ctrl K]  bell(3)  dock  gear - |  header 40 px, drag handle on the left
-| Today | Schedule | Grades | Info                  |  tab bar 36 px, icon + label
-| ( Week | Exams 3 | Export )                       |  segmented sub-views 32 px, counts
+| FAP-AIO                    sync  dock  gear   -  |  header 50 px, the whole bar drags (buttons excluded)
+| v2.0.0                                           |  version from the manifest as subtext
+| Classes   |   Exams   |   Export                 |  tabs of shipped views only (R2.1, R2.2)
 |--------------------------------------------------|
-|                                                  |
 |  view content (scrolls)                          |
-|                                                  |
 |--------------------------------------------------|
-| Synced 2 min ago        [=====>    ] 6/17 weeks  |  status strip 28 px, progress when syncing
+| Synced 2 min ago             [=====>    ] 6/17   |  status strip 34 px, always shown (R2.6)
 +--------------------------------------------------+
 ```
 
-Docked mode: the same stack at full viewport height against the right edge, with a 6 px resize grip on its left border. Collapsed states:
-- Floating minimizes to a 40 px pill (logo plus alert count) at the panel's last corner.
-- Docked collapses to a 48 px rail with the four tab icons, the bell and an expand button. A click on a rail icon expands the panel to that tab.
+Floating mode (R1.1, R1.2, R1.4, R1.7):
+- Default 400 by 600 px at the bottom-right corner, 8 px from the edges. Limits 320 to 720 px wide, 400 px to the viewport height.
+- Dragging the header moves the panel inside the viewport only; a viewport edge within 10 px snaps the panel to it.
+- Eight resize zones: 6 px edges and 12 px corners with `ns`, `ew`, `nwse` and `nesw` cursors. Resizing stays inside the viewport and snaps the same way.
 
-Docking mechanics (R1.2 to R1.5, R1.9):
-- Snap: during the header drag, `pointermove` checks `viewportWidth − (x + width) <= 24`. If so, a translucent dock preview fills the right edge; release docks.
-- Undock: in docked mode, a header drag of more than 48 px to the left undocks at the pointer, keeping the floating size from storage.
-- Reserving width: the appearance `StylePipeline` gets a `dock` layer with `html.fap-aio-docked body { margin-right: var(--fap-aio-dock-w) !important }`. Jidox's fixed top bar and footer get `right: var(--fap-aio-dock-w)`. The selectors must be confirmed on live FAP (verification list in STATUS). The variable is updated on resize with `requestAnimationFrame`. The panel host itself is `position: fixed; right: 0; top: 0; height: 100vh`.
-- Below 900 px of viewport width, docked becomes an overlay drawer: the `dock` layer is removed, a 40% scrim is added, and Escape or a click outside closes it.
+Docked mode (R1.1, R1.3 to R1.5, R1.9):
+- Full height against the right edge, 400 px by default, 320 to 640 px, resized from a 6 px left edge.
+- Dragging the header more than 48 px to the left undocks at the pointer.
+- The setting "When docked" chooses Narrow the page (default) or Cover the page. Narrowing adopts a document stylesheet (CSSOM, allowed by FAP's CSP) that sets `margin-right` on `body` and `right` on Jidox's fixed `.navbar-custom` and `.footer` to `--fap-aio-dock-w`. The selectors are checked on live FAP in the M1 browser check (part of G-SELECTORS).
+- Below 900 px of viewport width the docked panel is an overlay drawer with a 40% scrim that closes on Escape or a click outside, and the page is not narrowed.
+
+Minimized (R1.6): a 32 by 100 px vertical tab with a grip and the label FAP-AIO on the right edge. A vertical drag moves it (position stored in `panel.state.edgeTabTop`); a click without movement reopens the panel, floating at the bottom-right corner with its last size, or docked.
+
+Settings (R2.4) opens as a full view in the panel body with a back arrow; the tabs are hidden while it is open, the header and the status strip stay.
 
 Density tokens:
 
@@ -96,7 +97,7 @@ type Route =
 interface PanelRouter { current(): Route; go(r: Route, opts?: { source: 'user' | 'page' | 'deeplink' }): void; back(): void }
 ```
 
-The route persists in `panel.state.route`. Deep links from Today, the inbox and the palette call `go(..., { source: 'deeplink' })` (R3.2).
+The route persists in `panel.state.route`. Deep links from Today and the inbox call `go(..., { source: 'deeplink' })` (R3.2).
 
 ### View registry
 
@@ -131,23 +132,9 @@ Providers in R3.1 order: `nextClass` (scheduler), `todayClasses` (scheduler), `e
 
 A table of `pathname` regexes to `Route`, as in R4.1. It runs once per page load if the setting is on, and gets the course from `#grade-report-course` on the grade page. A user selection made afterwards wins until the next load (R4.2).
 
-### CommandRegistry and palette (`src/content/panel/commands/`)
+### Command palette
 
-```ts
-interface Command {
-  id: string;                         // 'schedule.syncWeek' - stable (R5.6)
-  title: string; group: 'Actions' | 'Navigate';
-  keywords?: string[]; shortcut?: string;
-  run(): void | Promise<void>;
-  secondary?: { title: string; run(): void };
-}
-interface SearchProvider { id: 'subjects' | 'lecturers' | 'news' | 'courses'; search(q: string, limit: number): PaletteResult[] }
-```
-
-- UI: `cmdk` (MIT, React). It is rendered in the shadow root as a modal overlay positioned 15% from the panel top. When docked or floating the palette spans the panel width; it is opened with the key or the header button (R5.1).
-- Matching: `cmdk`'s built-in fuzzy scorer, run on normalized strings (NFD, diacritics removed, `đ` to `d`) (R5.3).
-- Recents: the last 10 command ids in `panel.recents` (R5.3).
-- Ctrl+Enter runs `secondary` (R5.4). The ARIA combobox semantics come from `cmdk` and are verified in tests (R5.5).
+Removed 2026-10-26 (decision D-3, requirement 5). The earlier design is in [`.deprecated/2026-10-26-shell-audit/design.md`](.deprecated/2026-10-26-shell-audit/design.md).
 
 ### KeybindEngine (`src/content/panel/keys.ts`)
 
@@ -156,7 +143,7 @@ interface ActionDef { id: string; title: string; default: { win: string; mac: st
 type Keybind = string;   // normalized 'Ctrl+K', 'Alt+Shift+F', '?'
 ```
 
-- One `keydown` listener on `window` in capture phase. It is ignored when `event.isComposing`, or when the target or the shadow root's active element is an input, textarea, select or contenteditable. The exception is the palette and toggle actions (R7.5).
+- One `keydown` listener on `window` in capture phase. It is ignored when `event.isComposing`, or when the target or the shadow root's active element is an input, textarea, select or contenteditable. The exception is the toggle action (R7.5).
 - Platform comes from `navigator.userAgentData?.platform ?? navigator.platform`; macOS defaults use Cmd and Ctrl as listed in R7.1.
 - Recording: the settings row enters capture mode and builds the chord from `event.key`/`code` and the modifiers. It validates against the reserved browser list (Ctrl or Cmd plus T, W, N, Shift+N, Tab, Shift+Tab, L, D, F4 and similar; kept as a table) and against the other actions (R7.3).
 - The global toggle uses `chrome.commands` (`toggle-panel`, suggested `Alt+Shift+F`). Settings shows `chrome.commands.getAll()` output and links to `chrome://extensions/shortcuts` (R7.4).
@@ -218,7 +205,8 @@ interface PanelState {
   route: Route;
   density: 'comfortable' | 'compact';
 }
-interface PanelPrefs { pageAware: boolean; keybinds: Record<string, string>; recents: string[]; firstRun: 'pending' | 'done' }
+interface PanelPrefs { pageAware: boolean; keybinds: Record<string, string>; recents: string[]; firstRun: 'pending' | 'done'; docked: 'narrow' | 'cover' }
+// PanelState also gains edgeTabTop?: number (px from the viewport top) for the minimized tab.
 ```
 
 Migration from core `panel.state` v1: keep x, y, width, height and minimized; map `view` to `route`; mode is `floating`.
@@ -237,12 +225,10 @@ Migration from core `panel.state` v1: keep x, y, width, height and minimized; ma
   - router persistence and migration from v1;
   - page-aware mapping table;
   - keybind normalization, conflict detection and the input-focus guard;
-  - palette scoring with diacritics (`dang ky` finds `Đăng ký`);
   - alert dedupe and retention;
   - settings registry validation and import diff.
 - Component tests (Testing Library):
   - tab keyboard model (arrows, Home, End, Enter);
-  - palette combobox semantics;
   - dock snap thresholds with simulated pointer events;
   - collapsed pill and rail;
   - skeleton to content without layout shift.

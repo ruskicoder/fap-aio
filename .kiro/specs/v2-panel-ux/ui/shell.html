@@ -1,0 +1,109 @@
+<!doctype html>
+<!-- Agreed shell visual, gate G-UI-SHELL, approved by the owner 2026-10-26. Open in a browser; simulated 960 x 600 viewport. -->
+<html lang="en"><head><meta charset="utf-8"><title>FAP-AIO shell (agreed)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+:root{--surface-0:#f5f4ef;--surface-1:#eeede6;--surface-2:#fff;--border:#e2e0d8;--border-strong:#cfccc2;--border-stronger:#b4b2a9;--border-accent:#d85a30;--bg-accent:#faece7;--text-accent:#712b13;--text-primary:#1f1e1d;--text-secondary:#5f5e5a;--text-muted:#888780}
+body{font-family:system-ui,sans-serif;margin:24px;max-width:900px}
+#outer{position:relative;width:100%;height:426px;overflow:hidden;border-radius:8px;border:0.5px solid var(--border-strong);background:var(--surface-0);touch-action:none}
+#vp{position:absolute;left:0;top:0;width:960px;height:600px;transform-origin:0 0}
+#page{position:absolute;left:0;top:0;height:600px;overflow:hidden}
+.fbar{height:44px;background:var(--surface-1);border-bottom:0.5px solid var(--border);display:flex;align-items:center;padding:0 18px;font-size:15px;color:var(--text-secondary)}
+.fln{height:12px;border-radius:6px;background:var(--surface-1);margin:18px 24px 0}
+#panel{position:absolute;display:flex;flex-direction:column;background:var(--surface-2);border:0.5px solid var(--border-stronger);border-radius:10px;overflow:hidden}
+.hd{display:flex;align-items:center;gap:4px;height:50px;flex:none;padding:0 8px 0 14px;background:var(--surface-1);border-bottom:0.5px solid var(--border);cursor:grab;user-select:none}
+.ib{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;color:var(--text-secondary);font-size:20px;cursor:pointer;border:none;background:none;padding:0}
+.ib.on{background:var(--bg-accent);color:var(--text-accent)}
+.tb{display:flex;flex:none;border-bottom:0.5px solid var(--border)}
+.tb button{flex:1;border:none;border-radius:0;background:none;padding:11px 0;font-size:15px;color:var(--text-secondary);border-bottom:2px solid transparent;cursor:pointer}
+.tb button.on{color:var(--text-primary);font-weight:500;border-bottom-color:var(--border-accent)}
+.bd{flex:1;min-height:0;overflow:auto;padding:16px;font-size:15px;color:var(--text-secondary)}
+.st{flex:none;display:flex;justify-content:space-between;align-items:center;gap:8px;height:34px;padding:0 12px;border-top:0.5px solid var(--border);font-size:13px;color:var(--text-secondary)}
+.hdl{position:absolute;z-index:3}
+#etab{position:absolute;right:0;width:32px;height:100px;border-radius:8px 0 0 8px;background:var(--bg-accent);color:var(--text-accent);display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;user-select:none;font-size:13px;touch-action:none}
+</style></head><body>
+<div id="outer"><div id="vp">
+ <div id="page"><div class="fbar">FAP page</div><div class="fln" style="width:60%"></div><div class="fln" style="width:45%"></div><div class="fln" style="width:52%"></div><div class="fln" style="width:38%"></div><div class="fln" style="width:58%"></div></div>
+ <div id="panel">
+  <div class="hd" id="hd"><div style="flex:1;line-height:1.2"><div style="font-weight:500;font-size:16px;color:var(--text-primary)">FAP-AIO</div><div style="font-size:12px;color:var(--text-muted)">v2.0.0</div></div>
+   <button class="ib" data-a="sync" aria-label="Sync"><i class="ti ti-refresh"></i></button>
+   <button class="ib" data-a="dock" id="dockb" aria-label="Dock"><i class="ti ti-layout-sidebar-right"></i></button>
+   <button class="ib" data-a="settings" aria-label="Settings"><i class="ti ti-settings"></i></button>
+   <button class="ib" data-a="min" aria-label="Minimize"><i class="ti ti-minus"></i></button></div>
+  <div id="main" style="display:flex;flex-direction:column;flex:1;min-height:0"></div>
+  <div class="st"><span id="stl">Not synced yet</span><span id="str"></span></div>
+ </div>
+ <div id="etab" aria-label="Open FAP-AIO"><i class="ti ti-grip-horizontal" style="font-size:14px"></i><span style="writing-mode:vertical-rl">FAP-AIO</span></div>
+</div></div>
+<script>
+const VW=960,VH=600,M=8,SNAP=10,L={minW:320,maxW:720,minH:400,dMin:320,dMax:640};
+const S={mode:'floating',fl:{w:400,h:VH-2*M},dockW:400,min:false,tabY:VH-150,cover:false,view:'tab',tab:'Classes',sync:null,last:null};
+S.fl.x=VW-S.fl.w-M;S.fl.y=VH-S.fl.h-M;
+const $=id=>document.getElementById(id),outer=$('outer'),vp=$('vp'),page=$('page'),panel=$('panel'),main=$('main'),etab=$('etab');
+let sc=1;
+function fit(){sc=outer.clientWidth/VW;vp.style.transform='scale('+sc+')';outer.style.height=(VH*sc)+'px';}
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const pt=e=>{const r=outer.getBoundingClientRect();return{x:(e.clientX-r.left)/sc,y:(e.clientY-r.top)/sc};};
+const dirs={n:'top:0;left:10px;right:10px;height:6px;cursor:ns-resize',s:'bottom:0;left:10px;right:10px;height:6px;cursor:ns-resize',e:'right:0;top:10px;bottom:10px;width:6px;cursor:ew-resize',w:'left:0;top:10px;bottom:10px;width:6px;cursor:ew-resize',nw:'left:0;top:0;width:12px;height:12px;cursor:nwse-resize',ne:'right:0;top:0;width:12px;height:12px;cursor:nesw-resize',sw:'left:0;bottom:0;width:12px;height:12px;cursor:nesw-resize',se:'right:0;bottom:0;width:12px;height:12px;cursor:nwse-resize'};
+const H={};for(const d in dirs){const h=document.createElement('div');h.className='hdl';h.style.cssText=dirs[d];h.dataset.d=d;panel.appendChild(h);H[d]=h;}
+function ago(){if(!S.last)return'Not synced yet';const s=Math.round((Date.now()-S.last)/1000);return s<60?'Synced just now':'Synced '+Math.round(s/60)+' min ago';}
+function renderMain(){
+ if(S.view==='settings'){main.innerHTML='<div style="display:flex;align-items:center;gap:8px;height:44px;flex:none;padding:0 8px;border-bottom:0.5px solid var(--border)"><button class="ib" data-a="back" aria-label="Back"><i class="ti ti-arrow-left"></i></button><span style="font-weight:500;font-size:15px">Settings</span></div><div class="bd"><div style="color:var(--text-primary);font-weight:500;margin-bottom:8px">When docked</div><label style="display:flex;gap:8px;align-items:center;margin-bottom:6px;color:var(--text-primary)"><input type="radio" name="dk" data-a="narrow" '+(S.cover?'':'checked')+'> Narrow the page</label><label style="display:flex;gap:8px;align-items:center;color:var(--text-primary)"><input type="radio" name="dk" data-a="cover" '+(S.cover?'checked':'')+'> Cover the page</label><p style="margin-top:16px;font-size:13px">Other settings are designed in the Settings audit.</p></div>';return;}
+ main.innerHTML='<div class="tb">'+['Classes','Exams','Export'].map(t=>'<button data-tab="'+t+'" class="'+(S.tab===t?'on':'')+'">'+t+'</button>').join('')+'</div><div class="bd">'+S.tab+' view. Its content is designed in the Schedule audit.</div>';
+}
+function render(){
+ const dk=S.mode==='docked';
+ page.style.width=(dk&&!S.cover&&!S.min?VW-S.dockW:VW)+'px';
+ panel.style.display=S.min?'none':'flex';etab.style.display=S.min?'flex':'none';etab.style.top=S.tabY+'px';
+ const r=dk?{x:VW-S.dockW,y:0,w:S.dockW,h:VH}:S.fl;
+ Object.assign(panel.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',borderRadius:dk?'0':'10px'});
+ $('dockb').classList.toggle('on',dk);$('hd').style.cursor=dk?'default':'grab';
+ for(const d in H)H[d].style.display=dk?(d==='w'?'block':'none'):'block';
+ $('stl').textContent=S.sync!==null?'Syncing this week and exams…':ago();
+ $('str').innerHTML=S.sync!==null?'<span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:var(--surface-1);overflow:hidden;vertical-align:middle"><span style="display:block;height:100%;width:'+S.sync+'%;background:var(--border-accent)"></span></span>':'';
+}
+function snapRect(r){if(r.x<SNAP)r.x=0;if(VW-(r.x+r.w)<SNAP)r.x=VW-r.w;if(r.y<SNAP)r.y=0;if(VH-(r.y+r.h)<SNAP)r.y=VH-r.h;return r;}
+let op=null;
+panel.addEventListener('pointerdown',e=>{
+ const p=pt(e),h=e.target.closest('.hdl');
+ if(h){op={k:'rs',d:h.dataset.d,p,r:{...S.fl},dw:S.dockW};}
+ else if(e.target.closest('#hd')&&!e.target.closest('button')){op={k:'mv',p,r:{...S.fl}};$('hd').style.cursor=S.mode==='docked'?'default':'grabbing';}
+ else return;
+ panel.setPointerCapture(e.pointerId);e.preventDefault();
+});
+panel.addEventListener('pointermove',e=>{
+ if(!op)return;const p=pt(e),dx=p.x-op.p.x,dy=p.y-op.p.y;
+ if(op.k==='mv'){
+  if(S.mode==='docked'){if(dx<-48){S.mode='floating';S.fl.x=cl(p.x-S.fl.w/2,0,VW-S.fl.w);S.fl.y=cl(p.y-20,0,VH-S.fl.h);op={k:'mv',p,r:{...S.fl}};}}
+  else{const r={...S.fl,x:cl(op.r.x+dx,0,VW-S.fl.w),y:cl(op.r.y+dy,0,VH-S.fl.h)};S.fl=snapRect(r);}
+ }else if(S.mode==='docked'){S.dockW=cl(op.dw-dx,L.dMin,L.dMax);}
+ else{const o=op.r,d=op.d;let{x,y,w,h}=o;
+  if(d.includes('e')){w=cl(o.w+dx,L.minW,Math.min(L.maxW,VW-o.x));if(VW-(x+w)<SNAP&&VW-x<=L.maxW)w=VW-x;}
+  if(d.includes('w')){w=cl(o.w-dx,L.minW,Math.min(L.maxW,o.x+o.w));x=o.x+o.w-w;if(x<SNAP&&o.x+o.w<=L.maxW){x=0;w=o.x+o.w;}}
+  if(d.includes('s')){h=cl(o.h+dy,L.minH,VH-o.y);if(VH-(y+h)<SNAP)h=VH-y;}
+  if(d.includes('n')){h=cl(o.h-dy,L.minH,o.y+o.h);y=o.y+o.h-h;if(y<SNAP){y=0;h=o.y+o.h;}}
+  S.fl={x,y,w,h};}
+ render();
+});
+panel.addEventListener('pointerup',()=>{op=null;render();});
+panel.addEventListener('click',e=>{
+ const t=e.target.closest('[data-a],[data-tab]');if(!t)return;
+ if(t.dataset.tab){S.tab=t.dataset.tab;renderMain();return;}
+ const a=t.dataset.a;
+ if(a==='dock')S.mode=S.mode==='docked'?'floating':'docked';
+ else if(a==='min')S.min=true;
+ else if(a==='settings'){S.view='settings';renderMain();}
+ else if(a==='back'){S.view='tab';renderMain();}
+ else if(a==='narrow')S.cover=false;
+ else if(a==='cover')S.cover=true;
+ else if(a==='sync'&&S.sync===null){S.sync=0;const iv=setInterval(()=>{S.sync+=10;if(S.sync>=100){clearInterval(iv);S.sync=null;S.last=Date.now();}render();},200);}
+ render();
+});
+let tb=null;
+etab.addEventListener('pointerdown',e=>{tb={y:pt(e).y,t:S.tabY,moved:false};etab.setPointerCapture(e.pointerId);e.preventDefault();});
+etab.addEventListener('pointermove',e=>{if(!tb)return;const dy=pt(e).y-tb.y;if(Math.abs(dy)>3)tb.moved=true;S.tabY=cl(tb.t+dy,0,VH-100);render();});
+etab.addEventListener('pointerup',()=>{if(tb&&!tb.moved){S.min=false;if(S.mode==='floating'){S.fl.x=VW-S.fl.w-M;S.fl.y=VH-S.fl.h-M;}}tb=null;render();});
+setInterval(()=>{if(S.sync===null)render();},30000);
+fit();renderMain();render();
+new ResizeObserver(fit).observe(outer);
+</script></body></html>
