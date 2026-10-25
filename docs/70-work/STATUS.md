@@ -62,6 +62,8 @@ Done 2026-10-23 (loop session 1): owner set `paused: false` and asked for M1 to 
 
 Done 2026-10-23 (loop session 2): M1 complete (25 of 25 subtasks, 149 tests). Added CORE-5.1 sync engine (resumable range jobs with a per-tab lease, exam sync), PNL-2.1 router, view registry and view outlet, PNL-2.2 tab bar, segmented sub-views and the page-aware tab, CORE-6.1 Week and Exams views, CORE-7.1 ICS exporter and Export view. Findings: views use static loaders because the content script is one IIFE bundle without code splitting; the page-aware tab overrides the restored route on every load while the setting is on, as R4.1 requires. Owner check: load `dist/` unpacked, then sync a week, the term and the exams, and import an `.ics` into a calendar app. Next: M2, starting at PLT-6.1.
 
+Failure 2026-10-25 (owner UAT of M1): the M1 build was reported usable without a browser check and with UI decisions the owner never reviewed. Found: minimized pill left mid-page instead of the bottom-right corner; no usable resize, so content is clipped; rows truncate room and subject names, and the layout departs from the legacy fap-scheduler; the palette button shows `⌘K` on Linux and Ctrl+K is Chrome's search shortcut; Today, Grades, Info, the bell, the palette and three menu items are shown but do nothing; the status strip ignores the last sync time. Recorded as fixes F-1 to F-6 and decisions D-2 (live layout audit) and D-3 (palette shortcut) in the orchestrator, and as conventions rules 9 and 10. No more UI code until D-2 is settled with the owner.
+
 ## Last sync
 
 <!-- docs-scaffold:sync:start -->
