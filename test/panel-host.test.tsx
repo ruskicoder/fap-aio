@@ -31,14 +31,14 @@ describe('panel host', () => {
     act(() => mounted.root.unmount())
   })
 
-  it('minimizes to a handle, restores, and persists the state', async () => {
+  it('minimizes to the edge tab, restores, and persists the state', async () => {
     let mounted!: Awaited<ReturnType<typeof mountPanel>>
     await act(async () => { mounted = await mountPanel(document, '') })
     const min = mounted.shadow.querySelector<HTMLButtonElement>('[aria-label="Minimize panel"]')!
     act(() => min.click())
-    const restore = mounted.shadow.querySelector<HTMLButtonElement>('[aria-label="Restore FAP-AIO panel"]')!
+    const restore = mounted.shadow.querySelector<HTMLButtonElement>('[aria-label="Open FAP-AIO panel"]')!
     expect(restore).toBeTruthy()
-    expect(mounted.host.style.getPropertyValue('width')).toBe('40px')
+    expect(mounted.host.style.getPropertyValue('width')).toBe('32px')
     await flushPanelState()
     expect((c.storage.local.data['panel.state'] as { schemaVersion: number; data: { collapsed: boolean } })).toMatchObject({ schemaVersion: 2, data: { collapsed: true } })
     act(() => restore.click())

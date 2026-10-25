@@ -5,8 +5,8 @@ import { createRoot } from 'react-dom/client'
 import { parseHTML } from 'linkedom'
 import { installFakeChrome } from './helpers/fake-chrome'
 import { PanelRouter } from '../src/content/panel/router'
-import { Navigation, TABS } from '../src/content/panel/nav'
-import { clearViews, notifyCounts, registerView } from '../src/content/panel/views'
+import { Navigation } from '../src/content/panel/nav'
+import { clearViews, registerView } from '../src/content/panel/views'
 import { pageRoute } from '../src/content/panel/page-aware'
 import { mountPanel } from '../src/content/panel/host'
 
@@ -32,11 +32,14 @@ describe('page-aware map', () => {
   })
 })
 
-describe('tab bar and sub-views', () => {
+describe('tab bar', () => {
   beforeEach(() => {
     installFakeChrome()
     clearViews()
     document.body.innerHTML = ''
+    for (const [sub, label] of [['week', 'Classes'], ['exams', 'Exams'], ['export', 'Export']] as const) {
+      registerView({ tab: 'schedule', sub, label, icon: 'x', component: async () => () => null })
+    }
   })
 
   function render(router: PanelRouter) {
@@ -44,58 +47,57 @@ describe('tab bar and sub-views', () => {
     document.body.appendChild(el)
     const root = createRoot(el)
     act(() => root.render(<Navigation router={router} />))
-    const tabs = () => [...el.querySelectorAll<HTMLButtonElement>('[aria-label="Sections"] [role="tab"]')]
+    const tabs = () => [...el.querySelectorAll<HTMLButtonElement>('[role="tab"]')]
     const key = (t: HTMLElement, k: string) => act(() => { t.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true })) })
     return { el, root, tabs, key }
   }
 
-  it('has four one-word tabs with icons in order', () => {
-    const { tabs, root } = render(new PanelRouter())
-    expect(tabs().map((t) => t.textContent)).toEqual(['Today', 'Schedule', 'Grades', 'Info'])
-    expect(tabs().every((t) => t.querySelector('svg'))).toBe(true)
-    expect(TABS.every((t) => /^[A-Z][a-z]+$/.test(t.label))).toBe(true)
+  it('shows one tab per shipped view, one word each, and nothing for later milestones', () => {
+    const { el, tabs, root } = render(new PanelRouter({ tab: 'schedule', sub: 'week' }))
+    expect(tabs().map((t) => t.textContent)).toEqual(['Classes', 'Exams', 'Export'])
+    expect(tabs().every((t) => /^[A-Z][a-z]+$/.test(t.textContent ?? ''))).toBe(true)
+    expect(el.textContent).not.toMatch(/Today|Grades|Info/)
+    act(() => root.unmount())
+  })
+
+  it('opens the first tab when the route has no shipped view', () => {
+    const router = new PanelRouter({ tab: 'today' })
+    const { root } = render(router)
+    expect(router.current()).toEqual({ tab: 'schedule', sub: 'week' })
     act(() => root.unmount())
   })
 
   it('moves focus with arrows, Home and End, and activates only on Enter, Space or click', () => {
-    const router = new PanelRouter()
+    const router = new PanelRouter({ tab: 'schedule', sub: 'week' })
     const { tabs, key, root } = render(router)
-    expect(tabs().map((t) => t.tabIndex)).toEqual([0, -1, -1, -1])
+    expect(tabs().map((t) => t.tabIndex)).toEqual([0, -1, -1])
     tabs()[0]!.focus()
     key(tabs()[0]!, 'ArrowRight')
     expect(document.activeElement).toBe(tabs()[1])
-    expect(router.current()).toEqual({ tab: 'today' })
+    expect(router.current()).toEqual({ tab: 'schedule', sub: 'week' })
     key(tabs()[1]!, 'End')
-    expect(document.activeElement).toBe(tabs()[3])
-    key(tabs()[3]!, 'ArrowRight')
+    expect(document.activeElement).toBe(tabs()[2])
+    key(tabs()[2]!, 'ArrowRight')
     expect(document.activeElement).toBe(tabs()[0])
-    key(tabs()[0]!, 'ArrowLeft')
-    key(tabs()[3]!, 'Home')
+    key(tabs()[0]!, 'Home')
     expect(document.activeElement).toBe(tabs()[0])
     key(tabs()[1]!, 'Enter')
-    expect(router.current()).toEqual({ tab: 'schedule', sub: 'week' })
+    expect(router.current()).toEqual({ tab: 'schedule', sub: 'exams' })
     key(tabs()[2]!, ' ')
-    expect(router.current()).toEqual({ tab: 'grades', sub: 'courses' })
-    act(() => tabs()[3]!.click())
-    expect(router.current()).toEqual({ tab: 'info', sub: 'subjects' })
-    expect(tabs()[3]!.getAttribute('aria-selected')).toBe('true')
+    expect(router.current()).toEqual({ tab: 'schedule', sub: 'export' })
+    act(() => tabs()[0]!.click())
+    expect(router.current()).toEqual({ tab: 'schedule', sub: 'week' })
+    expect(tabs()[0]!.getAttribute('aria-selected')).toBe('true')
     act(() => root.unmount())
   })
 
-  it('shows the segmented sub-views with counts', () => {
-    let exams = 3
-    registerView({ tab: 'schedule', sub: 'exams', label: 'Exams', icon: 'school', component: async () => () => null, count: () => exams })
+  it('hides the tabs while Settings is open', () => {
     const router = new PanelRouter({ tab: 'schedule', sub: 'week' })
-    const { el, root } = render(router)
-    const subs = () => [...el.querySelectorAll<HTMLButtonElement>('[aria-label="Schedule views"] [role="tab"]')]
-    expect(subs().map((t) => t.getAttribute('aria-label'))).toEqual(['Week', 'Exams, 3', 'Export'])
-    exams = 5
-    act(() => notifyCounts())
-    expect(subs()[1]!.textContent).toBe('Exams5')
-    act(() => subs()[1]!.click())
-    expect(router.current()).toEqual({ tab: 'schedule', sub: 'exams' })
-    act(() => router.go({ tab: 'today' }))
-    expect(el.querySelector('[aria-label="Schedule views"]')).toBeNull()
+    const { tabs, root } = render(router)
+    act(() => router.go({ overlay: 'settings' }))
+    expect(tabs()).toHaveLength(0)
+    act(() => router.back())
+    expect(tabs()).toHaveLength(3)
     act(() => root.unmount())
   })
 })
@@ -107,6 +109,9 @@ describe('page-aware mount', () => {
     document.body.innerHTML = ''
     Object.defineProperty(window, 'innerWidth', { value: 1200, configurable: true })
     Object.defineProperty(window, 'innerHeight', { value: 800, configurable: true })
+    for (const [sub, label] of [['week', 'Classes'], ['exams', 'Exams'], ['export', 'Export']] as const) {
+      registerView({ tab: 'schedule', sub, label, icon: 'x', component: async () => () => null })
+    }
   })
 
   it('selects the mapped tab on load, then a manual pick wins', async () => {
@@ -114,9 +119,9 @@ describe('page-aware mount', () => {
     let m!: Awaited<ReturnType<typeof mountPanel>>
     await act(async () => { m = await mountPanel(document, '') })
     expect(m.router.current()).toEqual({ tab: 'schedule', sub: 'exams' })
-    const info = [...m.shadow.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find((t) => t.textContent === 'Info')!
-    act(() => info.click())
-    expect(m.router.current()).toEqual({ tab: 'info', sub: 'subjects' })
+    const classes = [...m.shadow.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find((t) => t.textContent === 'Classes')!
+    act(() => classes.click())
+    expect(m.router.current()).toEqual({ tab: 'schedule', sub: 'week' })
     act(() => m.root.unmount())
     history.replaceState(null, '', '/')
   })

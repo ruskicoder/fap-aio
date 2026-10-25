@@ -7,6 +7,8 @@ export const PanelPrefsSchema = z.object({
   keybinds: z.record(z.string()),
   recents: z.array(z.string()),
   firstRun: z.enum(['pending', 'done']),
+  /** While docked: narrow the FAP page or cover it (panel-ux R1.5). */
+  docked: z.enum(['narrow', 'cover']).default('narrow'),
 })
 export type PanelPrefs = z.infer<typeof PanelPrefsSchema>
 
@@ -14,7 +16,7 @@ declare module './storage/catalog' {
   interface StoreMap { 'panel.prefs': PanelPrefs }
 }
 
-export const defaultPrefs = (): PanelPrefs => ({ pageAware: true, keybinds: {}, recents: [], firstRun: 'pending' })
+export const defaultPrefs = (): PanelPrefs => ({ pageAware: true, keybinds: {}, recents: [], firstRun: 'pending', docked: 'narrow' })
 
 export async function readPrefs(): Promise<PanelPrefs> {
   const p = PanelPrefsSchema.safeParse(await read('panel.prefs'))
@@ -22,5 +24,8 @@ export async function readPrefs(): Promise<PanelPrefs> {
 }
 
 export function updatePrefs(fn: (p: PanelPrefs) => PanelPrefs): Promise<PanelPrefs> {
-  return update('panel.prefs', (old) => fn(PanelPrefsSchema.safeParse(old).success ? old! : defaultPrefs()))
+  return update('panel.prefs', (old) => {
+    const p = PanelPrefsSchema.safeParse(old)
+    return fn(p.success ? p.data : defaultPrefs())
+  })
 }

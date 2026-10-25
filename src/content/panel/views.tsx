@@ -4,14 +4,18 @@
 // skeleton. A chunk that fails shows an inline "Try again"; the rest of the panel keeps working.
 import { useEffect, useState, useSyncExternalStore, type ComponentType } from 'react'
 import type { Route } from '../../shared/panel-state'
+import type { StoreKey } from '../../shared/storage/catalog'
 import { isOverlay, routeKey, useRoute, type OverlayId, type PanelRouter, type TabId } from './router'
+import { Icon } from './icons'
 
 export type ViewDef = {
   label: string
   icon: string
   component: () => Promise<ComponentType>
-  /** Badge on the segmented control (R2.2); null hides it. */
+  /** Badge count; null hides it. Not shown in M1 (agreed shell has no tab badges). */
   count?: () => number | null
+  /** Stores whose `lastSync` the status strip shows while this view is open (R2.6). */
+  lastSync?: { label: string; key: StoreKey }[]
 } & ({ tab: TabId; sub?: string } | { overlay: OverlayId })
 
 const defs = new Map<string, ViewDef>()
@@ -25,6 +29,10 @@ export function registerView(def: ViewDef): void {
 }
 export const viewFor = (r: Route): ViewDef | undefined => defs.get(routeKey(r))
 export const viewsOf = (tab: TabId): ViewDef[] => [...defs.values()].filter((d) => 'tab' in d && d.tab === tab)
+/** Every registered non-overlay view, in registration order: the tabs of the panel (R2.1, R2.2). */
+export type TabViewDef = Extract<ViewDef, { tab: TabId }>
+export const tabViews = (): TabViewDef[] => [...defs.values()].filter((d): d is TabViewDef => 'tab' in d)
+export const routeOfView = (d: TabViewDef): Route => (d.sub ? { tab: d.tab, sub: d.sub } : { tab: d.tab }) as Route
 // Bumped when a view registers or a badge count changes.
 let countsVersion = 0
 const countListeners = new Set<() => void>()
@@ -99,9 +107,9 @@ export function ViewOutlet({ router }: { router: PanelRouter }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {overlay && (
-        <div className="flex h-9 shrink-0 items-center gap-2 border-b border-gray-200 px-2">
-          <button type="button" aria-label="Back" className="inline-flex h-7 min-w-7 items-center justify-center rounded px-1 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500" onClick={() => router.back()}>←</button>
-          <h2 className="text-sm font-semibold">{def?.label ?? ''}</h2>
+        <div className="flex h-11 shrink-0 items-center gap-2 border-b border-gray-200 px-2">
+          <button type="button" aria-label="Back" title="Back" className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500" onClick={() => router.back()}><Icon name="back" /></button>
+          <h2 className="text-base font-semibold">{def?.label ?? ''}</h2>
         </div>
       )}
       <div className="min-h-0 flex-1 overflow-auto" aria-busy={!!def && !failed && shown?.key !== key}>{body}</div>

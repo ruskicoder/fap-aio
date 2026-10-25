@@ -128,8 +128,7 @@ describe('route persistence', () => {
     await c.storage.local.set({ 'panel.prefs': { schemaVersion: 1, updatedAt: 0, data: { pageAware: false, keybinds: {}, recents: [], firstRun: 'done' } } })
     let m!: Awaited<ReturnType<typeof mountPanel>>
     await act(async () => { m = await mountPanel(document, '') })
-    act(() => m.shadow.querySelector<HTMLButtonElement>('[aria-label="Menu"]')!.click())
-    act(() => m.shadow.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')[1]!.click())
+    act(() => m.shadow.querySelector<HTMLButtonElement>('[aria-label="Settings"]')!.click())
     expect(m.router.current()).toEqual({ overlay: 'settings' })
     act(() => m.router.go({ tab: 'schedule', sub: 'exams' }))
     await flushPanelState()

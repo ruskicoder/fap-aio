@@ -1,9 +1,11 @@
 import { addModule, onBoot } from '../../content/modules'
 import { notifyCounts, registerView } from '../../content/panel/views'
+import { provideSyncAll } from '../../content/panel/actions'
+import { errorText } from '../../content/panel/errors'
 import { read, subscribe } from '../../shared/storage/catalog'
 import { todayVn } from '../../shared/dates'
 import { registerSchedulerSources } from './sources'
-import { engine } from './sync'
+import { engine, syncExams } from './sync'
 import { WeekView } from './views/WeekView'
 import { ExamsView } from './views/ExamsView'
 import { ExportView } from './views/ExportView'
@@ -20,12 +22,22 @@ const countExams = (d: ExamStore | null) => {
 
 export function registerSchedulerViews(): void {
   // Static loaders: the content script is one IIFE bundle without code splitting.
-  registerView({ tab: 'schedule', sub: 'week', label: 'Week', icon: 'calendar', component: async () => WeekView })
-  registerView({ tab: 'schedule', sub: 'exams', label: 'Exams', icon: 'school', component: async () => ExamsView, count: () => upcoming })
-  registerView({ tab: 'schedule', sub: 'export', label: 'Export', icon: 'download', component: async () => ExportView })
+  // Tabs Classes, Exams, Export (panel-ux R2.1, agreed shell).
+  registerView({ tab: 'schedule', sub: 'week', label: 'Classes', icon: 'calendar', component: async () => WeekView, lastSync: [{ label: 'Classes', key: 'timetable' }] })
+  registerView({ tab: 'schedule', sub: 'exams', label: 'Exams', icon: 'school', component: async () => ExamsView, count: () => upcoming, lastSync: [{ label: 'Exams', key: 'exams' }] })
+  registerView({ tab: 'schedule', sub: 'export', label: 'Export', icon: 'download', component: async () => ExportView, lastSync: [{ label: 'Classes', key: 'timetable' }, { label: 'Exams', key: 'exams' }] })
   void read('exams').then(countExams)
   subscribe('exams', countExams)
 }
+
+// Header Sync: this week's classes and the exams (panel-ux R2.3).
+provideSyncAll(async () => {
+  const w = await engine.syncWeek(todayVn())
+  if (!w.ok) return { ok: false, text: errorText(w.error) }
+  const e = await syncExams()
+  if (!e.ok) return { ok: false, text: errorText(e.error) }
+  return { ok: true }
+})
 
 addModule({ id: 'scheduler', registerSources: registerSchedulerSources, registerViews: registerSchedulerViews })
 // A range sync interrupted by a reload or navigation continues on the next page (core R6.6).

@@ -11,7 +11,7 @@ vi.mock('../src/content/fap/queue', () => ({ queuedGet: vi.fn(), queue: { curren
 const { WeekView, inRange } = await import('../src/features/scheduler/views/WeekView')
 const { ExamsView, daysLeft } = await import('../src/features/scheduler/views/ExamsView')
 const { registerSchedulerViews } = await import('../src/features/scheduler/index')
-const { clearViews, viewFor } = await import('../src/content/panel/views')
+const { clearViews, tabViews, viewFor } = await import('../src/content/panel/views')
 
 ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
 
@@ -134,10 +134,11 @@ describe('exams view', () => {
     act(() => root.unmount())
   })
 
-  it('registers Week and Exams with an upcoming count badge', async () => {
+  it('registers Classes, Exams and Export with their sync stamps and the upcoming count', async () => {
     clearViews()
     registerSchedulerViews()
-    expect(viewFor({ tab: 'schedule', sub: 'week' })?.label).toBe('Week')
+    expect(tabViews().map((v) => v.label)).toEqual(['Classes', 'Exams', 'Export'])
+    expect(viewFor({ tab: 'schedule', sub: 'export' })?.lastSync?.map((x) => x.key)).toEqual(['timetable', 'exams'])
     await tick()
     expect(viewFor({ tab: 'schedule', sub: 'exams' })?.count?.()).toBeNull()
     await put(c, 'exams', { exams: [exam('2099-01-01', 'FE'), exam('2000-01-01', 'PE')], lastSync: 1 })

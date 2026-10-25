@@ -17,6 +17,8 @@ export const PanelStateSchema = z.object({
   collapsed: z.boolean(),
   route: RouteSchema,
   density: z.enum(['comfortable', 'compact']),
+  /** Minimized edge tab, px from the viewport top (panel-ux R1.6). */
+  edgeTabTop: z.number().optional(),
 })
 export type PanelState = z.infer<typeof PanelStateSchema>
 
@@ -26,7 +28,8 @@ export const DOCKED_DEFAULT_WIDTH = 400
 export function defaultPanelState(viewport = { width: 1280, height: 800 }): PanelState {
   return {
     mode: 'floating',
-    floating: { x: Math.max(0, viewport.width - FLOATING_DEFAULT.width - 16), y: 72, ...FLOATING_DEFAULT },
+    // Bottom-right corner, 8 px from the edges (agreed shell, ui/shell.html).
+    floating: { x: Math.max(0, viewport.width - FLOATING_DEFAULT.width - 8), y: Math.max(0, viewport.height - FLOATING_DEFAULT.height - 8), ...FLOATING_DEFAULT },
     dockedWidth: DOCKED_DEFAULT_WIDTH,
     collapsed: false,
     route: { tab: 'today' },

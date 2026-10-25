@@ -1,10 +1,13 @@
-// Status strip (panel-ux R3.4 via the design's StatusStrip; platform R3.9, R5.5; core error table):
-// last sync, running range-sync progress, request-budget wait, data channel state, and the
-// challenge banner with a reload button.
+// Status strip (panel-ux R2.6; platform R3.9, R5.5; core error table): always at the bottom. Shows the
+// last sync of the open view's data, header Sync and range-sync progress, the request-budget wait,
+// the data channel state, and the challenge banner with a reload button.
 import { useEffect, useState } from 'react'
 import { queue as defaultQueue, type FapQueue, type QueueState } from '../fap/queue'
 import { onMessage } from '../../shared/call'
-import { subscribe, read } from '../../shared/storage/catalog'
+import { subscribe, read, type StoreKey } from '../../shared/storage/catalog'
+import { useSyncAll } from './actions'
+import { useRoute, type PanelRouter } from './router'
+import { useCounts, viewFor } from './views'
 import type { MsgOf } from '../../shared/messages'
 
 export interface SyncJobView { mondays: string[]; next: number }
@@ -19,7 +22,16 @@ export function ago(ts: number, now = Date.now()): string {
   return `${Math.round(h / 24)} days ago`
 }
 
-export function StatusStrip({ lastSync, q = defaultQueue, reload = () => location.reload() }: { lastSync?: number | null; q?: FapQueue; reload?: () => void }) {
+export interface SyncStamp { label: string; at: number | null }
+
+/** `Synced 2 min ago`, or one stamp per store: `Classes synced 2 min ago · Exams not synced yet`. */
+export function stampText(stamps: SyncStamp[], now = Date.now()): string {
+  if (stamps.length === 1) return stamps[0]!.at != null ? `Synced ${ago(stamps[0]!.at, now)}` : 'Not synced yet'
+  return stamps.map((s) => `${s.label} ${s.at != null ? `synced ${ago(s.at, now)}` : 'not synced yet'}`).join(' · ')
+}
+
+export function StatusStrip({ lastSync, stamps, q = defaultQueue, reload = () => location.reload() }: { lastSync?: number | null; stamps?: SyncStamp[]; q?: FapQueue; reload?: () => void }) {
+  const sync = useSyncAll()
   const [qs, setQs] = useState<QueueState>(q.current)
   const [job, setJob] = useState<SyncJobView | null>(null)
   const [data, setData] = useState<MsgOf<'data.progress'> | null>(null)
@@ -45,24 +57,51 @@ export function StatusStrip({ lastSync, q = defaultQueue, reload = () => locatio
     )
   }
 
+  if (sync.error) {
+    return (
+      <div role="alert" className="flex min-h-[34px] shrink-0 items-center gap-2 border-t border-red-200 bg-red-50 px-3 py-1 text-xs text-red-800">{sync.error}</div>
+    )
+  }
   const parts: string[] = []
+  if (sync.running) parts.push('Syncing this week and exams…')
   if (job && job.mondays.length) parts.push(`Syncing ${job.next}/${job.mondays.length} weeks`)
   if (qs.waiting) parts.push(`Waiting for FAP budget: ${qs.waiting.remaining} left, ${Math.ceil(qs.waiting.retryAfterMs / 1000)} s`)
   if (data?.state === 'syncing') parts.push('Syncing data')
   else if (data?.skipped) parts.push(`Data update skipped: ${data.skipped}`)
   else if (data?.version != null) parts.push(`Data v${data.version}`)
-  const left = lastSync ? `Synced ${ago(lastSync)}` : 'Not synced yet'
+  const left = stamps?.length ? stampText(stamps) : lastSync ? `Synced ${ago(lastSync)}` : 'Not synced yet'
   const pct = job && job.mondays.length ? Math.round((job.next / job.mondays.length) * 100) : null
 
   return (
-    <div role="status" aria-live="polite" className="flex h-7 shrink-0 items-center gap-2 border-t border-gray-200 px-3 text-xs text-gray-600">
-      <span className="truncate">{left}</span>
+    <div role="status" aria-live="polite" className="flex min-h-[34px] shrink-0 flex-wrap items-center gap-x-2 border-t border-gray-200 px-3 py-1 text-xs text-gray-600">
+      <span>{left}</span>
       {pct !== null && (
         <span aria-hidden="true" className="h-1.5 w-20 overflow-hidden rounded bg-gray-200">
           <span className="block h-full bg-orange-500" style={{ width: `${pct}%` }} />
         </span>
       )}
-      <span className="ml-auto truncate">{parts.join(' · ')}</span>
+      <span className="ml-auto">{parts.join(' · ')}</span>
     </div>
   )
+}
+
+/** The strip for the open view: reads `lastSync` of the stores its view declares (R2.6). */
+export function ViewStatusStrip({ router, q, reload }: { router: PanelRouter; q?: FapQueue; reload?: () => void }) {
+  const route = useRoute(router)
+  useCounts()
+  const def = viewFor(route)
+  const keys = def?.lastSync ?? []
+  const sig = keys.map((k) => `${k.label}=${k.key}`).join('|')
+  const [stamps, setStamps] = useState<SyncStamp[]>([])
+  useEffect(() => {
+    let live = true
+    const load = () => Promise.all(keys.map(async (k) => {
+      const d = (await read(k.key as StoreKey)) as { lastSync?: number | null } | null
+      return { label: k.label, at: d?.lastSync ?? null }
+    })).then((s) => { if (live) setStamps(s) })
+    void load()
+    const offs = keys.map((k) => subscribe(k.key as StoreKey, () => void load()))
+    return () => { live = false; offs.forEach((o) => o()) }
+  }, [sig])
+  return <StatusStrip stamps={keys.length ? stamps : undefined} q={q} reload={reload} />
 }
