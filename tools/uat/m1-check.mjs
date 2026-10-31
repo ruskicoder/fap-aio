@@ -215,7 +215,8 @@ async function main() {
   await sleep(600)
   const p3 = await panelBox()
   const narrowed = await ev(`({ body: getComputedStyle(document.body).marginRight || getComputedStyle(document.body).paddingRight, width: document.body.getBoundingClientRect().width })`)
-  note('Dock pins the panel to the right, full height', Math.round(p3.left + p3.w) >= 1439 && p3.h >= 899, `left ${Math.round(p3.left)}, width ${Math.round(p3.w)}, height ${Math.round(p3.h)}`)
+  const vw = await ev('document.documentElement.clientWidth')
+  note('Dock pins the panel to the right of the page, left of its scrollbar, full height', Math.abs(p3.left + p3.w - vw) <= 1 && p3.h >= 899, `right edge ${Math.round(p3.left + p3.w)}, visible width ${vw}, height ${Math.round(p3.h)}`)
   note('docking narrows the page body', narrowed.width <= 1440 - p3.w + 2, `body width ${Math.round(narrowed.width)} (fixture page has no Jidox CSS; live selectors still need a FAP check)`)
   await shot('docked')
 
@@ -230,6 +231,8 @@ async function main() {
   await sleep(600)
   const tab = await box('button', 'Open FAP-AIO panel')
   note('Minimize leaves an edge tab', !!tab, tab ? `at ${Math.round(tab.left)},${Math.round(tab.top)} size ${Math.round(tab.w)}x${Math.round(tab.h)}` : 'missing')
+  const vw2 = await ev('document.documentElement.clientWidth')
+  note('the edge tab is fully visible, not under the page scrollbar (fix F-10)', !!tab && Math.abs(tab.left + tab.w - vw2) <= 1, tab ? `tab right edge ${Math.round(tab.left + tab.w)}, visible width ${vw2}, window ${await ev('innerWidth')}` : '')
   await shot('minimized')
   if (tab) {
     await click('button', 'Open FAP-AIO panel')
@@ -243,7 +246,8 @@ async function main() {
   await sleep(600)
   await shot('narrow-820-docked')
   const p4 = await panelBox()
-  note('under 900 px docking is an overlay drawer', p4 && Math.round(p4.left + p4.w) >= 819, p4 ? `left ${Math.round(p4.left)}, width ${Math.round(p4.w)}` : '')
+  const vw3 = await ev('document.documentElement.clientWidth')
+  note('under 900 px docking is an overlay drawer', p4 && Math.abs(p4.left + p4.w - vw3) <= 1, p4 ? `left ${Math.round(p4.left)}, width ${Math.round(p4.w)}, visible width ${vw3}` : '')
 
   note('no request left the fixture origin', true, `${blocked.length} other-host requests blocked: ${[...new Set(blocked.map((u) => new URL(u).host))].join(', ') || 'none'}`)
 }

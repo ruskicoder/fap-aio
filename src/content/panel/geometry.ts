@@ -70,3 +70,13 @@ export function bottomRight(r: Rect, vw: number, vh: number): Rect {
 export const clampDockWidth = (w: number, vw: number) => cl(w, Math.min(LIMITS.docked.minW, vw), Math.min(LIMITS.docked.maxW, vw))
 export const clampTabTop = (t: number, vh: number) => cl(t, 0, Math.max(0, vh - EDGE_TAB.h))
 export const defaultTabTop = (vh: number) => clampTabTop(vh - EDGE_TAB.h - 96, vh)
+
+/**
+ * The visible page area without scrollbars (fix F-10). `innerWidth` includes a classic scrollbar, which
+ * put the edge tab and the docked pane under it. Falls back to the window size when the document
+ * reports no layout (an empty page or a test DOM).
+ */
+export function viewportSize(doc: Document = document, win: Window = window): { w: number; h: number } {
+  const el = doc.documentElement
+  return { w: el.clientWidth || win.innerWidth, h: el.clientHeight || win.innerHeight }
+}

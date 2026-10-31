@@ -183,6 +183,23 @@ describe('panel shell', () => {
     act(() => root.unmount())
   })
 
+  it('keeps the edge tab and the docked pane left of a page scrollbar (fix F-10)', () => {
+    const el = document.documentElement
+    Object.defineProperty(el, 'clientWidth', { value: VW - 15, configurable: true })
+    Object.defineProperty(el, 'clientHeight', { value: VH, configurable: true })
+    try {
+      const { q, px, root } = render({ ...defaultPanelState({ width: VW, height: VH }), collapsed: true })
+      expect(px('left') + px('width')).toBe(VW - 15)
+      act(() => q('[aria-label="Open FAP-AIO panel"]')!.click())
+      act(() => q('[aria-label="Dock panel"]')!.click())
+      expect([px('left'), px('width')]).toEqual([VW - 15 - 400, 400])
+      act(() => root.unmount())
+    } finally {
+      delete (el as unknown as Record<string, unknown>).clientWidth
+      delete (el as unknown as Record<string, unknown>).clientHeight
+    }
+  })
+
   it('reopens a docked panel docked', () => {
     const { q, px, root } = render({ ...defaultPanelState({ width: VW, height: VH }), mode: 'docked', collapsed: true })
     act(() => q('[aria-label="Open FAP-AIO panel"]')!.click())

@@ -9,7 +9,7 @@ import { useStore } from './use-store'
 import { setPageDock } from './page-dock'
 import { Icon } from './icons'
 import {
-  DRAWER_BELOW, EDGE_TAB, UNDOCK_PX, bottomRight, clampDockWidth, clampFloating, clampTabTop, defaultTabTop, moveRect, resizeRect,
+  DRAWER_BELOW, EDGE_TAB, UNDOCK_PX, bottomRight, clampDockWidth, clampFloating, clampTabTop, defaultTabTop, moveRect, resizeRect, viewportSize,
   type Dir, type Rect,
 } from './geometry'
 
@@ -32,7 +32,7 @@ export interface PanelAppProps {
   bind?: (update: (fn: (s: PanelState) => PanelState) => void) => void
 }
 
-const viewport = () => ({ w: window.innerWidth, h: window.innerHeight })
+const viewport = () => viewportSize()
 const btn = 'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-600 hover:bg-gray-200 hover:text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500'
 
 const HANDLES: [Dir, string][] = [
@@ -98,7 +98,10 @@ export function PanelApp({ initial, host, version = '', children, status, syncin
       update((s) => ({ ...s, floating: clampFloating(s.floating, v.w, v.h) }))
     }
     window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
+    // A page scrollbar that appears or goes away changes the visible width without a resize event.
+    const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize)
+    ro?.observe(document.documentElement)
+    return () => { window.removeEventListener('resize', onResize); ro?.disconnect() }
   }, [update])
 
   const collapse = useCallback(() => update((s) => ({ ...s, collapsed: true })), [update])

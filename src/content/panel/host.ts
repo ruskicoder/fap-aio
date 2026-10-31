@@ -11,6 +11,7 @@ import { ViewOutlet, registerView } from './views'
 import { Navigation } from './nav'
 import { pageRoute } from './page-aware'
 import { SettingsView } from './SettingsView'
+import { viewportSize } from './geometry'
 import { runSyncAll, useSyncAll } from './actions'
 import { readPrefs } from '../../shared/panel-prefs'
 import { loadPanelState } from './store'
@@ -42,7 +43,8 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   mountPoint.style.setProperty('height', '100%')
   shadow.appendChild(mountPoint)
   doc.body.appendChild(host)
-  const initial = await loadPanelState({ width: window.innerWidth, height: window.innerHeight })
+  const vp = viewportSize(doc)
+  const initial = await loadPanelState({ width: vp.w, height: vp.h })
   const root = createRoot(mountPoint)
   let updater: ((fn: (s: PanelState) => PanelState) => void) | null = null
   const router = new PanelRouter(initial.route)
