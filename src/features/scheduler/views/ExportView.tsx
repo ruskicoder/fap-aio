@@ -10,7 +10,7 @@ import {
   DEFAULT_PREFS, DETAILS, EXAM_TYPES, longDate, parsePrefs, rangeBounds, selectForExport, subjectNames, subjectsInRange, termName,
   type ExportPrefs, type ExportRange,
 } from '../export-prefs'
-import { Message, dayLabel, select } from './common'
+import { Chip, Message, dayLabel, select } from './common'
 
 const CLASS_OFFSETS = [5, 10, 15, 30, 60]
 const EXAM_FIRST: [number, string][] = [[10080, '1 week'], [4320, '3 days'], [2880, '2 days'], [1440, '1 day'], [720, '12 hours']]
@@ -18,15 +18,6 @@ const EXAM_SECOND: [number, string][] = [[180, '3 hours'], [120, '2 hours'], [60
 const MODES: [ExportPrefs['classMode'], string][] = [['all', 'All'], ['offline', 'Offline only'], ['online', 'Online only']]
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
-
-function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
-  return (
-    <button
-      type="button" aria-pressed={on} onClick={onClick}
-      className={`inline-flex min-h-7 items-center rounded-full border px-3 text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${on ? 'border-orange-500 bg-orange-50 text-orange-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
-    >{children}</button>
-  )
-}
 
 function Group({ n, title, children }: { n: number; title: string; children: ReactNode }) {
   return (
@@ -90,7 +81,8 @@ export function ExportView({ now = () => Date.now(), download = defaultDownload 
   const total = classEvents.length + examEvents.length
   const files = p.split ? [classEvents.length, examEvents.length].filter(Boolean).length : total ? 1 : 0
   const [from, to] = rangeBounds(p, today)
-  const sample = sessions[0] ?? null
+  // A sample with a known subject name, so the three title choices read differently (R9.6).
+  const sample = sessions.find((s) => names.has(s.code)) ?? null
   const ranges: [ExportRange, string][] = [['week', 'This week'], ['next2', 'Next 2 weeks'], ['month', 'This month'], ['term', termName(today)], ['custom', 'Custom']]
   const titleSample = (f: ExportPrefs['title']) => (sample ? classEvent(sample, { ...p, title: f }, names).summary : { 'code-group': 'CODE (group)', 'code-name': 'CODE · name', 'name-code': 'name (CODE)' }[f])
 

@@ -108,14 +108,18 @@ Out of scope for this spec: GPA calculator, the other info-getter modules (subje
 
 **User Story:** As a student, I want to browse my synced classes and exams in the panel, so that I can check what is coming without opening FAP's pages.
 
+Revised 2026-10-31 from the agreed Classes and Exams visual (gate G-UI-SCHEDULE, round S2 in `ui/schedule-audit.md`, saved as `ui/schedule.html`); the previous text is in `.deprecated/2026-10-31-schedule-audit/requirements.md`.
+
 #### Acceptance Criteria
 
-1. The panel SHALL list synced sessions grouped by day in date and time order.
-2. The panel SHALL filter sessions by range: today, this week, next two weeks, this month, all.
-3. The panel SHALL list exams split into upcoming and past, with days remaining for upcoming exams.
-4. The panel SHALL filter exams by exam type.
-5. WHILE no data is stored THEN the panel SHALL show an empty state with the action to sync.
-6. The panel SHALL show when each data set was last synced.
+1. The Classes tab SHALL show "Sync this week" and "Sync <term>" (the current term by name) at the top, then the sub-views "This week (n)" and "All (n)" with their class counts.
+2. The Classes tab SHALL list sessions under day headers (the date once per day, today marked) in date and time order. Each class is a card: the full title `CODE · name` (the code alone when no name is known), a slot tag and an attendance tag, and label-value lines for room (or Online), time, lecturer and group, and FAP's schedule type when present.
+3. The Exams tab SHALL show "Sync exams" at the top, then the sub-views "Upcoming (n)" and "Past (n)" with their counts, and a row of type chips (FE, PE, 2NDFE, 2NDPE, Other), all on by default, that filter both lists. Upcoming exams are listed soonest first, past exams latest first.
+4. Each exam is a card: the full title `CODE · name`, a type tag, a countdown tag (Today, Tomorrow, In n days, or Done for past exams), and label-value lines for format, room ("not assigned yet" when FAP has none), date, time and results date when present.
+5. Tags SHALL use soft tints (pale fill, dark text): attendance present green, absent red, not yet amber, other neutral; exam type FE green, PE blue, 2NDFE amber, 2NDPE purple, other neutral; countdown red within three days, green later, neutral when past.
+6. No text in a card SHALL be truncated; long titles and values wrap.
+7. WHILE no data is stored THEN the tab SHALL show an empty state with the action to sync.
+8. The panel SHALL show when each data set was last synced (in the status strip, panel-ux R2.6).
 
 ### Requirement 9: Calendar export
 

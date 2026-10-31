@@ -188,7 +188,7 @@ describe('export form', () => {
     expect(el.textContent).toContain('1 class')
     expect(dl().textContent).toBe('Download .ics (1 event)')
     act(() => byText('button', /^Classes$/).click())
-    expect(dl().disabled).toBe(true)
+    expect((dl() as HTMLButtonElement).disabled).toBe(true)
     expect(el.textContent).toContain('Nothing matches these options.')
     act(() => root.unmount())
   })

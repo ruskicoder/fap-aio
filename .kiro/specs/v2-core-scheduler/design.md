@@ -139,10 +139,11 @@ Registered by this spec (R4.4):
   - The final report gives weeks synced, weeks failed and sessions added or updated (R6.7).
 - Merge: key `code|date|start`; existing records get their mutable fields updated (R6.9).
 - `ExamSync`: merge key `code|type|date` (R7.3). Exams missing from FAP stay; `past = date < today` (R7.2).
-- Views:
-  - `SessionsView`: grouped by day, range filters (R8.1, R8.2).
-  - `ExamsView`: upcoming and past, days left, type filter (R8.3, R8.4).
-  - Empty states (R8.5) and last-sync stamps (R8.6).
+- Views (revised 2026-10-31 to `ui/schedule.html`; the previous text is in `.deprecated/2026-10-31-schedule-audit/design.md`):
+  - `ClassesView` (`views/WeekView.tsx`): sync buttons, This week and All with counts, day headers, class cards (R8.1, R8.2).
+  - `ExamsView`: sync button, Upcoming and Past with counts, type chips, exam cards with type and countdown tags (R8.3, R8.4).
+  - Shared `Tag` and `Line` parts in `views/common.tsx` with the soft tint table (R8.5); cards wrap and never truncate (R8.6).
+  - Empty states (R8.7); last-sync stamps in the status strip (R8.8).
 - `IcsExporter`, pure (revised 2026-10-31 for the agreed Export form; the previous text is in `.deprecated/2026-10-31-export-audit/design.md`):
   - `VTIMEZONE` for `Asia/Ho_Chi_Minh` (UTC+7, no DST); `DTSTART;TZID=...` (R9.11).
   - UID `sha1(code|date|start[|type])@fap-aio`, independent of title and details (R9.12).

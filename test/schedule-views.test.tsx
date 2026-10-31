@@ -8,7 +8,7 @@ import type { SyncEngine } from '../src/features/scheduler/sync'
 
 vi.mock('../src/content/fap/queue', () => ({ queuedGet: vi.fn(), queue: { current: { pending: 0, waiting: null, stopped: false }, subscribe: () => () => {} } }))
 
-const { WeekView, inRange } = await import('../src/features/scheduler/views/WeekView')
+const { WeekView, fullTitle } = await import('../src/features/scheduler/views/WeekView')
 const { ExamsView, daysLeft } = await import('../src/features/scheduler/views/ExamsView')
 const { registerSchedulerViews } = await import('../src/features/scheduler/index')
 const { clearViews, tabViews, viewFor } = await import('../src/content/panel/views')
@@ -37,21 +37,14 @@ function render(node: JSX.Element) {
   return { el, root, button: (t: string) => [...el.querySelectorAll('button')].find((b) => b.textContent === t)! }
 }
 
-describe('range filter', () => {
-  it('covers today, this week, next two weeks, this month and all', () => {
-    expect(inRange(TODAY, 'today', TODAY)).toBe(true)
-    expect(inRange('2026-10-05', 'week', TODAY)).toBe(true)
-    expect(inRange('2026-10-11', 'week', TODAY)).toBe(true)
-    expect(inRange('2026-10-12', 'week', TODAY)).toBe(false)
-    expect(inRange('2026-10-20', 'next2', TODAY)).toBe(true)
-    expect(inRange('2026-10-21', 'next2', TODAY)).toBe(false)
-    expect(inRange('2026-10-06', 'next2', TODAY)).toBe(false)
-    expect(inRange('2026-10-31', 'month', TODAY)).toBe(true)
-    expect(inRange('2026-11-01', 'month', TODAY)).toBe(false)
-    expect(inRange('2020-01-01', 'all', TODAY)).toBe(true)
+describe('card helpers', () => {
+  it('titles with the name when known and counts down to exams', () => {
+    expect(fullTitle('PRF192', 'Programming')).toBe('PRF192 · Programming')
+    expect(fullTitle('PRF192', undefined)).toBe('PRF192')
     expect(daysLeft('2026-10-07', TODAY)).toBe('Today')
     expect(daysLeft('2026-10-08', TODAY)).toBe('Tomorrow')
     expect(daysLeft('2026-10-17', TODAY)).toBe('In 10 days')
+    expect(daysLeft('2026-10-01', TODAY)).toBe('Done')
   })
 })
 
@@ -70,25 +63,27 @@ describe('week view', () => {
     act(() => root.unmount())
   })
 
-  it('groups sessions by day in date and time order and filters by range', async () => {
+  it('shows this week under day headers as cards, and All with its count', async () => {
     await put(c, 'timetable', {
-      sessions: [session('2026-10-05', '07:30'), session('2026-10-07', '07:30', { attendance: 'present' }), session('2026-10-07', '12:30', { id: 'X', code: 'SWE201', online: true }), session('2026-10-14', '07:30')],
-      weeks: {}, lastSync: Date.now() - 120_000,
+      sessions: [
+        session('2026-10-05', '07:30'), session('2026-10-07', '07:30', { attendance: 'present', scheduleType: 'Lab' }),
+        session('2026-10-07', '12:30', { id: 'X', code: 'SWE201', online: true, room: null, attendance: 'absent' }), session('2026-10-14', '07:30'),
+      ],
+      weeks: {}, lastSync: 1,
     })
-    const { el, root } = render(<WeekView now={() => NOW} />)
+    await put(c, 'exams', { exams: [exam('2026-10-20', 'FE')], lastSync: 1 })
+    const { el, button, root } = render(<WeekView now={() => NOW} />)
     await tick()
     const heads = () => [...el.querySelectorAll('h3')].map((h) => h.textContent)
-    expect(heads()).toEqual(['Mon 5 Oct', 'Wed 7 Oct · Today'])
-    const today = el.querySelectorAll('section')[1]!
-    expect([...today.querySelectorAll('li')].map((li) => li.textContent?.slice(0, 11))).toEqual(['07:30–09:00', '12:30–09:00'])
-    expect(today.textContent).toContain('Present')
-    expect(today.textContent).toContain('Online')
-    expect(el.textContent).toContain('Classes synced 2 min ago')
-    const sel = el.querySelector<HTMLSelectElement>('#aio-week-range')!
-    act(() => { sel.value = 'all'; sel.dispatchEvent(new Event('change', { bubbles: true })) })
+    expect(button('Sync Fall 2026')).toBeTruthy()
+    expect(button('This week (3)').getAttribute('aria-pressed')).toBe('true')
+    expect(heads()).toEqual(['Mon 5 Oct', 'Wed 7 Oct · today'])
+    const cards = [...el.querySelectorAll('section')[1]!.querySelectorAll('li')].map((li) => li.textContent)
+    expect(cards[0]).toBe('PRF192 · ProgrammingSlot 1PresentRoom: BE-301Time: 07:30–09:00Lecturer: abcGroup: SE1Type: Lab')
+    expect(cards[1]).toBe('SWE201Slot 1AbsentRoom: OnlineTime: 12:30–09:00Lecturer: abcGroup: SE1')
+    expect(el.querySelector('[class*="truncate"]')).toBeNull()
+    act(() => button('All (4)').click())
     expect(heads()).toHaveLength(3)
-    act(() => { sel.value = 'today'; sel.dispatchEvent(new Event('change', { bubbles: true })) })
-    expect(heads()).toEqual(['Wed 7 Oct · Today'])
     act(() => root.unmount())
   })
 
@@ -97,7 +92,7 @@ describe('week view', () => {
     const engine = { running: false, syncWeek: vi.fn(async () => ({ ok: false, error: { kind: 'session-expired' }, report: { synced: 0, failed: [], added: 0, updated: 0, unreadable: 0 } })) } as unknown as SyncEngine
     const { el, button, root } = render(<WeekView engine={engine} now={() => NOW} />)
     await tick()
-    await act(async () => button('Sync week').click())
+    await act(async () => button('Sync this week').click())
     expect(el.querySelector('[role="alert"]')!.textContent).toContain('Sign in to FAP again')
     act(() => root.unmount())
   })
@@ -117,20 +112,27 @@ describe('exams view', () => {
     act(() => root.unmount())
   })
 
-  it('splits upcoming and past, shows days left and filters by type', async () => {
-    await put(c, 'exams', { exams: [exam('2026-10-01', 'PE'), exam('2026-10-09', 'FE'), exam('2026-10-20', '2NDFE', { room: null })], lastSync: Date.now() })
-    const { el, root } = render(<ExamsView now={() => NOW} />)
+  it('splits upcoming and past with counts, draws tags and filters by type chips', async () => {
+    await put(c, 'exams', {
+      exams: [exam('2026-10-01', 'PE'), exam('2026-10-09', 'FE', { format: 'Multiple choices', publishDate: '2026-10-20' }), exam('2026-10-20', '2NDFE', { room: null })],
+      lastSync: 1,
+    })
+    const { el, button, root } = render(<ExamsView now={() => NOW} />)
     await tick()
-    const [up, past] = [...el.querySelectorAll('section')]
-    expect(up!.querySelector('h3')!.textContent).toBe('Upcoming (2)')
-    expect(up!.textContent).toContain('In 2 days')
-    expect(up!.textContent).toContain('Room not assigned')
-    expect(past!.querySelector('h3')!.textContent).toBe('Past (1)')
-    expect(el.textContent).toContain('Exams synced just now')
-    const sel = el.querySelector<HTMLSelectElement>('#aio-exam-type')!
-    act(() => { sel.value = 'FE'; sel.dispatchEvent(new Event('change', { bubbles: true })) })
-    expect(el.querySelectorAll('section')[0]!.querySelector('h3')!.textContent).toBe('Upcoming (1)')
-    expect(el.querySelectorAll('section')[1]!.textContent).toContain('No past exams.')
+    const cards = () => [...el.querySelectorAll('li')].map((li) => li.textContent)
+    expect(button('Upcoming (2)').getAttribute('aria-pressed')).toBe('true')
+    expect(cards()).toEqual([
+      'PRF192 · ProgrammingFEIn 2 daysFormat: Multiple choicesRoom: R1Date: Fri 9 OctTime: 10:50–12:20Results: Tue 20 Oct',
+      'PRF192 · Programming2NDFEIn 13 daysRoom: not assigned yetDate: Tue 20 OctTime: 10:50–12:20',
+    ])
+    expect([...el.querySelectorAll('li span')].find((t) => t.textContent === 'In 2 days')!.className).toContain('bg-red-50')
+    expect([...el.querySelectorAll('li span')].find((t) => t.textContent === 'FE')!.className).toContain('bg-green-50')
+    act(() => button('2NDFE').click())
+    expect(button('Upcoming (1)')).toBeTruthy()
+    act(() => button('Past (1)').click())
+    expect(cards()).toEqual(['PRF192 · ProgrammingPEDoneRoom: R1Date: Thu 1 OctTime: 10:50–12:20'])
+    act(() => button('PE').click())
+    expect(el.textContent).toContain('No past exams.')
     act(() => root.unmount())
   })
 

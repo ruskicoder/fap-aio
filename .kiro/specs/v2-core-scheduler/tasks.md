@@ -60,6 +60,12 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Schedule, Week through the panel view registry: sessions grouped by day, range filters (today, this week, next two weeks, this month, all), sync week and sync term actions with progress, last-sync stamp, empty state with the sync action.
   - Schedule, Exams with a count badge: upcoming and past, days left, type filter, last-sync stamp, empty state.
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6; panel-ux R2.1, R2.2, R9.3_
+- [x] 6.3 [CORE-6.3] Rebuild Classes and Exams to the agreed cards (fix F-3)
+  - Agreed visual: `ui/schedule.html`, round S2 in `ui/schedule-audit.md`.
+  - Classes: Sync this week and Sync <term> at the top, This week (n) and All (n), day headers with today marked, cards with the full title, slot and attendance tags, room, time, lecturer, group and schedule type lines.
+  - Exams: Sync exams at the top, Upcoming (n) and Past (n), type chips, cards with the full title, type and countdown tags, format, room, date, time and results lines.
+  - Soft tint tags; no `truncate` anywhere in the views; the M1 browser check asserts it.
+  - _Requirements: 8.1 to 8.8 (revised 2026-10-31)_
 - [ ] 6.2 [CORE-6.2] Register scheduler Today providers
   - Today providers `nextClass`, `todayClasses`, `examsSoon`. (Palette commands removed 2026-10-26 with panel-ux requirement 5.)
   - _Requirements: panel-ux R3.1_

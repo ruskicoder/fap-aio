@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>FAP-AIO schedule views, agreed 2026-10-31 (G-UI-SCHEDULE)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root{--surface-0:#f5f5f4;--surface-1:#f3f3f2;--surface-2:#fff;--border:rgba(0,0,0,.1);--border-strong:rgba(0,0,0,.18);--border-stronger:rgba(0,0,0,.4);--border-accent:#ea580c;
+--text-primary:#1c1c1c;--text-secondary:#5f5e5a;--text-muted:#888780;--bg-accent:#fff7ed;--text-accent:#9a3412;
+--bg-success:#eaf3de;--text-success:#27500a;--bg-danger:#fcebeb;--text-danger:#791f1f;--bg-warning:#faeeda;--text-warning:#633806;--bg-pro:#eeedfe;--text-pro:#3c3489;--bg-blue:#e6f1fb;--text-blue:#0c447c}
+body{font-family:system-ui,sans-serif;background:var(--surface-0);color:var(--text-primary);padding:24px}
+.row3{display:grid;grid-template-columns:repeat(3,400px);gap:24px;align-items:start}
+h1{font-size:18px;font-weight:500}p.n{font-size:13px;color:var(--text-secondary);max-width:1250px}
+
+.wrap{display:grid;grid-template-columns:400px minmax(0,1fr);gap:16px;align-items:start}
+.pn{border:0.5px solid var(--border-stronger);border-radius:10px;overflow:hidden;background:var(--surface-2);font-size:13px}
+.hd{display:flex;align-items:center;height:44px;padding:0 8px 0 12px;background:var(--surface-1);border-bottom:0.5px solid var(--border)}
+.tb{display:flex;border-bottom:0.5px solid var(--border)}.tb span{flex:1;text-align:center;padding:8px 0;color:var(--text-secondary)}.tb span.on{color:var(--text-primary);font-weight:500;border-bottom:2px solid var(--border-accent)}
+.sec{padding:10px 12px;border-bottom:0.5px solid var(--border)}.sec h4{margin:0 0 6px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px}
+.num{font-size:11px;background:var(--surface-1);border-radius:9px;padding:0 6px;color:var(--text-secondary)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{border:0.5px solid var(--border-strong);border-radius:14px;padding:2px 10px;font-size:12px}.chip.on{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.row{display:flex;align-items:center;gap:6px;margin:3px 0;font-size:12px}
+.ev{border-left:3px solid var(--border-accent);border-radius:0;background:var(--surface-1);padding:6px 8px;font-size:12px;line-height:1.5}
+.st{display:flex;justify-content:space-between;padding:6px 12px;font-size:12px;color:var(--text-secondary);border-top:0.5px solid var(--border)}
+.dl{margin:10px 12px;display:flex;align-items:center;justify-content:center;gap:8px;height:36px;border-radius:8px;background:var(--bg-accent);color:var(--text-accent);font-weight:500}
+.keep label{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin:0 0 8px;cursor:pointer}.keep small{display:block;color:var(--text-secondary);font-size:12px}
+.lays{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:1.25rem 0}
+.opt{border:0.5px solid var(--border);border-radius:12px;padding:10px;cursor:pointer;background:var(--surface-2)}.opt.sel{border:2px solid var(--border-accent);padding:9px}
+.mini{border:0.5px solid var(--border-strong);border-radius:6px;height:120px;padding:6px;display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--text-secondary)}
+.blk{background:var(--surface-1);border-radius:4px;padding:2px 6px}
+.cap{font-size:13px;margin:8px 0 0}.cap b{font-weight:500}.sub{font-size:12px;color:var(--text-secondary);margin:2px 0 0}
+
+.bar{display:flex;gap:6px;padding:8px 10px;border-bottom:0.5px solid var(--border)}.btn{border:0.5px solid var(--border-strong);border-radius:6px;padding:3px 8px;display:inline-flex;align-items:center;gap:4px;font-size:12px}
+.sub{display:flex;gap:6px;padding:6px 10px;font-size:12px}.sp{border-radius:12px;padding:2px 9px;border:0.5px solid var(--border-strong)}.sp.on{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.day{padding:6px 10px 2px;font-weight:500;color:var(--text-secondary);font-size:12px}
+.cd{margin:4px 10px 6px;border:0.5px solid var(--border);border-radius:8px;padding:7px 9px;background:var(--surface-2);font-size:12px}
+.tt{font-weight:500;font-size:13px;line-height:1.4}.tg{display:inline-block;border-radius:5px;padding:0 6px;font-size:11px;font-weight:500;margin-left:4px}
+.ln{color:var(--text-secondary);line-height:1.6}.ln b{font-weight:500;color:var(--text-primary)}
+.ok{background:var(--bg-success);color:var(--text-success)}.bad{background:var(--bg-danger);color:var(--text-danger)}.wait{background:var(--bg-warning);color:var(--text-warning)}.blue{background:var(--bg-blue);color:var(--text-blue)}.pro{background:var(--bg-pro);color:var(--text-pro)}.mut{background:var(--surface-1);color:var(--text-secondary)}
+</style></head><body>
+<h1>Schedule views, agreed with the owner (gate G-UI-SCHEDULE, 2026-10-31)</h1>
+<p class="n">Round S2 picks: day headers; This week and All with counts; soft tint tags; exam type chips row; all lines kept. Round S1 picks: layout A (one scrolling form, download pinned at the bottom), all eight groups and Remember my choices. Rounds in ui/schedule-audit.md. Sample data is illustrative.</p>
+<div class="row3">
+<div class="pn">
+ <div class="hd"><div style="flex:1;line-height:1.2"><div style="font-weight:500">FAP-AIO</div><div style="font-size:11px;color:var(--text-muted)">v2.0.0</div></div></div>
+ <div class="tb"><span class="on">Classes</span><span>Exams</span><span>Export</span></div>
+ <div class="bar"><span class="btn"><i class="ti ti-refresh"></i>Sync this week</span><span class="btn"><i class="ti ti-calendar"></i>Sync Fall 2026</span></div>
+ <div class="sub"><span class="sp on">This week (9)</span><span class="sp">All (58)</span></div>
+ <div class="day">Mon 26 Oct · today</div>
+ <div class="cd"><div class="tt">HCM202 · Tư tưởng Hồ Chí Minh<span class="tg mut">Slot 1</span><span class="tg ok">Present</span></div><div class="ln"><b>Room:</b> BE-301 &nbsp; <b>Time:</b> 07:30–09:00<br><b>Lecturer:</b> abc &nbsp; <b>Group:</b> SE1801</div></div>
+ <div class="cd"><div class="tt">SWP391 · Software development project<span class="tg mut">Slot 3</span><span class="tg wait">Not yet</span></div><div class="ln"><b>Room:</b> Online &nbsp; <b>Time:</b> 12:50–14:20<br><b>Lecturer:</b> xyz &nbsp; <b>Group:</b> SE1801</div></div>
+ <div class="day">Tue 27 Oct</div>
+ <div class="cd"><div class="tt">VNR202 · Lịch sử Đảng Cộng sản Việt Nam<span class="tg mut">Slot 2</span><span class="tg bad">Absent</span></div><div class="ln"><b>Room:</b> AL-R102 &nbsp; <b>Time:</b> 09:10–10:40</div></div>
+</div>
+<div class="pn">
+ <div class="hd"><div style="flex:1;line-height:1.2"><div style="font-weight:500">FAP-AIO</div><div style="font-size:11px;color:var(--text-muted)">v2.0.0</div></div></div>
+ <div class="tb"><span>Classes</span><span class="on">Exams</span><span>Export</span></div>
+ <div class="bar"><span class="btn"><i class="ti ti-refresh"></i>Sync exams</span></div>
+ <div class="sub"><span class="sp on">Upcoming (3)</span><span class="sp">Past (5)</span></div>
+ <div class="sub" style="padding-top:0"><span class="sp on">FE</span><span class="sp on">PE</span><span class="sp on">2NDFE</span><span class="sp on">2NDPE</span><span class="sp on">Other</span></div>
+ <div class="cd"><div class="tt">HCM202 · Tư tưởng Hồ Chí Minh<span class="tg ok">FE</span><span class="tg bad">Tomorrow</span></div><div class="ln"><b>Format:</b> Multiple choices<br><b>Room:</b> P.412 &nbsp; <b>Date:</b> Tue 27 Oct<br><b>Time:</b> 10:50–12:20 &nbsp; <b>Results:</b> 05 Nov</div></div>
+ <div class="cd"><div class="tt">SWP391 · Software development project<span class="tg blue">PE</span><span class="tg ok">In 9 days</span></div><div class="ln"><b>Format:</b> Project presentation<br><b>Room:</b> not assigned yet &nbsp; <b>Date:</b> Thu 5 Nov<br><b>Time:</b> 07:30–09:00</div></div>
+ <div class="cd"><div class="tt">MLN131 · Chủ nghĩa xã hội khoa học<span class="tg wait">2NDFE</span><span class="tg ok">In 21 days</span></div><div class="ln"><b>Room:</b> P.205 &nbsp; <b>Date:</b> Tue 17 Nov &nbsp; <b>Time:</b> 15:20–16:50</div></div>
+</div>
+<div class="pn">
+ <div class="hd"><div style="flex:1;line-height:1.2"><div style="font-weight:500">FAP-AIO</div><div style="font-size:11px;color:var(--text-muted)">v2.0.0</div></div><i class="ti ti-refresh" style="margin:0 6px;color:var(--text-secondary)" aria-hidden="true"></i><i class="ti ti-layout-sidebar-right" style="margin:0 6px;color:var(--text-secondary)" aria-hidden="true"></i><i class="ti ti-settings" style="margin:0 6px;color:var(--text-secondary)" aria-hidden="true"></i><i class="ti ti-minus" style="margin:0 6px;color:var(--text-secondary)" aria-hidden="true"></i></div>
+ <div class="tb"><span>Classes</span><span>Exams</span><span class="on">Export</span></div>
+ <div class="sec"><h4><span class="num">1</span>What to export</h4><div class="chips"><span class="chip on">Classes</span><span class="chip on">Exams</span></div><div class="row"><input type="radio" checked> One file &nbsp; <input type="radio"> One file each</div></div>
+ <div class="sec"><h4><span class="num">2</span>Date range</h4><div class="chips"><span class="chip">This week</span><span class="chip">Next 2 weeks</span><span class="chip">This month</span><span class="chip on">Fall 2026</span><span class="chip">Custom</span></div><div class="row" style="color:var(--text-secondary)">01 Sep 2026 to 31 Dec 2026</div></div>
+ <div class="sec"><h4><span class="num">3</span>Classes</h4><div class="chips"><span class="chip on">All</span><span class="chip">Offline only</span><span class="chip">Online only</span></div>
+  <div class="row" style="margin-top:6px">Subjects:</div><div class="chips"><span class="chip on">HCM202</span><span class="chip on">VNR202</span><span class="chip on">MLN131</span><span class="chip">SWP391</span></div></div>
+ <div class="sec"><h4><span class="num">4</span>Exams</h4><div class="chips"><span class="chip on">FE</span><span class="chip on">PE</span><span class="chip on">2NDFE</span><span class="chip on">2NDPE</span><span class="chip">Other</span></div>
+  <div class="row"><input type="checkbox"> Include exams without a room</div><div class="row"><input type="checkbox"> Include past exams</div></div>
+ <div class="sec"><h4><span class="num">5</span>Event title</h4><div class="row"><input type="radio" checked> HCM202 (SE1801)</div><div class="row"><input type="radio"> HCM202 · Tư tưởng Hồ Chí Minh</div><div class="row"><input type="radio"> Tư tưởng Hồ Chí Minh (HCM202)</div></div>
+ <div class="sec"><h4><span class="num">6</span>Event details</h4><div class="chips"><span class="chip on">Room</span><span class="chip on">Lecturer</span><span class="chip on">Slot</span><span class="chip">Group</span><span class="chip">Attendance</span><span class="chip on">Exam format</span><span class="chip on">Results date</span></div></div>
+ <div class="sec"><h4><span class="num">7</span>Reminders</h4><div class="row"><input type="checkbox" checked> Classes <span class="chip">15 min</span> before</div><div class="row"><input type="checkbox" checked> Exams <span class="chip">1 day</span> and <span class="chip">1 hour</span> before</div></div>
+ <div class="sec"><h4><span class="num">8</span>Preview</h4><div class="ev"><b style="font-weight:500">HCM202 (SE1801)</b><br>Mon 26 Oct, 07:30–09:00 · BE-301<br><span style="color:var(--text-secondary)">Lecturer abc · Slot 1</span></div><div class="row" style="color:var(--text-secondary)">58 classes and 5 exams</div></div>
+ <div class="dl"><i class="ti ti-download" aria-hidden="true"></i>Download .ics (63 events)</div>
+ <div class="st"><span>Classes synced 2 min ago · Exams synced 22 h ago</span></div>
+</div>
+
+</div>
+</body></html>
