@@ -68,7 +68,9 @@ export function ExportView({ now = () => Date.now(), download = defaultDownload 
   const toggle = <T,>(list: T[], v: T) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v])
   const remember = (on: boolean) => {
     set({ remember: on })
-    if (!on) void remove('export.prefs')
+    // Written at once, so a tick made before the stored options load is not lost (R9.10).
+    if (on) void write('export.prefs', { ...p, remember: true })
+    else void remove('export.prefs')
   }
 
   const sessions = timetable.data?.sessions ?? []

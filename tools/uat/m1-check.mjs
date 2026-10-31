@@ -2,7 +2,8 @@
 // M1 browser check (conventions rule 10) without live FAP: a headless Chrome loads dist/ through
 // CDP Extensions.loadUnpacked and every request to https://fap.fpt.edu.vn is answered from the
 // anonymized fixtures in test/fixtures/en (week partials and exams shifted to the current dates).
-// Every other host is blocked, so nothing reaches FAP or Cloudflare. Screenshots and a report go
+// Every other host the page requests is blocked, and Chrome's background services are switched off,
+// so nothing reaches FAP or Cloudflare. Screenshots and a report go
 // to ignore/uat/<date>/. Usage: node tools/uat/m1-check.mjs  (run through the machine's heavy lock)
 import { spawn } from 'node:child_process'
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
@@ -51,7 +52,8 @@ function route(url) {
 const chrome = spawn('/usr/bin/google-chrome', [
   '--headless=new', '--remote-debugging-pipe', '--enable-unsafe-extension-debugging',
   `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-gpu',
-  '--window-size=1440,900', 'about:blank',
+  '--disable-background-networking', '--disable-component-update', '--disable-sync', '--disable-features=OptimizationHints,MediaRouter',
+  '--safebrowsing-disable-auto-update', '--metrics-recording-only', '--window-size=1440,900', 'about:blank',
 ], { stdio: ['ignore', 'ignore', 'pipe', 'pipe', 'pipe'] })
 const toChrome = chrome.stdio[3]
 let buf = ''
