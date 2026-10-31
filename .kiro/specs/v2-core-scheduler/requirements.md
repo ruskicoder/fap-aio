@@ -125,18 +125,18 @@ Revised 2026-10-31 from the agreed Classes and Exams visual (gate G-UI-SCHEDULE,
 
 **User Story:** As a student, I want to export my classes and exams to a calendar file, so that they appear in Google Calendar, Outlook or Apple Calendar.
 
-Revised 2026-10-31 from the agreed Export visual (gate G-UI-SCHEDULE, round S1 in `ui/schedule-audit.md`); the previous text is in `.deprecated/2026-10-31-export-audit/requirements.md`.
+Revised 2026-10-31 from the agreed Export visual (gate G-UI-SCHEDULE, round S1 in `ui/schedule-audit.md`), and again the same day after the M1 UAT (round S3, fix F-7); earlier texts are in `.deprecated/2026-10-31-export-audit/` and `.deprecated/2026-10-31-export-s3/`.
 
 #### Acceptance Criteria
 
 1. The Export tab SHALL be one scrolling form with the download button pinned at the bottom, holding the option groups 2 to 13 below in this order.
-2. WHEN the user exports THEN the extension SHALL write the classes, the exams or both, as the user picks, into one iCalendar file or into one file each.
+2. WHEN the user exports THEN the extension SHALL write the classes, the exams or both, as the user picks, either into separate files, one each for offline classes, online classes and exams (the default, so each can be imported into its own calendar), or into one file.
 3. The user SHALL pick the date range from this week, the next two weeks, this month, the current term (shown with its name and dates), or custom start and end dates; the range applies to classes and exams.
 4. The user SHALL filter classes by mode (all, offline only, online only) and by subject, one toggle per subject code found in the synced classes.
 5. The user SHALL filter exams by type (FE, PE, 2NDFE, 2NDPE, other), and SHALL choose whether exams without an assigned room and exams already past are included; both are excluded by default.
-6. The user SHALL pick the event title format: `CODE (group)`, `CODE · name` or `name (CODE)`. Exam titles start with the exam type. A subject name comes from the synced exam list; WHEN no name is known THEN the title uses the code alone.
-7. The user SHALL pick which details the events carry: room (the event location), lecturer, slot, group, attendance, exam format and results date. Room, lecturer, slot, exam format and results date are on by default.
-8. WHERE the user enables reminders THEN class events SHALL carry one alarm at the chosen number of minutes before start, and exam events SHALL carry alarms at the two chosen times before start (1 day and 1 hour by default). Both are on by default.
+6. The user SHALL pick each kind's event title from presets or build a custom one from ordered pieces and a separator: for classes room, code, subject name, group, slot, lecturer and start time (default `Room - Code`, for example `BE-301 - PRF192`; an online class shows Online for the room); for exams room, exam type, code, subject name, exam format and start time (default `Room - Exam type - Code`). An empty piece is left out; WHEN every piece is empty THEN the title is the code. A subject name comes from the synced exam list.
+7. The user SHALL pick which details the events carry and their order: room (the event location), lecturer, slot, group, attendance, exam format and results date; the description lines follow the chosen order. Room, lecturer, slot, exam format and results date are on by default. Each kind carries an editable event category (`CATEGORIES`, default Class, Online class, Exam; empty for none).
+8. Each kind SHALL carry a list of reminder tiers the user edits: add a time from a list (5 minutes to 1 week) or typed in minutes, hours or days, and remove any. Defaults: classes 15 minutes, 2 hours and 1 day before; exams 30 minutes, 2 hours and 1 day before. An empty list means no alarms.
 9. The form SHALL preview the first event of the selection as it will appear (title, date, time, location, details) and the counts of classes and exams; the download button SHALL show the number of events and SHALL be disabled when there are none.
 10. WHERE the user ticks "Remember my choices" THEN the options SHALL be stored and restored on the next visit; unticking it SHALL delete the stored options.
 11. Every event SHALL use the time zone `Asia/Ho_Chi_Minh` for its start and end.

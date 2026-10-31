@@ -191,8 +191,14 @@ async function main() {
   await mouse('mouseMoved', b.x, b.y, 0); await mouse('mousePressed', b.x, b.y); await mouse('mouseReleased', b.x, b.y, 0)
   await sleep(2500)
   const files = readdirSync(dlDir).filter((f) => f.endsWith('.ics'))
-  const ics = files[0] ? readFileSync(join(dlDir, files[0]), 'utf8') : ''
-  note('Download writes an .ics file', files.length > before && ics.startsWith('BEGIN:VCALENDAR'), `${files.join(', ')}; ${(ics.match(/BEGIN:VEVENT/g) ?? []).length} events`)
+  const texts = files.map((f) => readFileSync(join(dlDir, f), 'utf8'))
+  const events = texts.reduce((n, t) => n + (t.match(/BEGIN:VEVENT/g) ?? []).length, 0)
+  note('Download writes the .ics files', files.length > before && texts.every((t) => t.startsWith('BEGIN:VCALENDAR')), `${files.join(', ')}; ${events} events`)
+  const evs = texts.flatMap((t) => t.replace(/\r\n /g, '').split('BEGIN:VEVENT').slice(1)).map((e) => ({ title: e.match(/^SUMMARY:(.*)$/m)?.[1] ?? '', room: e.match(/^LOCATION:(.*)$/m)?.[1] ?? null }))
+  const roomFirst = evs.filter((e) => e.room)
+  note('event titles put the room first', roomFirst.length > 0 && roomFirst.every((e) => e.title.startsWith(`${e.room} - `)), evs.slice(0, 3).map((e) => e.title).join(' | '))
+  const tiers = texts.flatMap((t) => t.split('BEGIN:VEVENT').slice(1, 2).map((e) => (e.match(/TRIGGER:[^\r]*/g) ?? []).join(' ')))
+  note('events carry the reminder tiers', tiers.every((t) => t.split(' ').length === 3), tiers.join(' / '))
   await shot('export-downloaded')
 
   // Drag the floating panel by its header and check it stays in the viewport.

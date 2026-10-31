@@ -1,6 +1,7 @@
 // Registered migration steps. Imported by the service worker, which runs them on update.
 import { addMigration } from './migrations'
 import type { PanelState, Route } from '../panel-state'
+import { exportPrefsV1toV2 } from '../../features/scheduler/export-options'
 
 /** Core panel state v1 `{ x, y, width, height, minimized, view }` to the panel-ux v2 schema. */
 export function panelStateV1toV2(v1: { x?: number; y?: number; width?: number; height?: number; minimized?: boolean; view?: string }): PanelState {
@@ -24,4 +25,5 @@ export function panelStateV1toV2(v1: { x?: number; y?: number; width?: number; h
 
 export function registerMigrationSteps(): void {
   addMigration('panel.state', 1, panelStateV1toV2)
+  addMigration('export.prefs', 1, exportPrefsV1toV2)
 }

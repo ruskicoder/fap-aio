@@ -2,7 +2,7 @@
 // a fixed +07:00 VTIMEZONE, UIDs are sha1 of the record identity so a newer import updates events,
 // text is escaped and lines are folded at 75 octets without splitting a UTF-8 sequence.
 import type { Exam, Session } from './types'
-import type { ExportPrefs } from './export-prefs'
+import type { ClassPiece, Detail, ExamPiece, ExportPrefs, TitleSpec } from './export-options'
 
 export const TZID = 'Asia/Ho_Chi_Minh'
 export type SessionFilter = 'all' | 'offline' | 'online'
@@ -47,7 +47,7 @@ const utcStamp = (ms: number) => new Date(ms).toISOString().replace(/[-:]/g, '')
 const alarm = (trigger: string, text: string) => ['BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${escapeText(text)}`, `TRIGGER:${trigger}`, 'END:VALARM']
 
 /** One calendar event before writing; the Export preview renders the same object (R9.9). */
-export interface IcsEvent { uid: string; date: string; start: string; end: string; summary: string; location: string | null; description: string; alarms: string[][] }
+export interface IcsEvent { uid: string; date: string; start: string; end: string; summary: string; location: string | null; description: string; category?: string | null; alarms: string[][] }
 type Ev = IcsEvent
 
 /** Writes one VCALENDAR (R9.2, R9.11 to R9.13). */
@@ -68,6 +68,7 @@ async function calendar(events: Ev[], now: number): Promise<string> {
     )
     if (e.location) lines.push(`LOCATION:${escapeText(e.location)}`)
     if (e.description) lines.push(`DESCRIPTION:${escapeText(e.description)}`)
+    if (e.category) lines.push(`CATEGORIES:${escapeText(e.category)}`)
     for (const a of e.alarms) lines.push(...a)
     lines.push('END:VEVENT')
   }
@@ -119,48 +120,49 @@ export function offsetText(min: number): string {
 }
 const trigger = (min: number) => (min % 1440 === 0 ? `-P${min / 1440}D` : min % 60 === 0 ? `-PT${min / 60}H` : `-PT${min}M`)
 
+/** Joins the chosen pieces with the separator, leaving out empty ones; the code when all are empty (R9.6). */
+export function buildTitle<P extends string>(spec: TitleSpec<P>, value: (p: P) => string | null | undefined, code: string): string {
+  const parts = spec.pieces.map(value).filter((v): v is string => !!v)
+  return parts.length ? parts.join(spec.sep) : code
+}
+
+const descLines = (p: ExportPrefs, line: (d: Detail) => string | null | undefined | false) =>
+  p.details.map(line).filter((v): v is string => !!v)
+
 /** A class event from the export options (R9.6 to R9.8). The UID ignores title and details (R9.12). */
 export function classEvent(s: Session, p: ExportPrefs, names: Map<string, string>): IcsEvent {
-  const name = names.get(s.code)
-  const summary = p.title === 'code-group' ? (s.group ? `${s.code} (${s.group})` : s.code)
-    : !name ? s.code
-    : p.title === 'code-name' ? `${s.code} · ${name}` : `${name} (${s.code})`
-  const has = (d: ExportPrefs['details'][number]) => p.details.includes(d)
+  const room = s.online ? 'Online' : s.room
   const att = attendanceText(s.attendance)
+  const value = (k: ClassPiece) => ({ room, code: s.code, name: names.get(s.code), group: s.group, slot: `Slot ${s.slot}`, lecturer: s.lecturer, time: s.start })[k]
   return {
     uid: `${s.code}|${s.date}|${s.start}`,
     date: s.date, start: s.start, end: s.end,
-    summary,
-    location: has('room') ? (s.online ? 'Online' : s.room) : null,
+    summary: buildTitle(p.classTitle, value, s.code),
+    location: p.details.includes('room') ? room : null,
     description: [
-      has('lecturer') && s.lecturer && `Lecturer: ${s.lecturer}`,
-      has('slot') && `Slot ${s.slot}`,
-      has('group') && s.group && `Group: ${s.group}`,
-      has('attendance') && att && `Attendance: ${att}`,
+      ...descLines(p, (d) => ({ room: null, lecturer: s.lecturer && `Lecturer: ${s.lecturer}`, slot: `Slot ${s.slot}`, group: s.group && `Group: ${s.group}`, attendance: att && `Attendance: ${att}`, format: null, results: null })[d]),
       s.scheduleType,
     ].filter(Boolean).join('\n'),
-    alarms: p.classReminder ? [alarm(trigger(p.classReminder), `${s.code} starts in ${offsetText(p.classReminder)}`)] : [],
+    category: (s.online ? p.categories.online : p.categories.offline) || null,
+    alarms: p.classReminders.map((m) => alarm(trigger(m), `${s.code} starts in ${offsetText(m)}`)),
   }
 }
 
-/** An exam event: the type starts the title (R9.6); alarms at the two chosen offsets (R9.8). */
+/** An exam event: title pieces include the exam type (R9.6); one alarm per tier (R9.8). */
 export function examEvent(e: Exam, p: ExportPrefs, names: Map<string, string>): IcsEvent {
   const type = examTypeText(e)
-  const name = e.name || names.get(e.code)
-  const summary = p.title === 'code-group' || !name ? `${type} ${e.code}`
-    : p.title === 'code-name' ? `${type} ${e.code} · ${name}` : `${type} ${name} (${e.code})`
-  const has = (d: ExportPrefs['details'][number]) => p.details.includes(d)
+  const value = (k: ExamPiece) => ({ room: e.room, type, code: e.code, name: e.name || names.get(e.code), format: e.format, time: e.start })[k]
   return {
     uid: `${e.code}|${e.date}|${e.start}|${e.type}`,
     date: e.date, start: e.start, end: e.end,
-    summary,
-    location: has('room') ? e.room : null,
+    summary: buildTitle(p.examTitle, value, `${type} ${e.code}`),
+    location: p.details.includes('room') ? e.room : null,
     description: [
-      has('format') && e.format && `Format: ${e.format}`,
-      has('results') && e.publishDate && `Results: ${e.publishDate}`,
+      ...descLines(p, (d) => ({ room: null, lecturer: null, slot: null, group: null, attendance: null, format: e.format && `Format: ${e.format}`, results: e.publishDate && `Results: ${e.publishDate}` })[d]),
       e.note,
     ].filter(Boolean).join('\n'),
-    alarms: (p.examReminders ?? []).map((m) => alarm(trigger(m), `${type} ${e.code} in ${offsetText(m)}`)),
+    category: p.categories.exam || null,
+    alarms: p.examReminders.map((m) => alarm(trigger(m), `${type} ${e.code} in ${offsetText(m)}`)),
   }
 }
 

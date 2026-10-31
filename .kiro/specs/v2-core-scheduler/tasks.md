@@ -82,6 +82,12 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - `ExportView`: one scrolling form, chips and radios as drawn, the current term named with its dates, custom dates, preview of the first event and the counts, pinned "Download .ics (N events)", one file or one each; `export.prefs` in the storage catalog, written while "Remember my choices" is ticked and removed when it is unticked.
   - Tests: selection per range, mode, subject, type, room and past; title formats with and without a known name; details and location; alarms; UID unchanged by title and details; one file and one each; remember and forget.
   - _Requirements: 9.1 to 9.13 (revised 2026-10-31)_
+- [x] 7.3 [CORE-7.3] Export titles, tiers, categories and separate files (fix F-7)
+  - Agreed: round S3 in `ui/schedule-audit.md` (presets plus builder, editable tiers, detail order, category per kind, separate files for offline classes, online classes and exams).
+  - `export.prefs` v2 with the migration step from v1; title pieces and separator per kind with presets; ordered details; categories; reminder tier lists; files separate or one.
+  - Export form: title preset list with Custom opening the piece builder, detail chips in order with move and remove, category fields, tier editors with a list and a typed time.
+  - Tests: titles from pieces with empty pieces left out, online room text, detail order, categories, one alarm per tier, three files, the v1 to v2 step.
+  - _Requirements: 9.2, 9.6, 9.7, 9.8 (revised 2026-10-31 after round S3)_
 
 - [ ] 8. [CORE-8] Reminders
 - [ ] 8.1 [CORE-8.1] Schedule reminder alarms and fire notifications

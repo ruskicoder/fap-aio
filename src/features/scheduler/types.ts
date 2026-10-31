@@ -1,6 +1,6 @@
 // Scheduler records (core design, "Data Models").
 import type { Attendance } from '../../content/fap/parse/constants'
-import type { ExportPrefs } from './export-prefs'
+import type { ExportPrefs } from './export-options'
 
 export interface Session {
   id: string // `${code}|${date}|${start}`

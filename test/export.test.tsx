@@ -4,9 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { installFakeChrome, type FakeChrome } from './helpers/fake-chrome'
-import { buildIcs, classEvent, examEvent, offsetText, sha1 } from '../src/features/scheduler/ics'
+import { buildIcs, buildTitle, classEvent, examEvent, offsetText, sha1 } from '../src/features/scheduler/ics'
 import {
-  DEFAULT_PREFS, longDate, parsePrefs, rangeBounds, selectForExport, subjectNames, subjectsInRange, termName, type ExportPrefs,
+  DEFAULT_PREFS, exportPrefsV1toV2, longDate, parsePrefs, rangeBounds, selectForExport, subjectNames, subjectsInRange, termName, type ExportPrefs,
 } from '../src/features/scheduler/export-prefs'
 import { ExportView } from '../src/features/scheduler/views/ExportView'
 import type { Exam, Session } from '../src/features/scheduler/types'
@@ -53,11 +53,15 @@ describe('export options', () => {
     expect(longDate('2026-09-01')).toBe('01 Sep 2026')
   })
 
-  it('reads stored options and falls back to the defaults', () => {
-    const p = prefs({ title: 'name-code', excludedSubjects: ['PRF192'], remember: true })
+  it('reads stored options, falls back to the defaults, and migrates version 1', () => {
+    const p = prefs({ classTitle: { pieces: ['name', 'code'], sep: ' | ' }, excludedSubjects: ['PRF192'], remember: true })
     expect(parsePrefs(JSON.parse(JSON.stringify(p)))).toEqual(p)
     expect(parsePrefs({ title: 'nope' })).toEqual(DEFAULT_PREFS)
     expect(parsePrefs(null)).toEqual(DEFAULT_PREFS)
+    const v1 = { ...DEFAULT_PREFS, split: true, title: 'code-name', classReminder: 30, examReminders: [1440, 60], range: 'week', remember: true }
+    for (const k of ['files', 'classTitle', 'examTitle', 'classReminders', 'categories'] as const) delete (v1 as Record<string, unknown>)[k]
+    expect(exportPrefsV1toV2(v1)).toEqual({ ...DEFAULT_PREFS, files: 'separate', classTitle: { pieces: ['code', 'name'], sep: ' · ' }, classReminders: [30], examReminders: [60, 1440], range: 'week', remember: true })
+    expect(exportPrefsV1toV2({ ...v1, split: false, classReminder: null, examReminders: null }).classReminders).toEqual([])
   })
 
   it('selects by range, mode and subject, and exams by type, room and date', () => {
@@ -77,53 +81,57 @@ describe('export options', () => {
 describe('export events', () => {
   const names = subjectNames(EXAMS)
 
-  it('formats class titles, with the code alone when no name is known', () => {
+  it('builds titles from pieces, leaving out empty ones', () => {
     const s = session()
-    expect(classEvent(s, prefs(), names).summary).toBe('PRF192 (SE1)')
-    expect(classEvent(s, prefs({ title: 'code-name' }), names).summary).toBe('PRF192 · Lập trình C')
-    expect(classEvent(s, prefs({ title: 'name-code' }), names).summary).toBe('Lập trình C (PRF192)')
-    expect(classEvent(session({ code: 'SWE201' }), prefs({ title: 'name-code' }), names).summary).toBe('SWE201')
-    expect(classEvent(session({ group: '' }), prefs(), names).summary).toBe('PRF192')
+    expect(classEvent(s, prefs(), names).summary).toBe('BE-301 - PRF192')
+    expect(classEvent(session({ online: true, room: null }), prefs(), names).summary).toBe('Online - PRF192')
+    expect(classEvent(s, prefs({ classTitle: { pieces: ['code', 'name'], sep: ' · ' } }), names).summary).toBe('PRF192 · Lập trình C')
+    expect(classEvent(s, prefs({ classTitle: { pieces: ['time', 'room', 'code', 'group', 'slot', 'lecturer'], sep: ' | ' } }), names).summary).toBe('07:30 | BE-301 | PRF192 | SE1 | Slot 1 | abc')
+    expect(classEvent(session({ code: 'SWE201' }), prefs({ classTitle: { pieces: ['name'], sep: ' - ' } }), names).summary).toBe('SWE201')
+    expect(classEvent(s, prefs({ classTitle: { pieces: [], sep: ' - ' } }), names).summary).toBe('PRF192')
+    expect(buildTitle({ pieces: ['a', 'b'], sep: ' - ' }, (k) => (k === 'a' ? '' : 'B'), 'X')).toBe('B')
   })
 
-  it('puts the chosen details in the description and the room in the location', () => {
-    const all = prefs({ details: ['room', 'lecturer', 'slot', 'group', 'attendance'] })
+  it('writes the details in the chosen order, the room as location, and the category', () => {
+    const all = prefs({ details: ['group', 'room', 'attendance', 'lecturer', 'slot'] })
     const e = classEvent(session({ scheduleType: 'Lab' }), all, names)
     expect(e.location).toBe('BE-301')
-    expect(e.description).toBe('Lecturer: abc\nSlot 1\nGroup: SE1\nAttendance: Present\nLab')
-    expect(classEvent(session({ online: true, room: null }), all, names).location).toBe('Online')
-    const none = classEvent(session(), prefs({ details: [] }), names)
-    expect(none.location).toBeNull()
-    expect(none.description).toBe('')
+    expect(e.description).toBe('Group: SE1\nAttendance: Present\nLecturer: abc\nSlot 1\nLab')
+    expect(e.category).toBe('Class')
+    const on = classEvent(session({ online: true, room: null }), all, names)
+    expect([on.location, on.category]).toEqual(['Online', 'Online class'])
+    const none = classEvent(session(), prefs({ details: [], categories: { offline: '', online: '', exam: '' } }), names)
+    expect([none.location, none.description, none.category]).toEqual([null, '', null])
   })
 
-  it('writes alarms at the chosen offsets', () => {
-    expect(classEvent(session(), prefs(), names).alarms.flat()).toContain('TRIGGER:-PT15M')
-    expect(classEvent(session(), prefs({ classReminder: 60 }), names).alarms.flat()).toContain('TRIGGER:-PT1H')
-    expect(classEvent(session(), prefs({ classReminder: null }), names).alarms).toEqual([])
-    const ex = examEvent(exam(), prefs({ examReminders: [2880, 30] }), names).alarms.flat()
-    expect(ex).toContain('TRIGGER:-P2D')
-    expect(ex).toContain('TRIGGER:-PT30M')
-    expect(examEvent(exam(), prefs({ examReminders: null }), names).alarms).toEqual([])
+  it('writes one alarm per reminder tier', () => {
+    const cl = classEvent(session(), prefs(), names).alarms.map((a) => a.find((l) => l.startsWith('TRIGGER')))
+    expect(cl).toEqual(['TRIGGER:-PT15M', 'TRIGGER:-PT2H', 'TRIGGER:-P1D'])
+    const ex = examEvent(exam(), prefs(), names).alarms.map((a) => a.find((l) => l.startsWith('TRIGGER')))
+    expect(ex).toEqual(['TRIGGER:-PT30M', 'TRIGGER:-PT2H', 'TRIGGER:-P1D'])
+    expect(classEvent(session(), prefs({ classReminders: [] }), names).alarms).toEqual([])
+    expect(examEvent(exam(), prefs({ examReminders: [10080, 90] }), names).alarms.flat()).toEqual(expect.arrayContaining(['TRIGGER:-P7D', 'TRIGGER:-PT90M']))
     expect([offsetText(15), offsetText(60), offsetText(1440), offsetText(120)]).toEqual(['15 minutes', '1 hour', '1 day', '2 hours'])
   })
 
-  it('starts exam titles with the type and carries format and results', () => {
+  it('titles exams with room, type and code by default, and carries format, results and the category', () => {
     const e = examEvent(exam(), prefs(), names)
-    expect(e.summary).toBe('FE PRF192')
+    expect(e.summary).toBe('R1 - FE - PRF192')
+    expect(examEvent(exam({ room: null }), prefs(), names).summary).toBe('FE - PRF192')
+    expect(examEvent(exam(), prefs({ examTitle: { pieces: ['type', 'code', 'name'], sep: ' · ' } }), names).summary).toBe('FE · PRF192 · Lập trình C')
+    expect(examEvent(EXAMS[3]!, prefs(), names).summary).toBe('R2 - PT - SWE201')
     expect(e.location).toBe('R1')
     expect(e.description).toBe('Format: Multiple choice\nResults: 2026-10-30')
-    expect(examEvent(exam(), prefs({ title: 'code-name' }), names).summary).toBe('FE PRF192 · Lập trình C')
-    expect(examEvent(exam(), prefs({ title: 'name-code' }), names).summary).toBe('FE Lập trình C (PRF192)')
-    expect(examEvent(EXAMS[3]!, prefs({ title: 'name-code' }), names).summary).toBe('PT SWE201')
-    expect(examEvent(exam(), prefs({ details: ['room'] }), names).description).toBe('')
+    expect(examEvent(exam(), prefs({ details: ['results', 'format'] }), names).description).toBe('Results: 2026-10-30\nFormat: Multiple choice')
+    expect(e.category).toBe('Exam')
   })
 
-  it('keeps the UID when the title format or details change', async () => {
+  it('keeps the UID when the title or details change, and writes CATEGORIES', async () => {
     const a = await buildIcs([classEvent(session(), prefs(), names)], NOW)
-    const b = await buildIcs([classEvent(session(), prefs({ title: 'name-code', details: [] }), names)], NOW)
+    const b = await buildIcs([classEvent(session(), prefs({ classTitle: { pieces: ['name', 'code'], sep: ' | ' }, details: [] }), names)], NOW)
     expect(a.match(/UID:.*/)![0]).toBe(`UID:${await sha1('PRF192|2026-10-05|07:30')}@fap-aio`)
     expect(b.match(/UID:.*/)![0]).toBe(a.match(/UID:.*/)![0])
+    expect(a).toContain('CATEGORIES:Class\r\n')
     const x = await buildIcs([examEvent(exam(), prefs(), names)], NOW)
     expect(x).toContain(`UID:${await sha1('PRF192|2026-10-20|10:50|FE')}@fap-aio`)
   })
@@ -162,34 +170,69 @@ describe('export form', () => {
       ['1What to export', '2Date range', '3Classes', '4Exams', '5Event title', '6Event details', '7Reminders', '8Preview'])
     expect(byText('button', /^Fall 2026$/).getAttribute('aria-pressed')).toBe('true')
     expect(el.textContent).toContain('01 Sep 2026 to 31 Dec 2026')
-    expect(el.textContent).toContain('3 classes and 1 exam')
-    expect(el.textContent).toContain('PRF192 (SE1)Mon 5 Oct, 07:30–09:00 · BE-301Lecturer: abc · Slot 1')
-    expect(dl().textContent).toBe('Download .ics (4 events)')
+    expect(el.textContent).toContain('2 offline classes, 1 online class and 1 exam')
+    expect(el.textContent).toContain('BE-301 - PRF192Mon 5 Oct, 07:30–09:00 · BE-301Lecturer: abc · Slot 1Category: Class')
+    expect(el.textContent).toContain('R1 - FE - PRF192Tue 20 Oct, 10:50–12:20 · R1')
+    expect(check(/^Room - Code \(/).checked).toBe(true)
+    expect(check(/^Room - Exam type - Code \(/).checked).toBe(true)
+    expect(el.textContent).toContain('15 minutes before×2 hours before×1 day before×')
+    expect(el.textContent).toContain('30 minutes before×2 hours before×1 day before×')
+    expect(dl().textContent).toBe('Download 3 .ics files (4 events)')
     expect(dl().parentElement!.className).toContain('sticky bottom-0')
     act(() => root.unmount())
   })
 
-  it('downloads one file, or one file each, and follows the filters', async () => {
+  it('downloads separate files for offline classes, online classes and exams, or one file', async () => {
     await mount()
     await act(async () => { dl().click(); await new Promise((r) => setTimeout(r, 20)) })
-    expect(download.mock.calls.map((a) => a[1])).toEqual(['fap-schedule-2026-10-07.ics'])
-    const text = download.mock.calls[0]![2] as string
-    expect(text.match(/BEGIN:VEVENT/g)).toHaveLength(4)
-    expect(el.querySelector('[role="status"]')!.textContent).toContain('with 4 events')
+    expect(download.mock.calls.map((a) => a[1])).toEqual(['fap-classes-offline-2026-10-07.ics', 'fap-classes-online-2026-10-07.ics', 'fap-exams-2026-10-07.ics'])
+    expect(download.mock.calls.map((a) => ((a[2] as string).match(/BEGIN:VEVENT/g) ?? []).length)).toEqual([2, 1, 1])
+    expect(download.mock.calls[1]![2]).toContain('CATEGORIES:Online class')
+    expect(el.querySelector('[role="status"]')!.textContent).toContain('each file into its own calendar')
 
-    act(() => byText('label', /^One file each$/).querySelector('input')!.click())
-    expect(dl().textContent).toBe('Download 2 .ics files (4 events)')
+    act(() => check(/^One file$/).click())
+    expect(dl().textContent).toBe('Download .ics (4 events)')
     download.mockReset()
     await act(async () => { dl().click(); await new Promise((r) => setTimeout(r, 20)) })
-    expect(download.mock.calls.map((a) => a[1])).toEqual(['fap-classes-2026-10-07.ics', 'fap-exams-2026-10-07.ics'])
+    expect(download.mock.calls.map((a) => a[1])).toEqual(['fap-schedule-2026-10-07.ics'])
 
     act(() => byText('button', /^PRF192$/).click())
     act(() => byText('button', /^Exams$/).click())
-    expect(el.textContent).toContain('1 class')
     expect(dl().textContent).toBe('Download .ics (1 event)')
     act(() => byText('button', /^Classes$/).click())
     expect((dl() as HTMLButtonElement).disabled).toBe(true)
     expect(el.textContent).toContain('Nothing matches these options.')
+    act(() => root.unmount())
+  })
+
+  it('edits a custom title, the detail order and the reminder tiers', async () => {
+    await mount()
+    const btn = (label: string) => el.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`)!
+    act(() => check(/^Custom \(BE-301 - PRF192\)/).click())
+    act(() => byText('button', /^\+ Subject name$/).click())
+    act(() => btn('Move Room right').click())
+    const sep = el.querySelector<HTMLSelectElement>('select[aria-label="Classes separator"]')!
+    act(() => { sep.value = ' | '; sep.dispatchEvent(new Event('change', { bubbles: true })) })
+    expect(el.textContent).toContain('PRF192 | BE-301 | Lập trình CMon 5 Oct')
+
+    act(() => btn('Move Slot left').click())
+    expect(el.textContent).toContain('Slot 1 · Lecturer: abc')
+
+    act(() => btn('Remove Classes reminder 2 hours').click())
+    const amount = el.querySelector<HTMLInputElement>('input[aria-label="Classes reminder amount"]')!
+    act(() => { Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(amount, '45'); amount.dispatchEvent(new Event('input', { bubbles: true })) })
+    const unit = el.querySelector<HTMLSelectElement>('select[aria-label="Classes reminder unit"]')!
+    act(() => { unit.value = '1'; unit.dispatchEvent(new Event('change', { bubbles: true })) })
+    act(() => [...el.querySelectorAll('button')].filter((b) => b.textContent === 'Add')[0]!.click())
+    expect(el.textContent).toContain('15 minutes before×45 minutes before×1 day before×')
+    act(() => [...el.querySelectorAll('button')].filter((b) => b.textContent === 'Add')[0]!.click())
+    expect(el.textContent).toContain('15 minutes before×45 minutes before×')
+
+    await act(async () => { dl().click(); await new Promise((r) => setTimeout(r, 20)) })
+    const ics = (download.mock.calls[0]![2] as string).replace(/\r\n /g, '')
+    expect(ics).toContain('SUMMARY:PRF192 | BE-301 | Lập trình C')
+    expect(ics).toContain('TRIGGER:-PT45M')
+    expect(ics).not.toContain('TRIGGER:-PT2H')
     act(() => root.unmount())
   })
 

@@ -150,7 +150,7 @@ Registered by this spec (R4.4):
   - Text escaping (`\`, `;`, `,`, newline) and folding at 75 octets on UTF-8 boundaries (R9.13).
   - `selectForExport(timetable, exams, prefs, today)`: range (week, next 2 weeks, month, current term from `termOf`, custom), class mode and excluded subjects, exam types, no-room and past toggles (R9.3 to R9.5).
   - `classEvent` and `examEvent` build one event from a record and `ExportPrefs`: title format with the subject name looked up by code in the exam list (R9.6), details and location by the chosen chips (R9.7), `VALARM`s by the chosen offsets (R9.8). The preview renders the same event object (R9.9).
-  - `buildIcs(events)` writes one calendar; one file or one per kind (R9.2).
+  - `buildIcs(events)` writes one calendar; three files (offline classes, online classes, exams) or one (R9.2). Titles join the chosen pieces with the separator, leaving out empty ones (R9.6); description lines follow the detail order and each event carries its kind's `CATEGORIES` (R9.7); one `VALARM` per reminder tier (R9.8).
   - The file is downloaded through an `a[download]` blob link inside the shadow root (platform amendment, no `downloads`).
 - Export view (`views/ExportView.tsx`): layout A of `ui/schedule-audit.md` round S1, one scrolling form, groups numbered 1 to 8, "Remember my choices" and the pinned "Download .ics (N events)" button (R9.1, R9.9). Options persist in `export.prefs` only while "Remember my choices" is ticked (R9.10).
 - `Reminders`, in the service worker:
@@ -215,18 +215,23 @@ interface Exam {
 
 interface SyncJob { kind: 'range'; mondays: string[]; next: number; failed: string[]; added: number; updated: number; unreadable: number; startedAt: number }
 
-// export.prefs (R9.10), stored only while `remember` is true
+// export.prefs v2 (R9.10), stored only while `remember` is true; revised 2026-10-31 (round S3, F-7)
+type ClassPiece = 'room' | 'code' | 'name' | 'group' | 'slot' | 'lecturer' | 'time';
+type ExamPiece = 'room' | 'type' | 'code' | 'name' | 'format' | 'time';
 interface ExportPrefs {
-  classes: boolean; exams: boolean; split: boolean;
+  classes: boolean; exams: boolean; files: 'separate' | 'one';   // separate: offline classes, online classes, exams
   range: 'week' | 'next2' | 'month' | 'term' | 'custom'; from: string | null; to: string | null;
   classMode: 'all' | 'offline' | 'online'; excludedSubjects: string[];
   examTypes: ExamType[]; examNoRoom: boolean; examPast: boolean;
-  title: 'code-group' | 'code-name' | 'name-code';
-  details: ('room' | 'lecturer' | 'slot' | 'group' | 'attendance' | 'format' | 'results')[];
-  classReminder: number | null;            // minutes before, null = off
-  examReminders: [number, number] | null;  // minutes before, default [1440, 60]
+  classTitle: { pieces: ClassPiece[]; sep: string };       // default room, code with ' - '
+  examTitle: { pieces: ExamPiece[]; sep: string };         // default room, type, code with ' - '
+  details: ('room' | 'lecturer' | 'slot' | 'group' | 'attendance' | 'format' | 'results')[];  // ordered
+  categories: { offline: string; online: string; exam: string };
+  classReminders: number[];   // minutes before, default [15, 120, 1440]
+  examReminders: number[];    // default [30, 120, 1440]
   remember: boolean;
 }
+// Migration step export.prefs 1 to 2 maps split, title, classReminder and examReminders.
 
 interface Settings {
   reminders: { enabled: boolean; classOffsetMin: 15 | 30 };

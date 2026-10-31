@@ -1,53 +1,11 @@
-// Export options and selection (core R9.2 to R9.8, R9.10): the agreed Export form of
-// ui/schedule-audit.md round S1. Pure; the view holds the state and `export.prefs` stores it.
-import { z } from 'zod'
+// Export date ranges and selection (core R9.3 to R9.5): which classes and exams the agreed Export form
+// writes. Pure; the options themselves are in export-options.ts.
 import { addDays, mondayOf, parseIso } from '../../shared/dates'
 import { termOf, termRange } from './sync'
-import type { Exam, ExamType, Session } from './types'
+import type { Exam, Session } from './types'
+import type { ExportPrefs } from './export-options'
 
-export const EXAM_TYPES: [ExamType, string][] = [['FE', 'FE'], ['PE', 'PE'], ['2NDFE', '2NDFE'], ['2NDPE', '2NDPE'], ['other', 'Other']]
-export const DETAILS = [['room', 'Room'], ['lecturer', 'Lecturer'], ['slot', 'Slot'], ['group', 'Group'], ['attendance', 'Attendance'], ['format', 'Exam format'], ['results', 'Results date']] as const
-export type Detail = (typeof DETAILS)[number][0]
-
-const iso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
-export const exportPrefsSchema = z.object({
-  classes: z.boolean(),
-  exams: z.boolean(),
-  split: z.boolean(),
-  range: z.enum(['week', 'next2', 'month', 'term', 'custom']),
-  from: iso.nullable(),
-  to: iso.nullable(),
-  classMode: z.enum(['all', 'offline', 'online']),
-  excludedSubjects: z.array(z.string()),
-  examTypes: z.array(z.enum(['FE', 'PE', '2NDFE', '2NDPE', 'other'])),
-  examNoRoom: z.boolean(),
-  examPast: z.boolean(),
-  title: z.enum(['code-group', 'code-name', 'name-code']),
-  details: z.array(z.enum(DETAILS.map(([d]) => d) as [Detail, ...Detail[]])),
-  classReminder: z.number().int().positive().nullable(),
-  examReminders: z.tuple([z.number().int().positive(), z.number().int().positive()]).nullable(),
-  remember: z.boolean(),
-})
-export type ExportPrefs = z.infer<typeof exportPrefsSchema>
-export type ExportRange = ExportPrefs['range']
-
-/** Defaults as drawn in round S1. */
-export const DEFAULT_PREFS: ExportPrefs = {
-  classes: true, exams: true, split: false,
-  range: 'term', from: null, to: null,
-  classMode: 'all', excludedSubjects: [],
-  examTypes: ['FE', 'PE', '2NDFE', '2NDPE'], examNoRoom: false, examPast: false,
-  title: 'code-group',
-  details: ['room', 'lecturer', 'slot', 'format', 'results'],
-  classReminder: 15, examReminders: [1440, 60],
-  remember: false,
-}
-
-/** Stored prefs, or the defaults when absent or unreadable. */
-export const parsePrefs = (x: unknown): ExportPrefs => {
-  const r = exportPrefsSchema.safeParse(x)
-  return r.success ? r.data : DEFAULT_PREFS
-}
+export * from './export-options'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 /** `01 Sep 2026` from yyyy-mm-dd. */

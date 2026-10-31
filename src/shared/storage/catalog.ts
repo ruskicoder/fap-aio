@@ -51,7 +51,7 @@ export const CATALOG = {
     prune: (d: { exams?: { date: string }[] }, now: number) => ({ ...d, exams: byAge(d.exams, (e) => dateMs(e.date), 400 * DAY, now) }),
   },
   'sync.job': { owner: 'scheduler', version: 1, size: '< 2 KB', retention: 'deleted when the job ends' },
-  'export.prefs': { owner: 'scheduler', version: 1, size: '< 2 KB', retention: 'removed when "Remember my choices" is unticked' },
+  'export.prefs': { owner: 'scheduler', version: 2, size: '< 2 KB', retention: 'removed when "Remember my choices" is unticked' },
   legacy: { owner: 'core', version: 1, size: '< 1 KB', retention: 'permanent' },
   'cache:*': {
     owner: 'registry', version: 1, size: 'per source, < 200 KB', retention: 'entries older than 30 days pruned',
