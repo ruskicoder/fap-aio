@@ -68,6 +68,8 @@ Done 2026-10-31 (session after the workflow revision): G-UI-SCHEDULE passed. Rou
 
 Done 2026-10-31 (same session, after UAT): owner UAT passed all 19 checklist items, including dock narrowing on live FAP, but G-UAT-M1 was not passed because Export titles and reminders were fixed presets (F-7). Round S3 agreed presets plus a title builder, editable reminder tiers and separate files for offline classes, online classes and exams; built as CORE-7.3 (export.prefs v2 with a migration step). 177 tests, m1-check 20 of 20. Next: owner rechecks Export, then G-UAT-M1. Codex review offload hit its usage limit (reset 2026-11-04 16:31).
 
+Done 2026-10-31 (same session): G-UAT-M1 passed. After the Export recheck the owner asked for rooms with their site (F-8: `P.xxx` campus, `NVH.xxx` Nhà Văn hóa Sinh viên; FAP writes `011` in the exam list and `NVH 302` in the timetable), titles joined by a dash without spaces (F-9), and the minimized tab clear of the page scrollbar (F-10: the shell now measures the visible page area). 182 tests, m1-check 21 of 21. M1 is accepted. Next: M2, whose UI tasks need their own G-UI audits first.
+
 ## Last sync
 
 <!-- docs-scaffold:sync:start -->
