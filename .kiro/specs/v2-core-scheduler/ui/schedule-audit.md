@@ -16,3 +16,11 @@ Shown: the Classes tab (Sync this week and Sync the term at the top, This week a
 
 Owner picks (2026-10-31): 1 day headers; 2 This week and All with counts; 3 soft tints; 4 type chips row; 5 drop no lines. Owner: "lgtm continue". Round S2 agreed. With S1 this completes the gate: the agreed visual of all three tabs is saved as `ui/schedule.html`, requirement 8 is revised (old text in `.deprecated/2026-10-31-schedule-audit/`) and the rebuild is CORE-6.3 (fix F-3). Gate G-UI-SCHEDULE passed.
 
+## G-UAT-M1 feedback on Export (2026-10-31)
+
+Owner: every checklist item passes, but UAT is not passed. "I cannot have option: Room - SubjectCode. This is the most used format and I dislike any events that don't show the room in the event name; this is for a quick glance of the room position and the event." Tiered notifications: exams 30 minutes, 2 hours and 1 day before; classes 15 minutes, 2 hours and 1 day before. "Non customizable export options are the bummer here." Recorded as F-7; round S3 follows.
+
+
+## Round S3, Export titles, reminders and customization (2026-10-31)
+
+Shown: working editors. Titles built from pieces (class: room, code, subject name, group, slot, lecturer, start time; exam: room, exam type, code, subject name, exam format, start time) with a separator and a live preview, preloaded with Room - Code and Room - Type Code; reminder tiers per kind, any number, added from a list (5 minutes to 1 week) or typed, preloaded with classes 15 minutes, 2 hours, 1 day and exams 30 minutes, 2 hours, 1 day. Questions: 1 title editor (piece builder, text template with placeholders, or presets plus builder); 2 reminders (editable tiers or a checkbox grid); 3 further customization candidates (file name, description line order, several saved setups, event category per kind, text for online classes). Owner picks pending.
