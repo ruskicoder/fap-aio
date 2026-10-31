@@ -12,7 +12,7 @@ export const CLASS_PIECES = [['room', 'Room'], ['code', 'Code'], ['name', 'Subje
 export const EXAM_PIECES = [['room', 'Room'], ['type', 'Exam type'], ['code', 'Code'], ['name', 'Subject name'], ['format', 'Exam format'], ['time', 'Start time']] as const
 export type ClassPiece = (typeof CLASS_PIECES)[number][0]
 export type ExamPiece = (typeof EXAM_PIECES)[number][0]
-export const SEPARATORS = [' - ', ' · ', ' | ', ' '] as const
+export const SEPARATORS = ['-', ' - ', ' · ', ' | ', ' '] as const
 
 const iso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
 const keys = <T extends string>(list: readonly (readonly [T, string])[]) => list.map(([k]) => k) as [T, ...T[]]
@@ -42,18 +42,19 @@ export type ExportPrefs = z.infer<typeof exportPrefsSchema>
 export type ExportRange = ExportPrefs['range']
 export type TitleSpec<P extends string> = { pieces: P[]; sep: (typeof SEPARATORS)[number] }
 
-/** Title presets per kind (round S3); Custom opens the piece builder. The first is the default. */
+/** Title presets per kind (round S3); Custom opens the piece builder. The first is the default. Joined
+ *  with `-` and no spaces, so calendar previews that cut long titles still show the code (fix F-9). */
 export const CLASS_PRESETS: TitleSpec<ClassPiece>[] = [
-  { pieces: ['room', 'code'], sep: ' - ' },
-  { pieces: ['room', 'code', 'name'], sep: ' - ' },
-  { pieces: ['code', 'room'], sep: ' - ' },
+  { pieces: ['room', 'code'], sep: '-' },
+  { pieces: ['room', 'code', 'name'], sep: '-' },
+  { pieces: ['code', 'room'], sep: '-' },
   { pieces: ['code', 'name'], sep: ' · ' },
-  { pieces: ['code', 'group'], sep: ' - ' },
+  { pieces: ['code', 'group'], sep: '-' },
 ]
 export const EXAM_PRESETS: TitleSpec<ExamPiece>[] = [
-  { pieces: ['room', 'type', 'code'], sep: ' - ' },
-  { pieces: ['room', 'type', 'code', 'name'], sep: ' - ' },
-  { pieces: ['type', 'code', 'room'], sep: ' - ' },
+  { pieces: ['room', 'type', 'code'], sep: '-' },
+  { pieces: ['room', 'type', 'code', 'name'], sep: '-' },
+  { pieces: ['type', 'code', 'room'], sep: '-' },
   { pieces: ['type', 'code', 'name'], sep: ' · ' },
 ]
 export const sameTitle = <P extends string>(a: TitleSpec<P>, b: TitleSpec<P>) => a.sep === b.sep && a.pieces.join() === b.pieces.join()

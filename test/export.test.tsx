@@ -83,8 +83,8 @@ describe('export events', () => {
 
   it('builds titles from pieces, leaving out empty ones', () => {
     const s = session()
-    expect(classEvent(s, prefs(), names).summary).toBe('BE-301 - PRF192')
-    expect(classEvent(session({ online: true, room: null }), prefs(), names).summary).toBe('Online - PRF192')
+    expect(classEvent(s, prefs(), names).summary).toBe('BE-301-PRF192')
+    expect(classEvent(session({ online: true, room: null }), prefs(), names).summary).toBe('Online-PRF192')
     expect(classEvent(s, prefs({ classTitle: { pieces: ['code', 'name'], sep: ' · ' } }), names).summary).toBe('PRF192 · Lập trình C')
     expect(classEvent(s, prefs({ classTitle: { pieces: ['time', 'room', 'code', 'group', 'slot', 'lecturer'], sep: ' | ' } }), names).summary).toBe('07:30 | BE-301 | PRF192 | SE1 | Slot 1 | abc')
     expect(classEvent(session({ code: 'SWE201' }), prefs({ classTitle: { pieces: ['name'], sep: ' - ' } }), names).summary).toBe('SWE201')
@@ -116,10 +116,10 @@ describe('export events', () => {
 
   it('titles exams with room, type and code by default, and carries format, results and the category', () => {
     const e = examEvent(exam(), prefs(), names)
-    expect(e.summary).toBe('R1 - FE - PRF192')
-    expect(examEvent(exam({ room: null }), prefs(), names).summary).toBe('FE - PRF192')
+    expect(e.summary).toBe('R1-FE-PRF192')
+    expect(examEvent(exam({ room: null }), prefs(), names).summary).toBe('FE-PRF192')
     expect(examEvent(exam(), prefs({ examTitle: { pieces: ['type', 'code', 'name'], sep: ' · ' } }), names).summary).toBe('FE · PRF192 · Lập trình C')
-    expect(examEvent(EXAMS[3]!, prefs(), names).summary).toBe('R2 - PT - SWE201')
+    expect(examEvent(EXAMS[3]!, prefs(), names).summary).toBe('R2-PT-SWE201')
     expect(e.location).toBe('R1')
     expect(e.description).toBe('Format: Multiple choice\nResults: 2026-10-30')
     expect(examEvent(exam(), prefs({ details: ['results', 'format'] }), names).description).toBe('Results: 2026-10-30\nFormat: Multiple choice')
@@ -128,10 +128,10 @@ describe('export events', () => {
 
   it('shows rooms with their site in titles and locations', () => {
     const c = classEvent(session({ room: 'NVH 302' }), prefs(), names)
-    expect([c.summary, c.location]).toEqual(['NVH.302 - PRF192', 'NVH.302'])
-    expect(classEvent(session({ room: 'P.011' }), prefs(), names).summary).toBe('P.011 - PRF192')
+    expect([c.summary, c.location]).toEqual(['NVH.302-PRF192', 'NVH.302'])
+    expect(classEvent(session({ room: 'P.011' }), prefs(), names).summary).toBe('P.011-PRF192')
     const e = examEvent(exam({ room: '011' }), prefs(), names)
-    expect([e.summary, e.location]).toEqual(['P.011 - FE - PRF192', 'P.011'])
+    expect([e.summary, e.location]).toEqual(['P.011-FE-PRF192', 'P.011'])
   })
 
   it('keeps the UID when the title or details change, and writes CATEGORIES', async () => {
@@ -179,10 +179,10 @@ describe('export form', () => {
     expect(byText('button', /^Fall 2026$/).getAttribute('aria-pressed')).toBe('true')
     expect(el.textContent).toContain('01 Sep 2026 to 31 Dec 2026')
     expect(el.textContent).toContain('2 offline classes, 1 online class and 1 exam')
-    expect(el.textContent).toContain('BE-301 - PRF192Mon 5 Oct, 07:30–09:00 · BE-301Lecturer: abc · Slot 1Category: Class')
-    expect(el.textContent).toContain('R1 - FE - PRF192Tue 20 Oct, 10:50–12:20 · R1')
-    expect(check(/^Room - Code \(/).checked).toBe(true)
-    expect(check(/^Room - Exam type - Code \(/).checked).toBe(true)
+    expect(el.textContent).toContain('BE-301-PRF192Mon 5 Oct, 07:30–09:00 · BE-301Lecturer: abc · Slot 1Category: Class')
+    expect(el.textContent).toContain('R1-FE-PRF192Tue 20 Oct, 10:50–12:20 · R1')
+    expect(check(/^Room-Code \(/).checked).toBe(true)
+    expect(check(/^Room-Exam type-Code \(/).checked).toBe(true)
     expect(el.textContent).toContain('15 minutes before×2 hours before×1 day before×')
     expect(el.textContent).toContain('30 minutes before×2 hours before×1 day before×')
     expect(dl().textContent).toBe('Download 3 .ics files (4 events)')
@@ -216,7 +216,7 @@ describe('export form', () => {
   it('edits a custom title, the detail order and the reminder tiers', async () => {
     await mount()
     const btn = (label: string) => el.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`)!
-    act(() => check(/^Custom \(BE-301 - PRF192\)/).click())
+    act(() => check(/^Custom \(BE-301-PRF192\)/).click())
     act(() => byText('button', /^\+ Subject name$/).click())
     act(() => btn('Move Room right').click())
     const sep = el.querySelector<HTMLSelectElement>('select[aria-label="Classes separator"]')!

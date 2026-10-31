@@ -17,7 +17,7 @@ import { Chip, Message, dayLabel, select } from './common'
 const MODES: [ExportPrefs['classMode'], string][] = [['all', 'All'], ['offline', 'Offline only'], ['online', 'Online only']]
 const TIERS = [5, 10, 15, 30, 60, 120, 180, 360, 720, 1440, 2880, 4320, 10080]
 const UNITS: [number, string][] = [[1, 'min'], [60, 'hours'], [1440, 'days']]
-const SEP_LABEL: Record<string, string> = { ' - ': '-', ' · ': '·', ' | ': '|', ' ': 'space' }
+const SEP_LABEL: Record<string, string> = { '-': '- (no spaces)', ' - ': '- (spaced)', ' · ': '·', ' | ': '|', ' ': 'space' }
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
 const small = `${select} h-7 text-xs`

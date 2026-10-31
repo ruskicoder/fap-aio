@@ -31,3 +31,7 @@ Owner picks (2026-10-31): 1 presets plus builder; 2 editable tiers; default clas
 
 All eight Export items pass, not accepted. Owner: "Our sites has 2 sites: the campus (use the prefix P.xxx) and Nha Van Hoa Sinh Vien (use the prefix NVH.XXX). The regular campus rooms don't get a P. prefix yet, which confuses the actual site." Raw FAP pages: the timetable writes `P.011` and `NVH 302`, the exam list a bare `011`. Recorded as F-8: rooms are shown as `P.xxx` and `NVH.xxx` on the cards and in the export.
 
+## G-UAT-M1 rooms recheck (2026-10-31)
+
+R1 to R5 pass. Owner: "Minor fix: P.xxx-FE-Code. No spaces, the calendar preview will hide the subject code." Recorded as F-9: the default separator becomes `-` without spaces for both kinds; the spaced ` - ` stays as a choice.
+
