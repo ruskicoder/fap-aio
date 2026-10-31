@@ -8,6 +8,7 @@ import { syncExams as defaultSync, type ExamOutcome } from '../sync'
 import { examTypeText } from '../ics'
 import { EXAM_TYPES } from '../export-prefs'
 import type { Exam, ExamType } from '../types'
+import { siteRoom } from '../rooms'
 import { fullTitle } from './WeekView'
 import { Card, Chip, Empty, Line, Message, SubTabs, Tag, button, dayLabel, primary, type Tint } from './common'
 
@@ -25,7 +26,7 @@ function ExamCard({ e, today }: { e: Exam; today: string }) {
   return (
     <Card title={fullTitle(e.code, e.name || undefined)} tags={<><Tag tint={TYPE_TINT[e.type]}>{examTypeText(e)}</Tag><Tag tint={countdownTint(e.date, today)}>{daysLeft(e.date, today)}</Tag></>}>
       {e.format && <Line label="Format">{e.format}</Line>}
-      <Line label="Room">{e.room ?? 'not assigned yet'}</Line>
+      <Line label="Room">{siteRoom(e.room) ?? 'not assigned yet'}</Line>
       <Line label="Date">{dayLabel(e.date)}</Line>
       <Line label="Time">{e.start}–{e.end}</Line>
       {e.publishDate && <Line label="Results">{/^\d{4}-\d{2}-\d{2}$/.test(e.publishDate) ? dayLabel(e.publishDate) : e.publishDate}</Line>}

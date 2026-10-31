@@ -8,6 +8,7 @@ import { engine as defaultEngine, termOf, termRange, type SyncEngine, type SyncO
 import { attendanceText } from '../ics'
 import { subjectNames, termName } from '../export-prefs'
 import type { Session } from '../types'
+import { siteRoom } from '../rooms'
 import { Card, Empty, Line, Message, SubTabs, Tag, button, dayLabel, primary, type Tint } from './common'
 
 export type ClassesSub = 'week' | 'all'
@@ -30,7 +31,7 @@ function ClassCard({ s, name }: { s: Session; name: string | undefined }) {
   const att = attendanceText(s.attendance)
   return (
     <Card title={fullTitle(s.code, name)} tags={<><Tag tint="gray">Slot {s.slot}</Tag>{att && <Tag tint={attTint(s.attendance)}>{att}</Tag>}</>}>
-      <Line label="Room">{s.online ? 'Online' : s.room ?? 'not assigned'}</Line>
+      <Line label="Room">{s.online ? 'Online' : siteRoom(s.room) ?? 'not assigned'}</Line>
       <Line label="Time">{s.start}–{s.end}</Line>
       {s.lecturer && <Line label="Lecturer">{s.lecturer}</Line>}
       {s.group && <Line label="Group">{s.group}</Line>}

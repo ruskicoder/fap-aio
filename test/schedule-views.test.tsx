@@ -67,7 +67,7 @@ describe('week view', () => {
     await put(c, 'timetable', {
       sessions: [
         session('2026-10-05', '07:30'), session('2026-10-07', '07:30', { attendance: 'present', scheduleType: 'Lab' }),
-        session('2026-10-07', '12:30', { id: 'X', code: 'SWE201', online: true, room: null, attendance: 'absent' }), session('2026-10-14', '07:30'),
+        session('2026-10-07', '12:30', { id: 'X', code: 'SWE201', online: true, room: null, attendance: 'absent' }), session('2026-10-14', '07:30', { room: 'NVH 302' }),
       ],
       weeks: {}, lastSync: 1,
     })
@@ -84,6 +84,7 @@ describe('week view', () => {
     expect(el.querySelector('[class*="truncate"]')).toBeNull()
     act(() => button('All (4)').click())
     expect(heads()).toHaveLength(3)
+    expect(el.textContent).toContain('Room: NVH.302')
     act(() => root.unmount())
   })
 
@@ -114,7 +115,7 @@ describe('exams view', () => {
 
   it('splits upcoming and past with counts, draws tags and filters by type chips', async () => {
     await put(c, 'exams', {
-      exams: [exam('2026-10-01', 'PE'), exam('2026-10-09', 'FE', { format: 'Multiple choices', publishDate: '2026-10-20' }), exam('2026-10-20', '2NDFE', { room: null })],
+      exams: [exam('2026-10-01', 'PE'), exam('2026-10-09', 'FE', { format: 'Multiple choices', publishDate: '2026-10-20', room: '011' }), exam('2026-10-20', '2NDFE', { room: null })],
       lastSync: 1,
     })
     const { el, button, root } = render(<ExamsView now={() => NOW} />)
@@ -122,7 +123,7 @@ describe('exams view', () => {
     const cards = () => [...el.querySelectorAll('li')].map((li) => li.textContent)
     expect(button('Upcoming (2)').getAttribute('aria-pressed')).toBe('true')
     expect(cards()).toEqual([
-      'PRF192 · ProgrammingFEIn 2 daysFormat: Multiple choicesRoom: R1Date: Fri 9 OctTime: 10:50–12:20Results: Tue 20 Oct',
+      'PRF192 · ProgrammingFEIn 2 daysFormat: Multiple choicesRoom: P.011Date: Fri 9 OctTime: 10:50–12:20Results: Tue 20 Oct',
       'PRF192 · Programming2NDFEIn 13 daysRoom: not assigned yetDate: Tue 20 OctTime: 10:50–12:20',
     ])
     expect([...el.querySelectorAll('li span')].find((t) => t.textContent === 'In 2 days')!.className).toContain('bg-red-50')

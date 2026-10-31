@@ -3,6 +3,7 @@
 // text is escaped and lines are folded at 75 octets without splitting a UTF-8 sequence.
 import type { Exam, Session } from './types'
 import type { ClassPiece, Detail, ExamPiece, ExportPrefs, TitleSpec } from './export-options'
+import { siteRoom } from './rooms'
 
 export const TZID = 'Asia/Ho_Chi_Minh'
 export type SessionFilter = 'all' | 'offline' | 'online'
@@ -131,7 +132,7 @@ const descLines = (p: ExportPrefs, line: (d: Detail) => string | null | undefine
 
 /** A class event from the export options (R9.6 to R9.8). The UID ignores title and details (R9.12). */
 export function classEvent(s: Session, p: ExportPrefs, names: Map<string, string>): IcsEvent {
-  const room = s.online ? 'Online' : s.room
+  const room = s.online ? 'Online' : siteRoom(s.room)
   const att = attendanceText(s.attendance)
   const value = (k: ClassPiece) => ({ room, code: s.code, name: names.get(s.code), group: s.group, slot: `Slot ${s.slot}`, lecturer: s.lecturer, time: s.start })[k]
   return {
@@ -151,12 +152,13 @@ export function classEvent(s: Session, p: ExportPrefs, names: Map<string, string
 /** An exam event: title pieces include the exam type (R9.6); one alarm per tier (R9.8). */
 export function examEvent(e: Exam, p: ExportPrefs, names: Map<string, string>): IcsEvent {
   const type = examTypeText(e)
-  const value = (k: ExamPiece) => ({ room: e.room, type, code: e.code, name: e.name || names.get(e.code), format: e.format, time: e.start })[k]
+  const room = siteRoom(e.room)
+  const value = (k: ExamPiece) => ({ room, type, code: e.code, name: e.name || names.get(e.code), format: e.format, time: e.start })[k]
   return {
     uid: `${e.code}|${e.date}|${e.start}|${e.type}`,
     date: e.date, start: e.start, end: e.end,
     summary: buildTitle(p.examTitle, value, `${type} ${e.code}`),
-    location: p.details.includes('room') ? e.room : null,
+    location: p.details.includes('room') ? room : null,
     description: [
       ...descLines(p, (d) => ({ room: null, lecturer: null, slot: null, group: null, attendance: null, format: e.format && `Format: ${e.format}`, results: e.publishDate && `Results: ${e.publishDate}` })[d]),
       e.note,

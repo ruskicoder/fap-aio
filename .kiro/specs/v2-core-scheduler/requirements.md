@@ -120,6 +120,7 @@ Revised 2026-10-31 from the agreed Classes and Exams visual (gate G-UI-SCHEDULE,
 6. No text in a card SHALL be truncated; long titles and values wrap.
 7. WHILE no data is stored THEN the tab SHALL show an empty state with the action to sync.
 8. The panel SHALL show when each data set was last synced (in the status strip, panel-ux R2.6).
+9. Rooms SHALL be shown with their site (added 2026-10-31 after the M1 UAT, fix F-8; previous text in `.deprecated/2026-10-31-room-sites/`): the campus as `P.xxx` (FAP writes `P.011` in the timetable and a bare `011` in the exam list) and Nhà Văn hóa Sinh viên as `NVH.xxx` (FAP writes `NVH 302`). Other room texts, such as Online, are shown as FAP writes them. Stored records keep FAP's text.
 
 ### Requirement 9: Calendar export
 
@@ -142,6 +143,7 @@ Revised 2026-10-31 from the agreed Export visual (gate G-UI-SCHEDULE, round S1 i
 11. Every event SHALL use the time zone `Asia/Ho_Chi_Minh` for its start and end.
 12. Every event SHALL have a UID derived from its identity (subject code, date, start time, and exam type for exams), so that importing a newer export updates events instead of duplicating them; the title format and details do not change the UID.
 13. The file SHALL escape text values and fold lines longer than 75 octets as RFC 5545 requires.
+14. Event titles and locations SHALL use the room with its site, as in requirement 8.9 (added 2026-10-31, fix F-8).
 
 ### Requirement 10: Reminders
 

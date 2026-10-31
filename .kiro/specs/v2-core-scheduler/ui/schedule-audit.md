@@ -27,3 +27,7 @@ Shown: working editors. Titles built from pieces (class: room, code, subject nam
 
 Owner picks (2026-10-31): 1 presets plus builder; 2 editable tiers; default class title Room - Code; default exam title Room - Exam type - Code; class reminders 15 minutes, 2 hours, 1 day; exam reminders 30 minutes, 2 hours, 1 day; more options: order of the description lines and an event category per kind. Owner notes: "calendar files must be separate for live classes, online classes, and Exams ... I tend to import a single ics file into a category to sort it ... AIO categories in a single file isn't what I want, unless there is option to sort it when import." Calendar apps import a file into one calendar, so the export writes three files by default: offline classes, online classes, exams; one file stays as a choice. Round S3 agreed; requirement 9 revised again (old text in `.deprecated/2026-10-31-export-s3/`); the rebuild is fix F-7.
 
+## G-UAT-M1 Export recheck (2026-10-31)
+
+All eight Export items pass, not accepted. Owner: "Our sites has 2 sites: the campus (use the prefix P.xxx) and Nha Van Hoa Sinh Vien (use the prefix NVH.XXX). The regular campus rooms don't get a P. prefix yet, which confuses the actual site." Raw FAP pages: the timetable writes `P.011` and `NVH 302`, the exam list a bare `011`. Recorded as F-8: rooms are shown as `P.xxx` and `NVH.xxx` on the cards and in the export.
+

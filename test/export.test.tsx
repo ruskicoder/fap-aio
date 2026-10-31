@@ -126,6 +126,14 @@ describe('export events', () => {
     expect(e.category).toBe('Exam')
   })
 
+  it('shows rooms with their site in titles and locations', () => {
+    const c = classEvent(session({ room: 'NVH 302' }), prefs(), names)
+    expect([c.summary, c.location]).toEqual(['NVH.302 - PRF192', 'NVH.302'])
+    expect(classEvent(session({ room: 'P.011' }), prefs(), names).summary).toBe('P.011 - PRF192')
+    const e = examEvent(exam({ room: '011' }), prefs(), names)
+    expect([e.summary, e.location]).toEqual(['P.011 - FE - PRF192', 'P.011'])
+  })
+
   it('keeps the UID when the title or details change, and writes CATEGORIES', async () => {
     const a = await buildIcs([classEvent(session(), prefs(), names)], NOW)
     const b = await buildIcs([classEvent(session(), prefs({ classTitle: { pieces: ['name', 'code'], sep: ' | ' }, details: [] }), names)], NOW)

@@ -88,6 +88,10 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Export form: title preset list with Custom opening the piece builder, detail chips in order with move and remove, category fields, tier editors with a list and a typed time.
   - Tests: titles from pieces with empty pieces left out, online room text, detail order, categories, one alarm per tier, three files, the v1 to v2 step.
   - _Requirements: 9.2, 9.6, 9.7, 9.8 (revised 2026-10-31 after round S3)_
+- [x] 7.4 [CORE-7.4] Rooms with their site (fix F-8)
+  - `siteRoom`: `NVH 302` to `NVH.302`, a bare campus number `011` to `P.011`, `P.011` kept, other texts unchanged; used by the Classes and Exams cards and by export titles and locations; stored records unchanged.
+  - Tests: every form seen on FAP (timetable `P.011`, `NVH 302`; exam list `011`), case and spacing variants, Online and unknown texts unchanged, cards and export.
+  - _Requirements: 8.9, 9.14_
 
 - [ ] 8. [CORE-8] Reminders
 - [ ] 8.1 [CORE-8.1] Schedule reminder alarms and fire notifications
