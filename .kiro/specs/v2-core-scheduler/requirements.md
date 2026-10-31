@@ -121,14 +121,23 @@ Out of scope for this spec: GPA calculator, the other info-getter modules (subje
 
 **User Story:** As a student, I want to export my classes and exams to a calendar file, so that they appear in Google Calendar, Outlook or Apple Calendar.
 
+Revised 2026-10-31 from the agreed Export visual (gate G-UI-SCHEDULE, round S1 in `ui/schedule-audit.md`); the previous text is in `.deprecated/2026-10-31-export-audit/requirements.md`.
+
 #### Acceptance Criteria
 
-1. WHEN the user exports classes THEN the extension SHALL produce an iCalendar file of the sessions in the selected range, with the choice of all, offline only or online only.
-2. WHEN the user exports exams THEN the extension SHALL produce an iCalendar file of upcoming exams that have an assigned room, with the exam type in the title.
-3. Every event SHALL use the time zone `Asia/Ho_Chi_Minh` for its start and end.
-4. Every event SHALL have a UID derived from its identity (subject code, date, start time, and exam type for exams), so that importing a newer export updates events instead of duplicating them.
-5. The file SHALL escape text values and fold lines longer than 75 octets as RFC 5545 requires.
-6. WHERE the user enables export reminders THEN class events SHALL carry an alarm a configurable number of minutes before start, and exam events SHALL carry alarms one day and one hour before start.
+1. The Export tab SHALL be one scrolling form with the download button pinned at the bottom, holding the option groups 2 to 13 below in this order.
+2. WHEN the user exports THEN the extension SHALL write the classes, the exams or both, as the user picks, into one iCalendar file or into one file each.
+3. The user SHALL pick the date range from this week, the next two weeks, this month, the current term (shown with its name and dates), or custom start and end dates; the range applies to classes and exams.
+4. The user SHALL filter classes by mode (all, offline only, online only) and by subject, one toggle per subject code found in the synced classes.
+5. The user SHALL filter exams by type (FE, PE, 2NDFE, 2NDPE, other), and SHALL choose whether exams without an assigned room and exams already past are included; both are excluded by default.
+6. The user SHALL pick the event title format: `CODE (group)`, `CODE · name` or `name (CODE)`. Exam titles start with the exam type. A subject name comes from the synced exam list; WHEN no name is known THEN the title uses the code alone.
+7. The user SHALL pick which details the events carry: room (the event location), lecturer, slot, group, attendance, exam format and results date. Room, lecturer, slot, exam format and results date are on by default.
+8. WHERE the user enables reminders THEN class events SHALL carry one alarm at the chosen number of minutes before start, and exam events SHALL carry alarms at the two chosen times before start (1 day and 1 hour by default). Both are on by default.
+9. The form SHALL preview the first event of the selection as it will appear (title, date, time, location, details) and the counts of classes and exams; the download button SHALL show the number of events and SHALL be disabled when there are none.
+10. WHERE the user ticks "Remember my choices" THEN the options SHALL be stored and restored on the next visit; unticking it SHALL delete the stored options.
+11. Every event SHALL use the time zone `Asia/Ho_Chi_Minh` for its start and end.
+12. Every event SHALL have a UID derived from its identity (subject code, date, start time, and exam type for exams), so that importing a newer export updates events instead of duplicating them; the title format and details do not change the UID.
+13. The file SHALL escape text values and fold lines longer than 75 octets as RFC 5545 requires.
 
 ### Requirement 10: Reminders
 

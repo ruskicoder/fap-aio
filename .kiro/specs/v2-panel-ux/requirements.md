@@ -126,7 +126,7 @@ Removed 2026-10-26 by the owner (decision D-3): no command palette, no search an
 
 1. Settings SHALL be grouped as:
    - General: page-aware tab, density, default goal tier, layout defaults.
-   - Schedule: reminders, export reminders.
+   - Schedule: reminders. (Export reminders moved into the Export tab form on 2026-10-31, core R9.8; previous text in `.deprecated/2026-10-31-export-audit/`.)
    - Grades: non-GPA list, GPA goal, MOOC assumptions.
    - Info and alerts: background refresh, notifications per kind, news watch keywords.
    - Session: keep-alive.

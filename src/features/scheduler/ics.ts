@@ -2,6 +2,7 @@
 // a fixed +07:00 VTIMEZONE, UIDs are sha1 of the record identity so a newer import updates events,
 // text is escaped and lines are folded at 75 octets without splitting a UTF-8 sequence.
 import type { Exam, Session } from './types'
+import type { ExportPrefs } from './export-prefs'
 
 export const TZID = 'Asia/Ho_Chi_Minh'
 export type SessionFilter = 'all' | 'offline' | 'online'
@@ -45,7 +46,14 @@ const local = (date: string, time: string) => `${date.replace(/-/g, '')}T${time.
 const utcStamp = (ms: number) => new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
 const alarm = (trigger: string, text: string) => ['BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${escapeText(text)}`, `TRIGGER:${trigger}`, 'END:VALARM']
 
-interface Ev { uid: string; date: string; start: string; end: string; summary: string; location: string | null; description: string; alarms: string[][] }
+/** One calendar event before writing; the Export preview renders the same object (R9.9). */
+export interface IcsEvent { uid: string; date: string; start: string; end: string; summary: string; location: string | null; description: string; alarms: string[][] }
+type Ev = IcsEvent
+
+/** Writes one VCALENDAR (R9.2, R9.11 to R9.13). */
+export function buildIcs(events: IcsEvent[], now = Date.now()): Promise<string> {
+  return calendar(events, now)
+}
 
 async function calendar(events: Ev[], now: number): Promise<string> {
   const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//FAP-AIO//FAP-AIO 2.0//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', ...VTIMEZONE]
@@ -98,6 +106,62 @@ export function examsIcs(exams: Exam[], opts: IcsOptions = {}): Promise<string> 
       alarms: opts.reminders ? [alarm('-P1D', `${type} ${e.code} tomorrow`), alarm('-PT1H', `${type} ${e.code} in 1 hour`)] : [],
     }
   }), opts.now ?? Date.now())
+}
+
+const ATTENDANCE: Record<string, string> = { present: 'Present', absent: 'Absent', 'not-yet': 'Not yet', exempt: 'Exempt' }
+export const attendanceText = (a: Session['attendance']) => (typeof a === 'string' ? ATTENDANCE[a]! : a.raw ? `${a.raw} (unknown)` : '')
+export const examTypeText = (e: Exam) => (e.type === 'other' ? e.typeRaw || 'Exam' : e.type)
+
+/** `15 minutes`, `1 hour`, `1 day` for an alarm offset in minutes. */
+export function offsetText(min: number): string {
+  const [n, unit] = min % 1440 === 0 ? [min / 1440, 'day'] : min % 60 === 0 ? [min / 60, 'hour'] : [min, 'minute']
+  return `${n} ${unit}${n === 1 ? '' : 's'}`
+}
+const trigger = (min: number) => (min % 1440 === 0 ? `-P${min / 1440}D` : min % 60 === 0 ? `-PT${min / 60}H` : `-PT${min}M`)
+
+/** A class event from the export options (R9.6 to R9.8). The UID ignores title and details (R9.12). */
+export function classEvent(s: Session, p: ExportPrefs, names: Map<string, string>): IcsEvent {
+  const name = names.get(s.code)
+  const summary = p.title === 'code-group' ? (s.group ? `${s.code} (${s.group})` : s.code)
+    : !name ? s.code
+    : p.title === 'code-name' ? `${s.code} · ${name}` : `${name} (${s.code})`
+  const has = (d: ExportPrefs['details'][number]) => p.details.includes(d)
+  const att = attendanceText(s.attendance)
+  return {
+    uid: `${s.code}|${s.date}|${s.start}`,
+    date: s.date, start: s.start, end: s.end,
+    summary,
+    location: has('room') ? (s.online ? 'Online' : s.room) : null,
+    description: [
+      has('lecturer') && s.lecturer && `Lecturer: ${s.lecturer}`,
+      has('slot') && `Slot ${s.slot}`,
+      has('group') && s.group && `Group: ${s.group}`,
+      has('attendance') && att && `Attendance: ${att}`,
+      s.scheduleType,
+    ].filter(Boolean).join('\n'),
+    alarms: p.classReminder ? [alarm(trigger(p.classReminder), `${s.code} starts in ${offsetText(p.classReminder)}`)] : [],
+  }
+}
+
+/** An exam event: the type starts the title (R9.6); alarms at the two chosen offsets (R9.8). */
+export function examEvent(e: Exam, p: ExportPrefs, names: Map<string, string>): IcsEvent {
+  const type = examTypeText(e)
+  const name = e.name || names.get(e.code)
+  const summary = p.title === 'code-group' || !name ? `${type} ${e.code}`
+    : p.title === 'code-name' ? `${type} ${e.code} · ${name}` : `${type} ${name} (${e.code})`
+  const has = (d: ExportPrefs['details'][number]) => p.details.includes(d)
+  return {
+    uid: `${e.code}|${e.date}|${e.start}|${e.type}`,
+    date: e.date, start: e.start, end: e.end,
+    summary,
+    location: has('room') ? e.room : null,
+    description: [
+      has('format') && e.format && `Format: ${e.format}`,
+      has('results') && e.publishDate && `Results: ${e.publishDate}`,
+      e.note,
+    ].filter(Boolean).join('\n'),
+    alarms: (p.examReminders ?? []).map((m) => alarm(trigger(m), `${type} ${e.code} in ${offsetText(m)}`)),
+  }
 }
 
 /** Starts the download from a blob link inside the panel (platform amendment: no `downloads`). */

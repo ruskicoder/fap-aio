@@ -6,6 +6,7 @@ import { errorText } from '../../../content/panel/errors'
 import { addDays, mondayOf, todayVn } from '../../../shared/dates'
 import { engine as defaultEngine, termOf, termRange, type SyncEngine, type SyncOutcome } from '../sync'
 import type { Session } from '../types'
+import { attendanceText } from '../ics'
 import { Empty, LastSync, Message, button, dayLabel, primary, select } from './common'
 
 export type Range = 'today' | 'week' | 'next2' | 'month' | 'all'
@@ -21,8 +22,6 @@ export function inRange(date: string, range: Range, today: string): boolean {
   }
 }
 
-const ATTENDANCE: Record<string, string> = { present: 'Present', absent: 'Absent', 'not-yet': 'Not yet', exempt: 'Exempt' }
-const attendanceText = (a: Session['attendance']) => (typeof a === 'string' ? ATTENDANCE[a]! : a.raw ? `${a.raw} (unknown)` : '')
 
 export function reportText(r: SyncOutcome['report']): string {
   const parts = [`${r.synced} ${r.synced === 1 ? 'week' : 'weeks'} synced`]

@@ -198,6 +198,7 @@ Sizes are estimates from the record shapes in the feature designs, not measureme
 | `timetable` | scheduler | 1 | about 30 KB per term | sessions older than 400 days pruned |
 | `exams` | scheduler | 1 | < 20 KB | exams older than 400 days pruned |
 | `sync.job` | scheduler | 1 | < 2 KB | deleted when the job ends |
+| `export.prefs` | scheduler | 1 | < 2 KB | removed when "Remember my choices" is unticked (added 2026-10-31, core R9.10) |
 | `legacy` | core | 1 | < 1 KB | permanent |
 | `cache:<sourceId>` | registry | 1 | per source, < 200 KB | entries older than 30 days pruned |
 | `grades.cache` | grades | 1 | about 2 KB per mark sheet | terms older than the last 12 pruned |

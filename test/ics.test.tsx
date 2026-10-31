@@ -1,13 +1,7 @@
 // @vitest-environment happy-dom
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { act } from 'react'
-import { createRoot } from 'react-dom/client'
-import { installFakeChrome, type FakeChrome } from './helpers/fake-chrome'
+import { describe, expect, it, vi } from 'vitest'
 import { TZID, download, escapeText, examsForExport, examsIcs, filterSessions, fold, sessionsIcs, sha1 } from '../src/features/scheduler/ics'
-import { ExportView } from '../src/features/scheduler/views/ExportView'
 import type { Exam, Session } from '../src/features/scheduler/types'
-
-;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
 
 const session = (p: Partial<Session> = {}): Session => ({
   id: 'PRF192|2026-10-05|07:30', date: '2026-10-05', slot: 1, start: '07:30', end: '09:00', code: 'PRF192', group: 'SE1', room: 'BE-301',
@@ -90,37 +84,5 @@ describe('blob download', () => {
     expect(clicked[0]!.getRootNode()).not.toBe(shadow) // removed after the click
     expect(document.querySelector('a[download]')).toBeNull()
     spy.mockRestore()
-  })
-})
-
-describe('export view', () => {
-  let c: FakeChrome
-  beforeEach(() => { c = installFakeChrome(); document.body.innerHTML = '' })
-
-  it('exports the chosen range and filter through a blob link', async () => {
-    await c.storage.local.set({
-      timetable: { schemaVersion: 1, updatedAt: 0, data: { sessions: [session(), session({ id: 'o', date: '2026-10-06', online: true }), session({ id: 'n', date: '2026-11-20' })], weeks: {}, lastSync: 1 } },
-      exams: { schemaVersion: 1, updatedAt: 0, data: { exams: [exam()], lastSync: 1 } },
-    })
-    const download = vi.fn()
-    const el = document.createElement('div')
-    document.body.appendChild(el)
-    const root = createRoot(el)
-    act(() => root.render(<ExportView now={() => NOW} download={download} />))
-    await act(async () => { await new Promise((r) => setTimeout(r, 0)) })
-    const btn = (t: RegExp) => [...el.querySelectorAll('button')].find((b) => t.test(b.textContent ?? ''))!
-    expect(btn(/^Export \d+ class/).textContent).toBe('Export 3 classes')
-    const [range, show] = [...el.querySelectorAll('select')]
-    act(() => { range!.value = 'week'; range!.dispatchEvent(new Event('change', { bubbles: true })) })
-    act(() => { show!.value = 'offline'; show!.dispatchEvent(new Event('change', { bubbles: true })) })
-    expect(btn(/^Export \d+ class/).textContent).toBe('Export 1 class')
-    act(() => el.querySelector<HTMLInputElement>('input[type="checkbox"]')!.click())
-    await act(async () => { btn(/^Export \d+ class/).click(); await new Promise((r) => setTimeout(r, 20)) })
-    expect(download.mock.calls[0]![1]).toBe('fap-classes-2026-10-07.ics')
-    expect(download.mock.calls[0]![2]).toContain('TRIGGER:-PT15M')
-    await act(async () => { btn(/^Export \d+ exam/).click(); await new Promise((r) => setTimeout(r, 20)) })
-    expect(download.mock.calls[1]![1]).toBe('fap-exams-2026-10-07.ics')
-    expect(el.querySelector('[role="status"]')!.textContent).toContain('Exported 1 exam')
-    act(() => root.unmount())
   })
 })

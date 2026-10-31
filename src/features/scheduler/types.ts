@@ -1,5 +1,6 @@
 // Scheduler records (core design, "Data Models").
 import type { Attendance } from '../../content/fap/parse/constants'
+import type { ExportPrefs } from './export-prefs'
 
 export interface Session {
   id: string // `${code}|${date}|${start}`
@@ -78,5 +79,6 @@ declare module '../../shared/storage/catalog' {
     timetable: TimetableStore
     exams: ExamStore
     'sync.job': SyncJob
+    'export.prefs': ExportPrefs
   }
 }

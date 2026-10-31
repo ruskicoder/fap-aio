@@ -70,6 +70,12 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Schedule, Export: range and filter choice, export reminders, download through an `a[download]` blob link inside the shadow root.
   - Tests: escaping, folding of Vietnamese text, UID stability, TZID.
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6; platform amendment (no `downloads`)_
+- [x] 7.2 [CORE-7.2] Rebuild the Export tab to the agreed form
+  - Agreed visual: `ui/schedule-audit.md` round S1 (layout A, groups 1 to 8, remember my choices).
+  - `ics.ts`: `ExportPrefs` with defaults and a zod schema, `selectForExport`, `classEvent` and `examEvent` (title formats, subject names from the exam list, detail chips, location, alarms), `buildIcs`; the 7.1 entry points stay for callers.
+  - `ExportView`: one scrolling form, chips and radios as drawn, the current term named with its dates, custom dates, preview of the first event and the counts, pinned "Download .ics (N events)", one file or one each; `export.prefs` in the storage catalog, written while "Remember my choices" is ticked and removed when it is unticked.
+  - Tests: selection per range, mode, subject, type, room and past; title formats with and without a known name; details and location; alarms; UID unchanged by title and details; one file and one each; remember and forget.
+  - _Requirements: 9.1 to 9.13 (revised 2026-10-31)_
 
 - [ ] 8. [CORE-8] Reminders
 - [ ] 8.1 [CORE-8.1] Schedule reminder alarms and fire notifications
@@ -91,6 +97,6 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
 
 - [ ] 11. [CORE-11] Settings and data controls
 - [ ] 11.1 [CORE-11.1] Declare the core and scheduler settings and "Clear data"
-  - Through the panel-ux `SettingsRegistry`: reminders (enabled, class offset), export reminders, keep-alive (enabled, interval), legacy cleanup; every change applies through `storage.onChanged` without reload.
+  - Through the panel-ux `SettingsRegistry`: reminders (enabled, class offset), keep-alive (enabled, interval), legacy cleanup; every change applies through `storage.onChanged` without reload.
   - "Clear data" removes every key except `settings` after a confirmation dialog, and asks the service worker to clear IndexedDB caches except packaged data.
   - _Requirements: 13.1, 13.2, 5.5_

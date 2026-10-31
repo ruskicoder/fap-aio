@@ -143,13 +143,15 @@ Registered by this spec (R4.4):
   - `SessionsView`: grouped by day, range filters (R8.1, R8.2).
   - `ExamsView`: upcoming and past, days left, type filter (R8.3, R8.4).
   - Empty states (R8.5) and last-sync stamps (R8.6).
-- `IcsExporter`, pure:
-  - `VTIMEZONE` for `Asia/Ho_Chi_Minh` (UTC+7, no DST); `DTSTART;TZID=...` (R9.3).
-  - UID `sha1(code|date|start[|type])@fap-aio` (R9.4).
-  - Text escaping (`\`, `;`, `,`, newline) and folding at 75 octets on UTF-8 boundaries (R9.5).
-  - Optional `VALARM`s (R9.6).
-  - Session filters: all, offline, online (R9.1). Exams with an assigned room only (R9.2).
-  - The file is downloaded through `chrome.downloads` from the service worker, or an `a[download]` blob link inside the shadow root.
+- `IcsExporter`, pure (revised 2026-10-31 for the agreed Export form; the previous text is in `.deprecated/2026-10-31-export-audit/design.md`):
+  - `VTIMEZONE` for `Asia/Ho_Chi_Minh` (UTC+7, no DST); `DTSTART;TZID=...` (R9.11).
+  - UID `sha1(code|date|start[|type])@fap-aio`, independent of title and details (R9.12).
+  - Text escaping (`\`, `;`, `,`, newline) and folding at 75 octets on UTF-8 boundaries (R9.13).
+  - `selectForExport(timetable, exams, prefs, today)`: range (week, next 2 weeks, month, current term from `termOf`, custom), class mode and excluded subjects, exam types, no-room and past toggles (R9.3 to R9.5).
+  - `classEvent` and `examEvent` build one event from a record and `ExportPrefs`: title format with the subject name looked up by code in the exam list (R9.6), details and location by the chosen chips (R9.7), `VALARM`s by the chosen offsets (R9.8). The preview renders the same event object (R9.9).
+  - `buildIcs(events)` writes one calendar; one file or one per kind (R9.2).
+  - The file is downloaded through an `a[download]` blob link inside the shadow root (platform amendment, no `downloads`).
+- Export view (`views/ExportView.tsx`): layout A of `ui/schedule-audit.md` round S1, one scrolling form, groups numbered 1 to 8, "Remember my choices" and the pinned "Download .ics (N events)" button (R9.1, R9.9). Options persist in `export.prefs` only while "Remember my choices" is ticked (R9.10).
 - `Reminders`, in the service worker:
   - On `sync-done` or a settings change, clear all `reminder:*` alarms and create one per class (15 or 30 minutes before) and per exam (1 day and 1 hour before), for items starting within 30 days (R10.2, R10.3). The cap of 500 active alarms (Chrome 117+) is respected by the 30-day window, and the nearest items are kept first.
   - Clicking a notification focuses a FAP tab on `/WeeklyTimetable` or `/ExamSchedule`, or opens one (R10.4).
@@ -174,7 +176,7 @@ A panel view bound to the `settings` store; every control writes immediately and
 
 ```ts
 // storage keys and versions
-type StoreKey = 'panel.state' | 'settings' | 'timetable' | 'exams' | 'sync.job' | 'legacy' | 'cache';
+type StoreKey = 'panel.state' | 'settings' | 'timetable' | 'exams' | 'sync.job' | 'export.prefs' | 'legacy' | 'cache';
 
 interface Versioned<T> { schemaVersion: number; updatedAt: number; data: T }
 
@@ -212,9 +214,22 @@ interface Exam {
 
 interface SyncJob { kind: 'range'; mondays: string[]; next: number; failed: string[]; added: number; updated: number; unreadable: number; startedAt: number }
 
+// export.prefs (R9.10), stored only while `remember` is true
+interface ExportPrefs {
+  classes: boolean; exams: boolean; split: boolean;
+  range: 'week' | 'next2' | 'month' | 'term' | 'custom'; from: string | null; to: string | null;
+  classMode: 'all' | 'offline' | 'online'; excludedSubjects: string[];
+  examTypes: ExamType[]; examNoRoom: boolean; examPast: boolean;
+  title: 'code-group' | 'code-name' | 'name-code';
+  details: ('room' | 'lecturer' | 'slot' | 'group' | 'attendance' | 'format' | 'results')[];
+  classReminder: number | null;            // minutes before, null = off
+  examReminders: [number, number] | null;  // minutes before, default [1440, 60]
+  remember: boolean;
+}
+
 interface Settings {
   reminders: { enabled: boolean; classOffsetMin: 15 | 30 };
-  exportReminders: { enabled: boolean; classOffsetMin: number };
+  exportReminders: { enabled: boolean; classOffsetMin: number };   // superseded 2026-10-31 by export.prefs (R9.8)
   keepAlive: { enabled: boolean; intervalMin: number };   // default false, 7
   background: { enabled: boolean; periodMin: number };    // v2-info, default true, 6
   legacy: { dismissed: boolean };
