@@ -6,4 +6,4 @@ Append-only record of the chat audit rounds for the Classes, Exams and Export ta
 
 Shown: the Export tab with every candidate option group (1 what to export, classes, exams, one file or one each; 2 date range presets, the term, custom; 3 class filters online or offline and per subject; 4 exam filters types, no-room exams, past exams; 5 event title format; 6 event details in the description; 7 reminders in the file, editable; 8 preview of one event and the counts; and "remember my choices"), a keep or drop checklist, and three layouts (A one scrolling form with a pinned download button, B a Classes card and an Exams card each with its own download, C three steps).
 
-Owner picks: pending.
+Owner picks (2026-10-31): layout A, one scrolling form with the download button pinned at the bottom; keep all eight groups (1 what, 2 range, 3 class filters, 4 exam filters, 5 title format, 6 details, 7 reminders, 8 preview) and "remember my choices"; drop none. Owner: "lgtm". Next session implements Export in full; Classes and Exams rounds still to run before their rebuild (F-3).
