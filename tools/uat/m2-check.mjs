@@ -124,13 +124,6 @@ const click = async (sel, text) => {
   await sleep(400)
   return b
 }
-const drag = async (x0, y0, x1, y1) => {
-  await mouse('mouseMoved', x0, y0, 0)
-  await mouse('mousePressed', x0, y0)
-  for (let i = 1; i <= 8; i++) await mouse('mouseMoved', x0 + ((x1 - x0) * i) / 8, y0 + ((y1 - y0) * i) / 8)
-  await mouse('mouseReleased', x1, y1, 0)
-  await sleep(400)
-}
 const panelBox = () => ev(`(() => { const r = document.getElementById('fap-aio-root'); if (!r) return null; const p = r.shadowRoot.querySelector('[aria-label="FAP-AIO"]') ?? r; const b = p.getBoundingClientRect(); return { left: b.left, top: b.top, w: b.width, h: b.height } })()`)
 const shadowText = () => ev(`document.getElementById('fap-aio-root')?.shadowRoot?.textContent ?? ''`)
 
