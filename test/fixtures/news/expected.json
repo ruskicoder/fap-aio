@@ -1,0 +1,563 @@
+{
+ "generatedBy": "tools/news/classify-fixture.py",
+ "items": [
+  {
+   "title": "[Khảo thí] Danh sách sinh viên không đủ điều kiện dự thi FE Fall2026",
+   "tag": "exam-office",
+   "families": [
+    "exam-eligibility"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": "fall2026",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "[QLĐT] Thông báo thu học phí học kỳ Spring 2027 đến hết 15/01/2027",
+   "tag": "academic",
+   "families": [
+    "tuition"
+   ],
+   "priority": "P1",
+   "deadline": "2027-01-15",
+   "term": {
+    "season": "spring 2027",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "[Đào tạo] Đăng ký môn học kỳ Summer2026 đến ngày 20/04/2026",
+   "tag": "academic",
+   "families": [
+    "course-registration"
+   ],
+   "priority": "P1",
+   "deadline": "2026-04-20",
+   "term": {
+    "season": "summer2026",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "[QUAN TRỌNG] Gia hạn đăng ký học lại Fall2026 trước ngày 05/09/2026",
+   "tag": "other",
+   "families": [
+    "course-registration"
+   ],
+   "priority": "P1",
+   "deadline": "2026-09-05",
+   "term": {
+    "season": "fall2026",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thông báo đăng ký thi thẩm định môn PRF192 Block 3W",
+   "tag": "other",
+   "families": [
+    "exam-registration"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": "block 3w",
+    "cohort": null
+   }
+  },
+  {
+   "title": "[Remind] Đăng ký thi sớm kỳ FA26, thời hạn đăng ký: 12/10/2026",
+   "tag": "other",
+   "families": [
+    "exam-registration"
+   ],
+   "priority": "P1",
+   "deadline": "2026-10-12",
+   "term": {
+    "season": "fa26",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Hướng dẫn miễn điểm danh cho sinh viên K18",
+   "tag": "other",
+   "families": [
+    "attendance-exemption"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": "k18"
+   }
+  },
+  {
+   "title": "[CTSV] Thủ tục tạm nghỉ học và nhập học lại",
+   "tag": "other",
+   "families": [
+    "course-registration",
+    "academic-procedure"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thông báo về BHYT năm 2027 bắt buộc với sinh viên",
+   "tag": "other",
+   "families": [
+    "health-insurance",
+    "thesis"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Lịch bảo vệ khóa luận tốt nghiệp SP27, chốt danh sách trước 30/03/2027",
+   "tag": "other",
+   "families": [
+    "thesis",
+    "graduation"
+   ],
+   "priority": "P1",
+   "deadline": "2027-03-30",
+   "term": {
+    "season": "sp27",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thông báo xét tốt nghiệp và nhận bằng đợt 1",
+   "tag": "other",
+   "families": [
+    "graduation"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Lịch học GDQP và rèn luyện tập trung cho K19 half 1",
+   "tag": "other",
+   "families": [
+    "mandatory-program",
+    "timetable-change"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": "half 1",
+    "block": null,
+    "cohort": "k19"
+   }
+  },
+  {
+   "title": "Hướng dẫn cấp lại thẻ sinh viên",
+   "tag": "other",
+   "families": [
+    "student-card"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "[Khảo thí] Lịch thi cuối kỳ Fall 2026 block 10",
+   "tag": "exam-office",
+   "families": [
+    "exam-schedule"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": "fall 2026",
+    "half": null,
+    "block": "block 10",
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thông báo thi thử EOS và phần mềm thi PEA",
+   "tag": "other",
+   "families": [
+    "mock-exam"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Quy định làm bài thi và nội quy phòng thi",
+   "tag": "other",
+   "families": [
+    "exam-guidance"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Công bố điểm và phúc khảo kết quả Summer2026",
+   "tag": "other",
+   "families": [
+    "results"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": "summer2026",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thông báo học online 100% tuần sau",
+   "tag": "other",
+   "families": [
+    "class-mode"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Hướng dẫn học các môn Coursera kỳ Fall2026",
+   "tag": "other",
+   "families": [
+    "coursera-guidance"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": "fall2026",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thay đổi lịch học bù do nghỉ lễ Quốc khánh",
+   "tag": "other",
+   "families": [
+    "timetable-change"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Học phần thay thế trong chương trình đào tạo K17",
+   "tag": "other",
+   "families": [
+    "curriculum-change"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": "k17"
+   }
+  },
+  {
+   "title": "Mượn/trả giáo trình tại thư viện",
+   "tag": "other",
+   "families": [
+    "textbooks",
+    "library"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Cập nhật điểm phong trào học kỳ SU26",
+   "tag": "other",
+   "families": [
+    "movement-points"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": "su26",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Cảnh báo giả mạo email nhà trường",
+   "tag": "other",
+   "families": [
+    "security"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Cơ hội thực tập OJT và summer school nước ngoài",
+   "tag": "other",
+   "families": [
+    "opportunity"
+   ],
+   "priority": "P3",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Mở lớp miễn phí kỹ năng mềm Professionalism",
+   "tag": "other",
+   "families": [
+    "skills-course"
+   ],
+   "priority": "P3",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thư viện giới thiệu sách mới tháng 10",
+   "tag": "other",
+   "families": [
+    "library"
+   ],
+   "priority": "P4",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Tạm ngừng phục vụ căng tin ngày 20/10",
+   "tag": "other",
+   "families": [
+    "service-closure"
+   ],
+   "priority": "P4",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Khảo sát ý kiến sinh viên về chất lượng giảng dạy",
+   "tag": "other",
+   "families": [
+    "survey"
+   ],
+   "priority": "P4",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Quy định nghỉ lễ cho cán bộ, giảng viên, giáo viên",
+   "tag": "other",
+   "families": [
+    "timetable-change",
+    "staff-only"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Đăng ký môn Vovinam và học võ kỳ Fall2026",
+   "tag": "other",
+   "families": [
+    "course-registration",
+    "mandatory-program"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": "fall2026",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "[QUAN TRỌNG] [Remind] Nộp học phí đến hết ngày 31/12/2026",
+   "tag": "other",
+   "families": [
+    "tuition"
+   ],
+   "priority": "P1",
+   "deadline": "2026-12-31",
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thông báo về việc gia hạn nộp hồ sơ",
+   "tag": "other",
+   "families": [
+    "thesis"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Đến hết 31/02/2026 nộp đơn",
+   "tag": "other",
+   "families": [],
+   "priority": "P4",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thông báo chung về hoạt động câu lạc bộ",
+   "tag": "other",
+   "families": [],
+   "priority": "P4",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Kế hoạch học tập kỳ FA26 cho môn SWP391 và SEP490",
+   "tag": "other",
+   "families": [
+    "timetable-change"
+   ],
+   "priority": "P2",
+   "deadline": null,
+   "term": {
+    "season": "fa26",
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Lịch thi môn MKT101c và ENW493c đến hết 25/11/2026",
+   "tag": "other",
+   "families": [
+    "exam-schedule"
+   ],
+   "priority": "P2",
+   "deadline": "2026-11-25",
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  }
+ ]
+}

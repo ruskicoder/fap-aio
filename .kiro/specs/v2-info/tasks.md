@@ -23,7 +23,7 @@ Compacted on 2026-10-22 from 21 to 12 subtasks with no requirement dropped; the 
   - A warning per current Coursera course whose item is unchecked and whose FE is synced, with days left.
   - Pure functions tested on synthetic records.
   - _Requirements: 4.2, 4.3, 4.5, 5.2, 5.3_
-- [ ] 2.2 [INF-2.2] Port `newsClassifier`
+- [x] 2.2 [INF-2.2] Port `newsClassifier`
   - Title normalization, tag, families, flags, priority, term tokens, title deadline, personalization (subject codes, Coursera, thesis, cohort, campus; other campus to P4; staff-only hidden), user watch keywords to P1, repost dedupe on the normalized title within 30 days, detail enrichment.
   - Parity test against `tools/news/analyze-news.py` output on a committed fixture of synthetic titles built from the rule families.
   - _Requirements: 7.4, 7.5, 7.6, 7.8, 7.9_
