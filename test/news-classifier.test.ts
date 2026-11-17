@@ -67,7 +67,7 @@ describe('personalization', () => {
 
 describe('repost dedupe', () => {
   it('keeps the newest of the same normalized title within 30 days and marks it reposted', () => {
-    const out = dedupeNews([
+    const out = dedupeNews<{ title: string; createdAt: string; reposted?: boolean }>([
       { title: 'Lịch thi Fall2026', createdAt: '2026-10-01' },
       { title: 'LỊCH THI  Fall2026', createdAt: '2026-10-20' },
       { title: 'Lịch thi Fall2026', createdAt: '2026-08-01' },
