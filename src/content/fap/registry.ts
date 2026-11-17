@@ -3,7 +3,7 @@
 // are cached in `cache:<sourceId>` keyed by params; a parser failure becomes `layout-changed`
 // naming the source and the last good copy is kept.
 import { read as readStore, update } from '../../shared/storage/catalog'
-import { queuedGet, type Priority } from './queue'
+import { queuedGet, queuedGetJson, type Priority } from './queue'
 import type { FapError, FapResult } from './access'
 
 export type Params = Record<string, string>
@@ -12,7 +12,10 @@ export interface SourceDef<T> {
   id: string
   route: (params: Params) => string
   partial: boolean
-  parse: (doc: Document, params: Params) => T
+  /** Parser of an HTML page or partial. */
+  parse?: (doc: Document, params: Params) => T
+  /** Parser of a JSON route, read through fapGetJson with the same queue and error mapping (info design). */
+  json?: (value: unknown, params: Params) => T
   cacheTtlMs: number
   background?: { periodMin: number }
 }
@@ -53,11 +56,14 @@ export async function read<T>(id: string, params: Params = {}, opts: { force?: b
     const c = await peek<T>(id, params)
     if (c && Date.now() - c.fetchedAt < def.cacheTtlMs) return { ok: true, value: c.value, fetchedAt: c.fetchedAt, cached: true }
   }
-  const r = await queuedGet(def.route(params), { partial: def.partial, source: id, priority: opts.priority ?? 'user' })
+  const get = { partial: def.partial, source: id, priority: opts.priority ?? 'user' as Priority }
+  const r = def.json ? await queuedGetJson<unknown>(def.route(params), get) : await queuedGet(def.route(params), get)
   if (!r.ok) return r
   let value: T
   try {
-    value = def.parse(r.value, params)
+    if (def.json) value = def.json(r.value, params)
+    else if (def.parse) value = def.parse(r.value as Document, params)
+    else throw new Error(`source ${id} has no parser`)
   } catch (e) {
     return { ok: false, error: { kind: 'layout-changed', source: id, detail: e instanceof Error ? e.message : String(e) } }
   }

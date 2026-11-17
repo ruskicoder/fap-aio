@@ -7,7 +7,7 @@ Placement in the panel (panel-ux R2.1, R3.1): the Info tab has Subjects, Lecture
 Compacted on 2026-10-22 from 21 to 12 subtasks with no requirement dropped; the previous list is in [`.deprecated/tasks.md`](.deprecated/tasks.md).
 
 - [ ] 1. [INF-1] Info sources and parsers
-- [ ] 1.1 [INF-1.1] Notification and curriculum sources
+- [x] 1.1 [INF-1.1] Notification and curriculum sources
   - `info.unread` through `fapGetJson` (2 min) and `info.bell` from `data-notification-*` attributes (10 min).
   - `info.curriculum` (24 h): term, code, name, credits, prerequisites column, subject detail link.
   - _Requirements: 5.4, 2.3, 2.4, 2.5_
