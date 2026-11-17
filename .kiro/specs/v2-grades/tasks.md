@@ -37,11 +37,11 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - In the `SettingsRegistry` Grades section: default tier (Good), non-GPA list with a reset to default, GPA goal, MOOC completion per course; per-course goals in `grades.settings`; every change recomputes at once.
   - _Requirements: 2.3, 7.1, 7.2, 7.7; panel-ux R8.1_
 
-- [ ] 4. [GRD-4] Inline page enhancements
+- [x] 4. [GRD-4] Inline page enhancements
 - [x] 4.1 [GRD-4.1] Build `TranscriptSummary`
   - Shadow-rooted block before the transcript card with cumulative GPA, counted credits and per-semester GPA; `fap-aio-gpa-counted` row class styled through a page-level constructable sheet; links to the Grades view, the what-if simulator and the non-GPA setting; a layout-changed notice instead of a summary on parse failure.
   - _Requirements: 3.1, 3.2, 3.3, 3.4_
-- [ ] 4.2 [GRD-4.2] Build `GradeInline`
+- [x] 4.2 [GRD-4.2] Build `GradeInline`
   - Shadow-rooted block after the mark sheet card with pass status, current average, required scores for the selected tier and warnings; tier selector saving the course goal; `MutationObserver` on `#grade-report` with a 150 ms debounce; FAP cells untouched.
   - Integration test reacting to a partial swap.
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 4.9, 4.10_

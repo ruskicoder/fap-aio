@@ -4,8 +4,10 @@ import { addModule } from '../../content/modules'
 import { registerGradeSources } from './sources'
 import { registerGradeSettings } from './settings'
 import { mountTranscriptSummary } from './inline/TranscriptSummary'
+import { mountGradeInline } from './inline/GradeInline'
 
 export const TRANSCRIPT_PATH = /^\/Report\/Transcript(\/|$)/i
+export const GRADE_PATH = /^\/Report\/Grade(\/|$)/i
 
 addModule({
   id: 'grades',
@@ -13,5 +15,6 @@ addModule({
   registerViews: registerGradeSettings,
   onPage: ({ path, doc }) => {
     if (TRANSCRIPT_PATH.test(path)) mountTranscriptSummary(doc)
+    if (GRADE_PATH.test(path)) mountGradeInline(doc)
   },
 })
