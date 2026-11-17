@@ -52,3 +52,29 @@ export interface TermCourses {
   selectedTermId: string | null
   courses: CourseRef[]
 }
+
+/** One row of `table.student-mark-sheet`, as `rowsFromTable` in tools/flm-scraper/marksheet.mjs gives it. */
+export type MarkSheetRow =
+  | { kind: 'item' | 'group-total'; group: string; name: string; weight: string; value: string }
+  | { kind: 'summary'; label: string; value: string; status: string | null }
+
+/** Summary rows (R4.5): late penalty in percent, mark bonus, course average and FAP's status class. */
+export interface MarkSheetSummary {
+  latePenaltyPercent: number | null
+  bonus: number | null
+  average: number | null
+  status: string | null
+}
+
+export interface MarkSheetHeader {
+  code: string
+  title: string
+  /** The meta line parts, in FAP's order (class group, term). */
+  meta: string[]
+}
+
+export interface MarkSheet {
+  header: MarkSheetHeader | null
+  rows: MarkSheetRow[]
+  summary: MarkSheetSummary
+}

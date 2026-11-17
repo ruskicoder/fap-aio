@@ -4,13 +4,13 @@ Spec prefix `GRD`. Phases are numbered `N.`, subtasks `N.M`; the global id is `G
 
 Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the four calculation engines stay separate. The previous list is in [`.deprecated/tasks.md`](.deprecated/tasks.md).
 
-- [ ] 1. [GRD-1] Grade sources and parsers
+- [x] 1. [GRD-1] Grade sources and parsers
 - [x] 1.1 [GRD-1.1] Write the transcript and term list parsers and sources
   - `src/features/grades/parse/transcript.ts`: the 10-column main table and the 7-column replaced table by position; status from badge class plus constants (`bg-danger` marked unverified); `-` grade as `null`; unknown status kept raw. Register `grades.transcript` (6 h).
   - `grades.termCourses` from `#grade-report-term` and `#grade-report-course` options (6 h).
   - Tests on the vi and en transcript fixtures and the grade page fixture.
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 8.1, 8.2_
-- [ ] 1.2 [GRD-1.2] Port the mark sheet reader and source
+- [x] 1.2 [GRD-1.2] Port the mark sheet reader and source
   - TypeScript port of `rowsFromTable` from `tools/flm-scraper/marksheet.mjs` and the `.fap-result-card__*` header; register `grades.markSheet` as a partial (30 min).
   - Tests on the regular, resit and summary-only mark sheet fixtures.
   - _Requirements: 4.1, 4.5_
