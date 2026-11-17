@@ -52,9 +52,9 @@ function Pieces<K extends string>({ items, value, onChange, label }: { items: re
         {value.map((k, i) => (
           <span key={k} className="inline-flex min-h-7 items-center gap-0.5 rounded-full border border-orange-500 bg-orange-50 pl-3 pr-1 text-xs text-orange-800">
             {name(k)}
-            <button type="button" className={mini} aria-label={`Move ${name(k)} left`} disabled={i === 0} onClick={() => move(i, -1)}>←</button>
-            <button type="button" className={mini} aria-label={`Move ${name(k)} right`} disabled={i === value.length - 1} onClick={() => move(i, 1)}>→</button>
-            <button type="button" className={mini} aria-label={`Remove ${name(k)}`} onClick={() => onChange(value.filter((x) => x !== k))}>×</button>
+            <button type="button" className={mini} aria-label={`Move ${name(k).toLowerCase()} left`} disabled={i === 0} onClick={() => move(i, -1)}>←</button>
+            <button type="button" className={mini} aria-label={`Move ${name(k).toLowerCase()} right`} disabled={i === value.length - 1} onClick={() => move(i, 1)}>→</button>
+            <button type="button" className={mini} aria-label={`Remove ${name(k).toLowerCase()}`} onClick={() => onChange(value.filter((x) => x !== k))}>×</button>
           </span>
         ))}
         {!value.length && <span className="text-xs text-gray-600">None</span>}
@@ -121,7 +121,7 @@ function Tiers({ kind, value, onChange }: { kind: string; value: number[]; onCha
         {value.map((m) => (
           <span key={m} className="inline-flex min-h-7 items-center gap-0.5 rounded-full border border-gray-300 pl-3 pr-1 text-xs">
             {offsetText(m)} before
-            <button type="button" className={mini} aria-label={`Remove ${kind} reminder ${offsetText(m)}`} onClick={() => onChange(value.filter((x) => x !== m))}>×</button>
+            <button type="button" className={mini} aria-label={`Remove ${kind.toLowerCase()} reminder ${offsetText(m)}`} onClick={() => onChange(value.filter((x) => x !== m))}>×</button>
           </span>
         ))}
         {!value.length && <span className="text-xs text-gray-600">No reminders</span>}

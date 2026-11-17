@@ -23,13 +23,13 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - Pathname table to routes, the course from `#grade-report-course`, applied once per page load when the setting is on; a manual pick wins until the next load.
   - _Requirements: 2.1, 2.2, 2.5, 4.1, 4.2, 4.3; core R1.8_
 
-- [ ] 3. [PNL-3] Visual system and accessibility
+- [x] 3. [PNL-3] Visual system and accessibility
 - [x] 3.1 [PNL-3.1] Add tokens, theme variables, icons, focus, motion and the virtualized list
   - Comfortable and compact tokens from the design; `--aio-*` variables derived from the active theme's `panel-theme` sheet with a neutral fallback before appearance loads; system UI font.
   - Tabler outline icons as an SVG sprite inside the shadow root; a visible focus ring on every control; 24 px minimum targets; transitions of 200 ms or less, removed under `prefers-reduced-motion`.
   - A virtualized list component used by lists over 100 items (news, subjects).
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.7_
-- [ ] 3.2 [PNL-3.2] Add accessibility tests
+- [x] 3.2 [PNL-3.2] Add accessibility tests
   - axe-core on the shell and each registered view in both densities; a target size audit; copy checks for sentence case in labels.
   - _Requirements: 10.2, 10.3, 10.8_
 

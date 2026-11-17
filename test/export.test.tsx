@@ -218,15 +218,15 @@ describe('export form', () => {
     const btn = (label: string) => el.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`)!
     act(() => check(/^Custom \(BE-301-PRF192\)/).click())
     act(() => byText('button', /^\+ Subject name$/).click())
-    act(() => btn('Move Room right').click())
+    act(() => btn('Move room right').click())
     const sep = el.querySelector<HTMLSelectElement>('select[aria-label="Classes separator"]')!
     act(() => { sep.value = ' | '; sep.dispatchEvent(new Event('change', { bubbles: true })) })
     expect(el.textContent).toContain('PRF192 | BE-301 | Lập trình CMon 5 Oct')
 
-    act(() => btn('Move Slot left').click())
+    act(() => btn('Move slot left').click())
     expect(el.textContent).toContain('Slot 1 · Lecturer: abc')
 
-    act(() => btn('Remove Classes reminder 2 hours').click())
+    act(() => btn('Remove classes reminder 2 hours').click())
     const amount = el.querySelector<HTMLInputElement>('input[aria-label="Classes reminder amount"]')!
     act(() => { Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(amount, '45'); amount.dispatchEvent(new Event('input', { bubbles: true })) })
     const unit = el.querySelector<HTMLSelectElement>('select[aria-label="Classes reminder unit"]')!

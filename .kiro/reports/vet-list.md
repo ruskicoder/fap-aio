@@ -12,3 +12,4 @@ Choices made without an audit (owner instruction D-9, 2026-11-17). One line each
 - PNL-3.1 targets: every button is at least 24 by 24 px, which widens the small move and remove buttons inside the Export chips | alternative: keep them small and rely on chip spacing.
 - PNL-3.1 focus: controls without their own ring get a 2 px coral outline on keyboard focus | alternative: a ring (box-shadow) like the existing controls.
 - PNL-3.1 density: compact changes text, small text, control height (where `h-control` is used), row padding and gaps; header icon buttons stay 36 px | alternative: also shrink the header buttons.
+- PNL-3.2 screen reader labels in Export: the move and remove buttons now read "Move room left", "Remove classes reminder 2 hours" (item names in lower case inside the sentence) | alternative: keep the capitalised item names.
