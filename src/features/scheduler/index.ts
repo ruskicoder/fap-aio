@@ -11,7 +11,8 @@ import { ExamsView } from './views/ExamsView'
 import { ExportView } from './views/ExportView'
 import type { ExamStore } from './types'
 import { registerSchedulerToday } from './today'
-import { registerReminderSettings } from './settings'
+import { registerKeepAliveSettings, registerReminderSettings } from './settings'
+import { wireKeepAlive } from './keepalive'
 
 // Upcoming exams for the segmented-control badge (panel-ux R2.2).
 let upcoming: number | null = null
@@ -32,6 +33,8 @@ export function registerSchedulerViews(): void {
   subscribe('exams', countExams)
   registerSchedulerToday()
   registerReminderSettings()
+  registerKeepAliveSettings()
+  wireKeepAlive()
 }
 
 // Header Sync: this week's classes and the exams (panel-ux R2.3).

@@ -9,6 +9,7 @@ import { installDataHandlers } from './data/handlers'
 import { installPermissions } from './permissions'
 import { installDiagnostics } from './diagnostics'
 import { installReminders } from './reminders'
+import { installKeepAlive } from './keepalive'
 
 registerMigrationSteps()
 installRouter()
@@ -20,6 +21,7 @@ installDataHandlers()
 installPermissions()
 installDiagnostics()
 installReminders()
+installKeepAlive()
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'update') void runMigrations()

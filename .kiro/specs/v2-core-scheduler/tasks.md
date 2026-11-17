@@ -99,8 +99,8 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Turning reminders on requests `notifications` through the platform grant flow; on fire, a notification and an inbox alert; a click focuses a FAP tab on `/WeeklyTimetable` or `/ExamSchedule` or opens one.
   - _Requirements: 10.1, 10.2, 10.3, 10.4; platform R1.3, R1.7_
 
-- [ ] 9. [CORE-9] Session keep-alive
-- [ ] 9.1 [CORE-9.1] Implement the keep-alive alarm
+- [x] 9. [CORE-9] Session keep-alive
+- [x] 9.1 [CORE-9.1] Implement the keep-alive alarm
   - `src/background/keepalive.ts`: alarm `keepalive` at the configured period (default 7, minimum 1); `runOnFapTab('keepalive')`; the tab calls `fapGetJson('/Notification/UnreadCount')` as a background read; skipped when `now − lastFapRequestAt < period`; `session-expired` turns the setting off and pushes an alert; turning it off clears the alarm.
   - _Requirements: 11.1, 11.2, 11.3, 11.4; info R8.7_
 

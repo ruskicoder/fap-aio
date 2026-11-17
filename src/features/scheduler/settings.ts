@@ -1,7 +1,7 @@
 // Core and scheduler settings (core R13.1, R13.2; panel-ux R8.1). Every value lives in the `settings`
 // store and is read through storage.onChanged, so a change applies without reload.
-// Reminders (CORE-8) and keep-alive (CORE-9) register their rows when those features ship: a row whose
-// value nothing reads yet would be a control that does not work (conventions rule 10).
+// Reminders (CORE-8) and keep-alive (CORE-9) rows are registered by the scheduler module, which also
+// wires the code that reads them (conventions rule 10).
 import { createElement } from 'react'
 import { registerSetting } from '../../content/panel/settings/registry'
 import { PermissionToggle } from '../../content/panel/settings/permission-toggle'
