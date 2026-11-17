@@ -46,8 +46,8 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - Tests for the sanitizer.
   - _Requirements: 5.1, 5.2, 5.3, 5.4; platform R7.4_
 
-- [ ] 6. [APP-6] Layout tweaks
-- [ ] 6.1 [APP-6.1] Implement compact, wide and sticky
+- [x] 6. [APP-6] Layout tweaks
+- [x] 6.1 [APP-6.1] Implement compact, wide and sticky
   - `layout/tweaks.ts`: fragments toggled by `fap-aio-compact`, `fap-aio-wide` and `fap-aio-sticky` classes on `html`; measured sticky offset updated on resize; settings off by default in the Appearance section.
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 

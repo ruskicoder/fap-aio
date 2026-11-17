@@ -4,6 +4,7 @@ import '../features/scheduler'
 import '../features/grades'
 import '../features/info'
 import '../features/legacy'
+import '../features/appearance'
 
 registerPanelHost()
 void bootstrap()

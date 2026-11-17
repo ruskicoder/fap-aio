@@ -5,12 +5,15 @@ import { read, subscribe } from '../../shared/storage/catalog'
 import { StylePipeline, THEME_LAYERS, userCss, varsCss } from './pipeline'
 import { ModeGuard } from './mode'
 import { parseActive, resolveStyle, type AppearanceActive } from './state'
+import { startTweaks, type Tweaks } from './layout/tweaks'
 
 export const SAFE_CLASS = 'fap-aio-safe'
 
 export interface Appearance {
   pipeline: StylePipeline
   mode: ModeGuard
+  /** Compact, wide and sticky (R7), independent of the theme and of FAP default. */
+  tweaks: Tweaks
   /** Applies a state now (used on load, on storage change and on a colour-scheme change). */
   render(state: AppearanceActive): void
   ready: Promise<void>
@@ -54,6 +57,7 @@ export function startAppearance(doc: Document = document, win: Window = window):
   let changed = false
   subscribe('appearance.active', (v) => { changed = true; render(parseActive(v)) })
   const first = (v: unknown) => { if (!changed) render(parseActive(v)) }
-  const ready = read('appearance.active').then(first, () => first(null))
-  return { pipeline, mode, render, ready }
+  const tweaks = startTweaks(pipeline, doc, win)
+  const ready = Promise.all([read('appearance.active').then(first, () => first(null)), tweaks.ready]).then(() => undefined)
+  return { pipeline, mode, tweaks, render, ready }
 }
