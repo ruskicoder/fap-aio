@@ -8,6 +8,7 @@ import { DOCK_CLASS, setPageDock } from '../src/content/panel/page-dock'
 import { provideSyncAll, resetSyncAll, runSyncAll } from '../src/content/panel/actions'
 import { StatusStrip, ViewStatusStrip, stampText } from '../src/content/panel/StatusStrip'
 import { SettingsView } from '../src/content/panel/SettingsView'
+import { registerGeneralSettings } from '../src/content/panel/settings/general'
 import { PanelRouter } from '../src/content/panel/router'
 import { clearViews, registerView } from '../src/content/panel/views'
 import { FapQueue } from '../src/content/fap/queue'
@@ -101,9 +102,10 @@ describe('settings view', () => {
   beforeEach(() => { installFakeChrome(); document.body.innerHTML = '' })
 
   it('switches the docked behaviour between narrow and cover', async () => {
+    registerGeneralSettings()
     const { el, root } = render(<SettingsView />)
     await tick()
-    const radios = [...el.querySelectorAll<HTMLInputElement>('input[type="radio"]')]
+    const radios = [...el.querySelectorAll<HTMLInputElement>('[data-setting="general.docked"] input[type="radio"]')]
     expect(radios.map((r) => r.parentElement!.textContent)).toEqual(['Narrow the page', 'Cover the page'])
     expect(radios[0]!.checked).toBe(true)
     await act(async () => { radios[1]!.click() })

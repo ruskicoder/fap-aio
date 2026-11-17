@@ -6,11 +6,12 @@ import { createRoot, type Root } from 'react-dom/client'
 import css from './panel.css?inline'
 import { PanelApp } from './PanelApp'
 import { ViewStatusStrip } from './StatusStrip'
-import { PanelRouter } from './router'
+import { PanelRouter, isOverlay, useRoute } from './router'
 import { ViewOutlet, registerView } from './views'
 import { Navigation } from './nav'
 import { pageRoute } from './page-aware'
 import { SettingsView } from './SettingsView'
+import { registerGeneralSettings } from './settings/general'
 import { viewportSize } from './geometry'
 import { runSyncAll, useSyncAll } from './actions'
 import { readPrefs } from '../../shared/panel-prefs'
@@ -61,7 +62,13 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   router.subscribe((route) => updater?.((s) => ({ ...s, route })))
   // Page-aware tab, once per page load (panel-ux R4.1, R4.2).
   if ((await readPrefs()).pageAware) router.go(pageRoute(doc.location?.pathname ?? '/', doc), { source: 'page' })
-  registerView({ overlay: 'settings', label: 'Settings', icon: 'settings', component: async () => SettingsView })
+  registerGeneralSettings()
+  // The route's section (deep links such as the non-GPA setting) scrolls Settings to it.
+  const SettingsOverlay = () => {
+    const r = useRoute(router)
+    return createElement(SettingsView, { section: isOverlay(r) && 'section' in r ? r.section : undefined })
+  }
+  registerView({ overlay: 'settings', label: 'Settings', icon: 'settings', component: async () => SettingsOverlay })
   const version = chrome.runtime.getManifest?.().version ?? ''
   root.render(createElement(Shell, { initial: { ...initial, route: router.current() }, host, version, router, bind: (u: Updater) => { updater = u } }))
   // Toolbar button and the toggle-panel command (panel-ux R7.1).

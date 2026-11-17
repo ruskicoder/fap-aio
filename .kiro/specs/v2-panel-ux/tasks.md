@@ -57,7 +57,7 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
 
 - [ ] 8. [PNL-8] Settings registry and Settings view
-- [ ] 8.1 [PNL-8.1] Implement `SettingsRegistry` and the Settings view
+- [x] 8.1 [PNL-8.1] Implement `SettingsRegistry` and the Settings view
   - `SettingDef` with sections, types, defaults, validation and custom rows; values stored in `settings`; the General section's own settings (page-aware tab, density, layout defaults).
   - Sections in the R8.1 order, sticky index when docked and a select when floating, search over label, description and key, default and "modified" marker per row.
   - _Requirements: 8.1, 8.2, 8.3, 4.3_
