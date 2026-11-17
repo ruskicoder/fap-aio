@@ -28,6 +28,12 @@ export interface PanelAppProps {
   onSync?: () => void
   onSettings?: () => void
   onState?: (s: PanelState) => void
+  /** Extra header buttons before Dock (the alerts bell, R6.2). */
+  headerActions?: ReactNode
+  /** A layer over the panel body under the header (the inbox popover). */
+  overlay?: ReactNode
+  /** Unread count shown on the minimized edge tab (R1.6, R6.2). */
+  tabBadge?: number
   /** Exposes the state updater to the host (toggle command, router). */
   bind?: (update: (fn: (s: PanelState) => PanelState) => void) => void
 }
@@ -46,7 +52,7 @@ type Op =
   | { kind: 'move'; x0: number; y0: number; r: Rect }
   | { kind: 'resize'; dir: Dir; x0: number; y0: number; r: Rect; dockW: number }
 
-export function PanelApp({ initial, host, version = '', children, status, syncing = false, onSync, onSettings, onState, bind }: PanelAppProps) {
+export function PanelApp({ initial, host, version = '', children, status, syncing = false, onSync, onSettings, onState, bind, headerActions, overlay, tabBadge = 0 }: PanelAppProps) {
   const [vp, setVp] = useState(viewport)
   const [state, setState] = useState<PanelState>(() => ({ ...initial, floating: clampFloating(initial.floating, vp.w, vp.h) }))
   const [dragging, setDragging] = useState(false)
@@ -175,11 +181,12 @@ export function PanelApp({ initial, host, version = '', children, status, syncin
       update((s) => ({ ...s, edgeTabTop: clampTabTop(tabTop + step, vp.h) }))
     }
     return (
-      <button type="button" aria-label="Open FAP-AIO panel" title="Click to open, drag to move"
+      <button type="button" aria-label={tabBadge ? `Open FAP-AIO panel, ${tabBadge} unread alerts` : 'Open FAP-AIO panel'} title="Click to open, drag to move"
         onPointerDown={tabDown} onPointerMove={tabMove} onPointerUp={tabUp} onClick={tabClick} onKeyDown={tabKey}
         className="flex h-full w-full cursor-pointer touch-none select-none flex-col items-center justify-center gap-1.5 rounded-l-lg border border-r-0 border-orange-300 bg-orange-100 text-orange-900 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
         <Icon name="grip" size={14} />
         <span className="text-xs font-semibold [writing-mode:vertical-rl]">FAP-AIO</span>
+        {tabBadge > 0 && <span aria-hidden="true" className="inline-flex min-w-[18px] items-center justify-center rounded-full bg-orange-600 px-1 text-[11px] font-semibold leading-[18px] text-white">{tabBadge > 99 ? '99+' : tabBadge}</span>}
       </button>
     )
   }
@@ -195,6 +202,7 @@ export function PanelApp({ initial, host, version = '', children, status, syncin
         <button type="button" aria-label="Sync this week and exams" title="Sync this week and exams" aria-busy={syncing} className={btn} onClick={onSync}>
           <Icon name="refresh" className={syncing ? 'animate-spin motion-reduce:animate-none' : ''} />
         </button>
+        {headerActions}
         <button type="button" aria-label={docked ? 'Undock panel' : 'Dock panel'} title={docked ? 'Undock' : 'Dock'} aria-pressed={docked}
           className={`${btn} ${docked ? 'bg-orange-100 text-orange-900' : ''}`} onClick={toggleDock}>
           <Icon name="dock" />
@@ -204,6 +212,7 @@ export function PanelApp({ initial, host, version = '', children, status, syncin
       </header>
       <div className="flex min-h-0 flex-1 flex-col">{children}</div>
       {status}
+      {overlay}
       {HANDLES.filter(([d]) => (docked ? d === 'w' && !drawer : true)).map(([d, cls]) => (
         <div key={d} aria-hidden="true" data-dir={d} className={`absolute z-10 touch-none ${docked ? 'inset-y-0 left-0 w-1.5 cursor-ew-resize' : cls}`} />
       ))}

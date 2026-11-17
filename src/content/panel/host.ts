@@ -18,6 +18,7 @@ import { loadPanelState } from './store'
 import { onBoot } from '../modules'
 import { installPanelTheme } from '../../features/appearance/panel-theme'
 import { IconSprite } from './icons'
+import { Bell, InboxPopover, useUnread } from './inbox/Inbox'
 import { getSetting } from '../../shared/settings'
 import { subscribe } from '../../shared/storage/catalog'
 import { onMessage } from '../../shared/call'
@@ -73,8 +74,10 @@ type Updater = (fn: (s: PanelState) => PanelState) => void
 /** The agreed shell (ui/shell.html): header Sync and Settings, tabs, view outlet, status strip. */
 function Shell({ initial, host, version, router, bind }: { initial: PanelState; host: HTMLElement; version: string; router: PanelRouter; bind: (u: Updater) => void }) {
   const sync = useSyncAll()
+  const unread = useUnread()
   return createElement(Fragment, null, createElement(IconSprite), createElement(PanelApp, {
     initial, host, version, bind, syncing: sync.running,
+    headerActions: createElement(Bell), overlay: createElement(InboxPopover, { router }), tabBadge: unread,
     onSync: () => void runSyncAll(),
     onSettings: () => router.go({ overlay: 'settings' }),
     status: createElement(ViewStatusStrip, { router }),

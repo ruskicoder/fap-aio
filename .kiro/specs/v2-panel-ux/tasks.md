@@ -44,8 +44,8 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
 
 5. PNL-5 Command palette: removed 2026-10-26 (decision D-3). The earlier phase is in [`.deprecated/2026-10-26-shell-audit/tasks.md`](.deprecated/2026-10-26-shell-audit/tasks.md).
 
-- [ ] 6. [PNL-6] Alerts inbox
-- [ ] 6.1 [PNL-6.1] Implement `AlertStore` and the inbox popover
+- [x] 6. [PNL-6] Alerts inbox
+- [x] 6.1 [PNL-6.1] Implement `AlertStore` and the inbox popover
   - `alerts.push()` with `dedupeKey`, retention 200 items or 60 days, read state, `notify` to the service worker for enabled kinds.
   - Under the bell: list with kind filters, mark one or all read, deep links; unread count on the bell, pill and rail.
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 1.6_

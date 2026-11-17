@@ -12,6 +12,8 @@ vi.mock('../src/content/fap/queue', () => ({ queuedGet: vi.fn(), queue: { curren
 const { mountPanel } = await import('../src/content/panel/host')
 const { registerSchedulerViews } = await import('../src/features/scheduler/index')
 const { clearViews, tabViews, routeOfView } = await import('../src/content/panel/views')
+const { setInboxOpen } = await import('../src/content/panel/inbox/store')
+const { write } = await import('../src/shared/storage/catalog')
 
 ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
 const tick = () => act(async () => { await new Promise((r) => setTimeout(r, 0)) })
@@ -89,7 +91,13 @@ describe('accessibility audit', () => {
 
   for (const density of ['comfortable', 'compact'] as const) {
     it(`finds no problem on the shell and every view (${density})`, async () => {
-      await act(async () => { await setSettings({ 'general.density': density }) })
+      await act(async () => {
+        await setSettings({ 'general.density': density })
+        await write('alerts', { items: [
+          { id: 'a', kind: 'grade', title: 'PRF192 is failing', at: Date.now(), read: false, dedupeKey: 'a' },
+          { id: 'b', kind: 'sync', title: 'Sync failed', at: Date.now(), read: true, dedupeKey: 'b' },
+        ] })
+      })
       registerSchedulerViews()
       let m!: Awaited<ReturnType<typeof mountPanel>>
       await act(async () => { m = await mountPanel(document, '') })
@@ -103,6 +111,10 @@ describe('accessibility audit', () => {
         await tick(); await tick()
         problems.push(...audit(m.shadow, JSON.stringify(r)))
       }
+      await act(async () => { setInboxOpen(true) })
+      expect(m.shadow.querySelector('[role="dialog"]')).toBeTruthy()
+      problems.push(...audit(m.shadow, 'inbox'))
+      await act(async () => { setInboxOpen(false) })
       expect(problems).toEqual([])
     })
   }
