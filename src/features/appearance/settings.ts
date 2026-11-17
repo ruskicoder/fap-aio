@@ -32,7 +32,7 @@ export function registerAppearanceSettings(): void {
   // Shown once a Classic part ships (rule 10); it says only what is there today.
   registerSetting<boolean>({
     key: CLASSIC_KEY, section: 'appearance', type: 'toggle', default: false,
-    label: 'Classic FAP layout', description: 'On the FAP home page, the links grouped as the old FAP grouped them, with application deadlines on request.',
+    label: 'Classic FAP layout', description: 'Old FAP style: links grouped as before on the home page with application deadlines on request, term tabs and course cards on the grade and attendance reports, and timetable sessions as cards coloured by attendance.',
   })
 }
 

@@ -47,6 +47,44 @@ export function hide(id: string, find: Find): Patch {
   }
 }
 
+const tokens = (v: string | null) => (v ?? '').split(/\s+/).filter(Boolean)
+
+/**
+ * Adds classes to every element `findAll` returns, including ones FAP renders later (re-applied by the
+ * log's refresh); revert gives each element back its original `class` attribute text. Never reports a
+ * missing target, since the elements may arrive with a partial after the patch is applied.
+ */
+export function markAll(id: string, findAll: () => Element[], classesOf: (el: Element) => string[]): Patch {
+  const marked = new Map<Element, { original: string | null; added: string[] }>()
+  const restore = (el: Element) => {
+    const m = marked.get(el)
+    if (!m) return
+    marked.delete(el)
+    const rest = tokens(el.getAttribute('class')).filter((t) => !m.added.includes(t))
+    if (rest.join(' ') === tokens(m.original).join(' ')) {
+      if (m.original === null) el.removeAttribute('class')
+      else el.setAttribute('class', m.original)
+    } else el.classList.remove(...m.added)
+  }
+  const fits = (el: Element) => marked.has(el) && classesOf(el).every((c) => el.classList.contains(c))
+  return {
+    id,
+    apply() {
+      for (const el of [...marked.keys()]) if (!el.isConnected) marked.delete(el)
+      for (const el of findAll()) {
+        if (fits(el)) continue
+        restore(el)
+        const added = classesOf(el).filter((c) => !el.classList.contains(c))
+        marked.set(el, { original: el.getAttribute('class'), added })
+        el.classList.add(...added)
+      }
+      return true
+    },
+    applied: () => findAll().every(fits),
+    revert() { for (const el of [...marked.keys()]) restore(el) },
+  }
+}
+
 /** Moves an element into a new parent (before `before` when given); revert puts it back in its place. */
 export function move(id: string, find: Find, parent: Find, before: Find = () => null): Patch {
   let el: Element | null = null

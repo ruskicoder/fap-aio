@@ -61,7 +61,7 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - Orange section headings with v2 links; FAP home content kept below.
   - The application deadline table from `/Application/GetFormSchema` (GET, one call per application type, 46 types) is filled only when the user presses "Load deadlines": one type per request at user priority under the shared budget, results cached for 24 hours, no background reads; hidden when the type list cannot be read.
   - _Requirements: 6.5; platform R3.1, R3.2_
-- [ ] 7.3 [APP-7.3] Build classic report pages and timetable cards
+- [x] 7.3 [APP-7.3] Build classic report pages and timetable cards
   - Term tab strip and course card list driving FAP's own selects (`change` with `bubbles: true`); selects hidden visually but focusable; timetable cells styled as cards by attendance status.
   - _Requirements: 6.6, 6.7_
 - [ ] 7.4 [APP-7.4] Build the classic top navigation and centred column
