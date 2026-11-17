@@ -72,6 +72,10 @@ export function installTabs(): void {
     return ok(null)
   })
   register('commands.list', async () => ok(await chrome.commands.getAll()))
+  register('shortcuts.open', async () => {
+    await chrome.tabs.create({ url: 'chrome://extensions/shortcuts' })
+    return ok(null)
+  })
 
   chrome.tabs.onRemoved.addListener((tabId: number) => {
     void update((s) => {

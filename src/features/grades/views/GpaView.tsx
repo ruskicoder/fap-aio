@@ -6,6 +6,7 @@ import { Empty, Message, button, primary } from '../../scheduler/views/common'
 import { ago } from '../../../content/panel/StatusStrip'
 import { errorText } from '../../../content/panel/errors'
 import { panelRouter } from '../../../content/panel/host'
+import { registerRefresh } from '../../../content/panel/keys'
 import { read } from '../../../content/fap/registry'
 import { computeGpa, formatGpa, isExcluded, type GpaResult } from '../engine/gpa'
 import { gpaGoal, maxAverage, type GoalCourse, type GpaGoalResult } from '../engine/goals'
@@ -66,11 +67,13 @@ export function GpaView() {
   const load = async (force: boolean) => {
     setBusy(true)
     setError(null)
-    const r = await read<Transcript>(GRADES_TRANSCRIPT, {}, { force, priority: 'user' })
+    const r = await read<Transcript>(GRADES_TRANSCRIPT, {}, { force, priority: 'user' }).catch((e: unknown) => ({ ok: false as const, error: { kind: 'network' as const, message: String(e) } }))
     setBusy(false)
     if (r.ok) { setT(r.value); setAt(r.fetchedAt) } else setError(errorText(r.error))
   }
   useEffect(() => { void load(false) }, [])
+  // Alt+R (panel-ux R7.1).
+  useEffect(() => registerRefresh('grades/gpa', () => void load(true)), [])
 
   const g = t && settings ? computeGpa({ rows: t.rows, nonGpa: settings.nonGpa }) : null
   return (

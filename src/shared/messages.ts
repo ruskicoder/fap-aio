@@ -42,6 +42,8 @@ export const MsgSchema = z.discriminatedUnion('type', [
     result: z.union([z.record(z.unknown()), z.object({ error: z.string() }).strict()]),
   }),
   msg('commands.list', {}),
+  // Opens chrome://extensions/shortcuts, which a content script cannot open (panel-ux R7.4).
+  msg('shortcuts.open', {}),
   msg('diagnostics', {}),
   // extension page -> service worker
   msg('perm.result', { perm, granted: z.boolean() }),

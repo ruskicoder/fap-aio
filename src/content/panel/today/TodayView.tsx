@@ -5,6 +5,7 @@ import type { PanelRouter } from '../router'
 import { ago } from '../StatusStrip'
 import { onProvidersChanged, refreshAll, todayProviders, type TodayItem, type TodayProvider } from './providers'
 import { subscribe } from '../../../shared/storage/catalog'
+import { registerRefresh } from '../keys'
 
 export const CALM_TEXT = 'Nothing needs your attention today.'
 export const NO_NEXT_CLASS = 'No upcoming class in your synced schedule.'
@@ -79,6 +80,8 @@ export function TodayView({ router }: { router: PanelRouter }) {
     setBusy(false)
     if (!r.ok) setError(r.text ?? 'Refresh failed. Try again later.')
   }
+  // Alt+R (panel-ux R7.1).
+  useEffect(() => registerRefresh('today', () => void refresh()), [])
   return (
     <div className="pb-3">
       <div className="flex items-center gap-2 px-3 pb-1 pt-2.5">

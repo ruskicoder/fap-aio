@@ -6,8 +6,11 @@ import { createRoot, type Root } from 'react-dom/client'
 import css from './panel.css?inline'
 import { PanelApp } from './PanelApp'
 import { ViewStatusStrip } from './StatusStrip'
-import { PanelRouter, isOverlay, useRoute } from './router'
-import { ViewOutlet, registerView } from './views'
+import { PanelRouter, isOverlay, routeKey, useRoute } from './router'
+import { installKeys, refresherFor, registerAction } from './keys'
+import { ShortcutsSheet, registerShortcutSettings } from './shortcuts'
+import { toggleInbox } from './inbox/store'
+import { ViewOutlet, registerView, routeOfView, tabViews } from './views'
 import { Navigation } from './nav'
 import { pageRoute } from './page-aware'
 import { SettingsView } from './SettingsView'
@@ -87,7 +90,39 @@ export async function mountPanel(doc: Document = document, cssText: string = css
     updater?.((s) => ({ ...s, collapsed: false }))
     router.go(r, { source: 'deeplink' })
   }
+  // Keyboard actions (panel-ux R7.1), their Settings rows and the shortcuts sheet.
+  registerPanelActions(router, (fn) => updater?.(fn))
+  registerShortcutSettings()
+  registerView({ overlay: 'shortcuts', label: 'Shortcuts', icon: 'info', component: async () => ShortcutsSheet })
+  removeKeys?.()
+  removeKeys = installKeys(doc.defaultView ?? window)
   return { host, shadow, root, router }
+}
+
+let removeKeys: (() => void) | null = null
+
+/** The page actions of R7.1; each opens the panel when it is minimized. */
+export function registerPanelActions(router: PanelRouter, update: (fn: (s: PanelState) => PanelState) => void): void {
+  const open = () => update((s) => (s.collapsed ? { ...s, collapsed: false } : s))
+  for (let n = 1; n <= 9; n++) {
+    registerAction({
+      id: `tab.${n}`, title: `Open tab ${n}`, default: { win: `Alt+${n}`, mac: `Ctrl+${n}` },
+      run: () => { const t = tabViews()[n - 1]; if (t) { open(); router.go(routeOfView(t)) } },
+    })
+  }
+  const step = (by: number) => {
+    const tabs = tabViews()
+    if (!tabs.length) return
+    const i = tabs.findIndex((t) => routeKey(routeOfView(t)) === routeKey(router.current()))
+    open()
+    router.go(routeOfView(tabs[(i + by + tabs.length) % tabs.length]!))
+  }
+  registerAction({ id: 'view.next', title: 'Next view', default: { win: 'Alt+]', mac: 'Alt+]' }, run: () => step(1) })
+  registerAction({ id: 'view.prev', title: 'Previous view', default: { win: 'Alt+[', mac: 'Alt+[' }, run: () => step(-1) })
+  registerAction({ id: 'view.refresh', title: 'Refresh this view', default: { win: 'Alt+R', mac: 'Alt+R' }, run: () => { const fn = refresherFor(routeKey(router.current())); if (fn) fn(); else void runSyncAll() } })
+  registerAction({ id: 'panel.dock', title: 'Dock or undock the panel', default: { win: 'Alt+D', mac: 'Alt+D' }, run: () => update((s) => ({ ...s, collapsed: false, mode: s.mode === 'docked' ? 'floating' : 'docked' })) })
+  registerAction({ id: 'inbox', title: 'Open alerts', default: { win: 'Alt+N', mac: 'Alt+N' }, run: () => { open(); toggleInbox() } })
+  registerAction({ id: 'sheet', title: 'Show shortcuts', default: { win: '?', mac: '?' }, run: () => { open(); router.go({ overlay: 'shortcuts' }) } })
 }
 
 let opener: ((r: Route) => void) | null = null

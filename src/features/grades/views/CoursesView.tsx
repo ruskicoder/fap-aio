@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { Empty, Message, Tag, button, type Tint } from '../../scheduler/views/common'
 import { ago } from '../../../content/panel/StatusStrip'
 import { panelRouter } from '../../../content/panel/host'
+import { registerRefresh } from '../../../content/panel/keys'
 import { TIERS, type Prediction } from '../engine/predict'
 import { weakGroups } from '../engine/course-model'
 import { flmLink, loadCourses, recompute, useCourses, type CourseRow } from '../courses'
@@ -123,6 +124,8 @@ export function CoursesView() {
   })
   const [rubric, setRubric] = useState<RubricInfo | null>(null)
   useEffect(() => { void loadCourses() }, [])
+  // Alt+R (panel-ux R7.1).
+  useEffect(() => registerRefresh('grades/courses', () => void loadCourses({ force: true })), [])
   // Settings changed: recompute what is loaded, without new requests (R2.3).
   useEffect(() => { if (settings) void recompute() }, [settings])
   useEffect(() => { void rubricInfo().then(setRubric) }, [])

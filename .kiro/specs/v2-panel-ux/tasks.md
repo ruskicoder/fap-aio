@@ -50,8 +50,8 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - Under the bell: list with kind filters, mark one or all read, deep links; unread count on the bell, pill and rail.
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 1.6_
 
-- [ ] 7. [PNL-7] Keyboard shortcuts and keybinds
-- [ ] 7.1 [PNL-7.1] Implement `KeybindEngine`, keybind recording and the shortcuts sheet
+- [x] 7. [PNL-7] Keyboard shortcuts and keybinds
+- [x] 7.1 [PNL-7.1] Implement `KeybindEngine`, keybind recording and the shortcuts sheet
   - One capture-phase `keydown` listener; the input, IME and contenteditable guard with the toggle exception; platform defaults for macOS; actions from R7.1 wired to router, overlays and shell.
   - Settings rows that record, clear and reset; refusal with the conflicting action or the reserved browser chord named; overrides only in `panel.prefs`; the toggle-panel row shows `commands.list` output and links to `chrome://extensions/shortcuts`; the `?` sheet lists all current keybinds.
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
