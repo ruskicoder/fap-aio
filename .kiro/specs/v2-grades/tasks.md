@@ -20,7 +20,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - `src/features/grades/engine/gpa.ts`: counted rows (passed, numeric grade, credits above 0, not excluded), case-insensitive prefix exclusion, per-semester order `year * 10 + term`, cumulative GPA, two decimals with credits.
   - Tests: prefix exclusion, Exempt and In progress not counted, the replaced table ignored.
   - _Requirements: 2.1, 2.2, 2.4, 2.5, 2.6, 1.2_
-- [ ] 2.2 [GRD-2.2] Implement `CourseModeler`
+- [x] 2.2 [GRD-2.2] Implement `CourseModeler`
   - Port of `courseModel`: token-overlap mapping with aliases and confidence, even and uneven groups, resit replacement, summary rows, FLM plan without items, `unscored` and `none` results, rubric lookup through `dataClient` with the trailing lowercase fallback, flags.
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 4.10, 12.2_
 - [ ] 2.3 [GRD-2.3] Implement `Predictor`
