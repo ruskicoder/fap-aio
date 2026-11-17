@@ -112,7 +112,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
 - [ ] 10. [PLT-10] Privacy, diagnostics and release
-- [ ] 10.1 [PLT-10.1] Build "Copy diagnostics" and the network destination check
+- [x] 10.1 [PLT-10.1] Build "Copy diagnostics" and the network destination check
   - The allow-list report from the design (`diagnostics` message); a test seeds stores with records and asserts no record value appears in the output.
   - A build test that collects the targets of `fetch`, `XMLHttpRequest` and `chrome.tabs.create`/`windows.create` calls in `src/` and fails on any host outside `fap.fpt.edu.vn`, `flm.fpt.edu.vn` and `raw.githubusercontent.com`; URL strings that are never requested (XML namespaces, library error links, About links) are out of scope.
   - _Requirements: 7.1, 7.2, 7.3_
