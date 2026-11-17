@@ -18,7 +18,7 @@ Compacted on 2026-10-22 from 21 to 12 subtasks with no requirement dropped; the 
   - _Requirements: 7.1, 7.2, 7.6, 4.1; Gate: G-SELECTORS_
 
 - [ ] 2. [INF-2] Analyzers and lecturer directory
-- [ ] 2.1 [INF-2.1] Implement `attendanceRisk` and `courseraDue`
+- [x] 2.1 [INF-2.1] Implement `attendanceRisk` and `courseraDue`
   - `allowed = floor(total × (1 − minPercent/100))` with the FLM attendance requirement (80% default, 100% where stated); levels safe, warning, last chance, failed; figures exposed to the grades predictor.
   - A warning per current Coursera course whose item is unchecked and whose FE is synced, with days left.
   - Pure functions tested on synthetic records.
