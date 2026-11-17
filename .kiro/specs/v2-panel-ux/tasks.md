@@ -34,8 +34,8 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - _Requirements: 10.2, 10.3, 10.8_
 
 - [ ] 4. [PNL-4] Docked mode
-- [ ] 4.1 [PNL-4.1] Implement snap, undock, the dock toggle and the narrow-viewport drawer
-  - Snap preview within 24 px of the right edge during header drag, dock on release; undock after a 48 px drag at the pointer; the header toggle; 6 px width grip with docked limits 320 to 640 px.
+- [x] 4.1 [PNL-4.1] Implement snap, undock, the dock toggle and the narrow-viewport drawer
+  - Edge snapping within 10 px during header drag (the 24 px dock preview was dropped by G-UI-SHELL on 2026-10-26, R1.2; built with fixes F-1 and F-2); undock after a 48 px drag at the pointer; the header toggle; 6 px width grip with docked limits 320 to 640 px.
   - Below 900 px: overlay drawer, 40% scrim, closes on Escape or a click outside, no width reserved.
   - _Requirements: 1.2, 1.3, 1.4, 1.7, 1.9_
 - [ ] 4.2 [PNL-4.2] Reserve the width through the appearance pipeline

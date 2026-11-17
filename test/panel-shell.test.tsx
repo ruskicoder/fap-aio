@@ -132,6 +132,28 @@ describe('panel shell', () => {
     act(() => root.unmount())
   })
 
+  it('keeps the docked width between 320 and 640 px and docks back from the header toggle (PNL-4.1)', async () => {
+    const { q, px, drag, root } = render({ ...defaultPanelState({ width: VW, height: VH }), mode: 'docked' })
+    await tick()
+    drag(q('[data-dir="w"]')!, [VW - 400, 300], [VW - 100, 300])
+    expect(px('width')).toBe(320)
+    act(() => q('[aria-label="Undock panel"]')!.click())
+    act(() => q('[aria-label="Dock panel"]')!.click())
+    expect(px('width')).toBe(320)
+    act(() => root.unmount())
+  })
+
+  it('closes the narrow-viewport drawer on a click outside it (R1.9)', async () => {
+    Object.defineProperty(window, 'innerWidth', { value: 800, configurable: true })
+    const { host, root } = render({ ...defaultPanelState({ width: 800, height: VH }), mode: 'docked' })
+    await tick()
+    const scrim = host.querySelector<HTMLElement>('.bg-black\\/40')!
+    expect(scrim).toBeTruthy()
+    act(() => scrim.click())
+    expect(host.querySelector('[aria-label="Open FAP-AIO panel"]')).toBeTruthy()
+    act(() => root.unmount())
+  })
+
   it('covers the page instead when the user chose cover', async () => {
     await c.storage.local.set({ 'panel.prefs': { schemaVersion: 1, updatedAt: 0, data: { ...defaultPrefs(), docked: 'cover' } } })
     const { q, root } = render({ ...defaultPanelState({ width: VW, height: VH }), mode: 'docked' })
