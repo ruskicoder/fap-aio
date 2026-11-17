@@ -130,7 +130,8 @@ export function ThemeView() {
   }
 
   return (
-    <div ref={rootRef} className="pb-4">
+    // Controls scrolled into view (focus, find) stop below the sticky preview bar (WCAG 2.4.11).
+    <div ref={rootRef} className="pb-4 [&_button]:scroll-mt-28 [&_input]:scroll-mt-28 [&_select]:scroll-mt-28">
       {previewing && (
         <div role="status" className="sticky top-0 z-10 mx-3 mt-2 flex flex-wrap items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm text-gray-900 shadow-sm">
           <span className="flex-1">Previewing {previewing === 'fap-default' ? 'FAP default' : nameOf(previewing)} on this page. Nothing changes until you apply.</span>

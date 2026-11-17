@@ -80,7 +80,8 @@ export function ThemeEditor({ theme, onDone }: { theme: Theme; onDone: (message:
   }
 
   return (
-    <div className="pb-2">
+    // Controls scrolled into view stop above the sticky Save bar (WCAG 2.4.11).
+    <div className="pb-2 [&_button]:scroll-mb-20 [&_input]:scroll-mb-20 [&_select]:scroll-mb-20 [&_.cm-content]:scroll-mb-20">
       <div className="px-3 pt-2.5">
         <p className="text-xs text-gray-600">Changes show on this page as you make them. Nothing is kept until you save.</p>
         <label className="mt-2 flex items-center gap-2 text-sm text-gray-700">Name
