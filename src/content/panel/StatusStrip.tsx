@@ -86,6 +86,17 @@ export function StatusStrip({ lastSync, stamps, q = defaultQueue, reload = () =>
 }
 
 /** The strip for the open view: reads `lastSync` of the stores its view declares (R2.6). */
+/** A store's `lastSync`, or for a registry cache (`cache:<source>`) its latest read (fix F-13). */
+export async function syncedAt(key: StoreKey): Promise<number | null> {
+  const d = (await read(key)) as { lastSync?: number | null; entries?: Record<string, { fetchedAt: number }> } | null
+  if (!d) return null
+  if (key.startsWith('cache:')) {
+    const at = Object.values(d.entries ?? {}).map((e) => e.fetchedAt)
+    return at.length ? Math.max(...at) : null
+  }
+  return d.lastSync ?? null
+}
+
 export function ViewStatusStrip({ router, q, reload }: { router: PanelRouter; q?: FapQueue; reload?: () => void }) {
   const route = useRoute(router)
   useCounts()
@@ -95,10 +106,8 @@ export function ViewStatusStrip({ router, q, reload }: { router: PanelRouter; q?
   const [stamps, setStamps] = useState<SyncStamp[]>([])
   useEffect(() => {
     let live = true
-    const load = () => Promise.all(keys.map(async (k) => {
-      const d = (await read(k.key as StoreKey)) as { lastSync?: number | null } | null
-      return { label: k.label, at: d?.lastSync ?? null }
-    })).then((s) => { if (live) setStamps(s) })
+    const load = () => Promise.all(keys.map(async (k) => ({ label: k.label, at: await syncedAt(k.key) })))
+      .then((s) => { if (live) setStamps(s) })
     void load()
     const offs = keys.map((k) => subscribe(k.key as StoreKey, () => void load()))
     return () => { live = false; offs.forEach((o) => o()) }

@@ -69,7 +69,7 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   registerGeneralSettings()
   // Today: composed from the modules' providers (panel-ux R3).
   const Today = () => createElement(TodayView, { router })
-  registerView({ tab: 'today', label: 'Today', icon: 'home', component: async () => Today })
+  registerView({ tab: 'today', label: 'Today', icon: 'home', component: async () => Today, lastSync: [{ label: 'Classes', key: 'timetable' }, { label: 'Exams', key: 'exams' }] })
   // The route's section (deep links such as the non-GPA setting) scrolls Settings to it.
   const SettingsOverlay = () => {
     const r = useRoute(router)

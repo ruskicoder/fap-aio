@@ -16,8 +16,8 @@ export const GRADE_PATH = /^\/Report\/Grade(\/|$)/i
 export function registerGradeViews(): void {
   registerGradeSettings()
   // Static loaders: the content script is one IIFE bundle without code splitting.
-  registerView({ tab: 'grades', sub: 'courses', label: 'Courses', icon: 'chart', component: async () => CoursesView })
-  registerView({ tab: 'grades', sub: 'gpa', label: 'GPA', icon: 'chart', component: async () => GpaView })
+  registerView({ tab: 'grades', sub: 'courses', label: 'Courses', icon: 'chart', component: async () => CoursesView, lastSync: [{ label: 'Courses', key: 'cache:grades.markSheet' }] })
+  registerView({ tab: 'grades', sub: 'gpa', label: 'GPA', icon: 'chart', component: async () => GpaView, lastSync: [{ label: 'Transcript', key: 'cache:grades.transcript' }] })
   registerGradeToday()
 }
 
