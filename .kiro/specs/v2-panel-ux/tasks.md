@@ -61,7 +61,7 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - `SettingDef` with sections, types, defaults, validation and custom rows; values stored in `settings`; the General section's own settings (page-aware tab, density, layout defaults).
   - Sections in the R8.1 order, sticky index when docked and a select when floating, search over label, description and key, default and "modified" marker per row.
   - _Requirements: 8.1, 8.2, 8.3, 4.3_
-- [ ] 8.2 [PNL-8.2] Add export, import and reset
+- [x] 8.2 [PNL-8.2] Add export, import and reset
   - JSON `{ formatVersion: 1, settings }`; import validates each key and shows a diff before applying; reset section and reset all with confirmation.
   - _Requirements: 8.4, 8.5_
 - [ ] 8.3 [PNL-8.3] Build the Data and privacy and About sections

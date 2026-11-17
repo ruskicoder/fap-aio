@@ -31,3 +31,7 @@ Choices made without an audit (owner instruction D-9, 2026-11-17). One line each
 - PNL-9.1 items: cards with a coloured left edge by tone (grey, amber, red, green), the time text ("in 25 min") in coral on the right, the detail line below; the whole card is the deep link | alternative: tone as a tag chip like the schedule cards.
 - PNL-9.1 sync line: "Synced 2 min ago" from the most recent provider sync, left of a grey outline "Refresh" button; the button is hidden while no provider can refresh, and Refresh stops at the first failure and shows its text | alternative: the oldest sync time, and refresh all sources even after a failure.
 - PNL-9.1 section headings: small grey upper-case labels, as in Settings | alternative: sentence-case headings.
+- PNL-8.2 actions: "Export settings", "Import settings" and "Reset all" as grey outline buttons at the foot of Settings; "Reset section" as a small text button beside each section heading (hidden while searching) | alternative: an actions menu in the Settings header.
+- PNL-8.2 confirmations: an inline box in the view (coral border, "Reset" or "Apply" coral, "Cancel" grey) instead of a modal dialog | alternative: a modal over the panel.
+- PNL-8.2 import preview: "Import changes N settings:" then "Label: old to new" per row; refused values and unknown keys listed in one line each; nothing applies until "Apply" | alternative: a table with old and new columns.
+- PNL-8.2 export file name: `fap-aio-settings-<yyyy-mm-dd>.json` | alternative: `fap-aio-settings.json`.
