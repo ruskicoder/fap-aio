@@ -15,7 +15,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - Tests on the regular, resit and summary-only mark sheet fixtures.
   - _Requirements: 4.1, 4.5_
 
-- [ ] 2. [GRD-2] Calculation engines
+- [x] 2. [GRD-2] Calculation engines
 - [x] 2.1 [GRD-2.1] Implement `GpaEngine`
   - `src/features/grades/engine/gpa.ts`: counted rows (passed, numeric grade, credits above 0, not excluded), case-insensitive prefix exclusion, per-semester order `year * 10 + term`, cumulative GPA, two decimals with credits.
   - Tests: prefix exclusion, Exempt and In progress not counted, the replaced table ignored.
@@ -27,7 +27,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - Port of `predict` with `displayed = round1(min(10, Σ w·score + bonus))`, component criteria (FE never below 4, progress above 0, group criterion on the weighted average), pass mark from FLM or 5, tier bisection with the 0.05 allowance in 0.1 steps, attendance allowance, Coursera warning, assumed MOOC bonus.
   - Golden tests: every case in `test/fixtures/grades/golden.json` matches; 4.95 passes and 4.94 fails.
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8_
-- [ ] 2.4 [GRD-2.4] Implement `GoalEngine`
+- [x] 2.4 [GRD-2.4] Implement `GoalEngine`
   - Effective course goal (override or default tier); needed average for a GPA goal; water-filling distribution by bisection with caps; unreachable result with the highest reachable GPA; effective target as the higher of tier and derived target.
   - Tests: reachable, capped and unreachable cases; derived targets reproduce the goal.
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
