@@ -5,7 +5,7 @@ Spec prefix `GRD`. Phases are numbered `N.`, subtasks `N.M`; the global id is `G
 Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the four calculation engines stay separate. The previous list is in [`.deprecated/tasks.md`](.deprecated/tasks.md).
 
 - [ ] 1. [GRD-1] Grade sources and parsers
-- [ ] 1.1 [GRD-1.1] Write the transcript and term list parsers and sources
+- [x] 1.1 [GRD-1.1] Write the transcript and term list parsers and sources
   - `src/features/grades/parse/transcript.ts`: the 10-column main table and the 7-column replaced table by position; status from badge class plus constants (`bg-danger` marked unverified); `-` grade as `null`; unknown status kept raw. Register `grades.transcript` (6 h).
   - `grades.termCourses` from `#grade-report-term` and `#grade-report-course` options (6 h).
   - Tests on the vi and en transcript fixtures and the grade page fixture.

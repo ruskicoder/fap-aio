@@ -33,3 +33,27 @@ export function lookup<V>(table: string, entries: ConstEntry<V>[], text: string)
 }
 
 export const attendanceOf = (text: string): Attendance => lookup('attendance', ATTENDANCE, text)
+
+export type TranscriptStatus = 'passed' | 'exempt' | 'in-progress' | 'not-passed' | Unknown
+
+/** Transcript status badges (grades R1.3). `bg-danger` with Not passed has not been seen on FAP yet. */
+export const TRANSCRIPT_STATUS: (ConstEntry<Exclude<TranscriptStatus, Unknown>> & { badge: string })[] = [
+  { value: 'passed', en: ['Passed'], vi: ['Đạt'], badge: 'bg-success', verified: true },
+  { value: 'exempt', en: ['Exempt'], vi: ['Exempt', 'Miễn'], badge: 'bg-success', verified: true },
+  { value: 'in-progress', en: ['In progress'], vi: ['Đang học'], badge: 'bg-info', verified: true },
+  { value: 'not-passed', en: ['Not passed'], vi: ['Không đạt', 'Chưa đạt'], badge: 'bg-danger', verified: false },
+]
+
+/**
+ * Status from the badge text through the table; an unlisted text on a `bg-info` or `bg-danger` badge
+ * takes that badge's meaning, any other unlisted text is kept raw (grades R1.3, R1.4).
+ */
+export function transcriptStatusOf(text: string, badgeClass: string): TranscriptStatus {
+  const n = normText(text)
+  for (const e of TRANSCRIPT_STATUS) if ([...e.en, ...e.vi].some((t) => normText(t) === n)) return e.value
+  const classes = badgeClass.split(/\s+/)
+  const byBadge = TRANSCRIPT_STATUS.find((e) => e.badge !== 'bg-success' && classes.includes(e.badge))
+  if (byBadge) return byBadge.value
+  logUnknownOnce('transcript status', text.trim())
+  return { kind: 'unknown', raw: text.trim() }
+}
