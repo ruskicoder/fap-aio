@@ -82,7 +82,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - _Requirements: 2.4, 6.5, 6.6; grades R12.2; info R2.1_
 
 - [ ] 7. [PLT-7] Signed data channel
-- [ ] 7.1 [PLT-7.1] Write the offline signing tool `tools/data-sign/`
+- [x] 7.1 [PLT-7.1] Write the offline signing tool `tools/data-sign/`
   - `keygen` (32 random bytes as a Crockford base32 phrase), deterministic HKDF-SHA256 derivation to a P-256 key, `keyId`, `publish <dir>` (hash, next `dataVersion`, sign, verify against `src/shared/keyring.ts`, print the git commands for `data/live` and `data/<date>`), `verify`.
   - Tests: the same phrase gives the same `keyId` twice; a signature verifies with WebCrypto in Node.
   - _Requirements: 5.8, 5.9, 9.4_
