@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "dataVersion": 1,
+  "files": [
+    {
+      "name": "subject-rules.json",
+      "path": "flm/subject-rules.json",
+      "schema": "subject-rules@1",
+      "sha256": "0c764fd44540e53dc239fa9a21b6bab0455105db7454d184b2da7fe8e207db14",
+      "bytes": 1198605
+    },
+    {
+      "name": "subject-list.json",
+      "path": "flm/subject-list.json",
+      "schema": "subject-list@1",
+      "sha256": "d6326eaae28899681184bf15dfc9e217071a79f96d139300750a4005d444c47f",
+      "bytes": 10301073
+    },
+    {
+      "name": "news-rules.json",
+      "path": "news/news-rules.json",
+      "schema": "news-rules@1",
+      "sha256": "47f3fc4f0ba78e3c234da1f2daadae1fca1bebc8c7238669f3ff5b0241c75e2e",
+      "bytes": 7459
+    }
+  ]
+}

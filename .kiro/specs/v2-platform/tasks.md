@@ -71,7 +71,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - _Requirements: 8.4; grades R4, R5_
 
 - [ ] 6. [PLT-6] Packaged data and IndexedDB data service
-- [ ] 6.1 [PLT-6.1] Package the data files and build the IndexedDB store
+- [x] 6.1 [PLT-6.1] Package the data files and build the IndexedDB store
   - Copy `data/flm/subject-rules.json`, `data/flm/subject-list.json` and `data/news/news-rules.json` into the build; generate an unsigned `data/manifest.json` with `dataVersion` and SHA-256 values; zod schemas `subject-rules@1`, `subject-list@1`, `news-rules@1` validated against the committed files in a test.
   - `src/background/data/db.ts` with stores `files`, `subjects`, `overrides`, `search`; on install, read the packaged files with `fetch(chrome.runtime.getURL(...))` and index them in one transaction; re-index from packaged files when the database is missing.
   - Tests with `fake-indexeddb`.

@@ -98,7 +98,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | PLT-4 | Shared request budget | v2-platform | M1 | PLT-2, PLT-3 | - | done |
 | PLT-5 | Test fixture pipeline | v2-platform | M1 | PLT-1 | - | done |
 | PLT-5.1 | Anonymizer, deny-list check and committed fixtures | v2-platform | M1 | - | G-CAPTURE | todo |
-| PLT-6 | Packaged data and IndexedDB data service | v2-platform | M2 | PLT-2, PLT-3 | G-UAT-M1 | todo |
+| PLT-6 | Packaged data and IndexedDB data service | v2-platform | M2 | PLT-2, PLT-3 | G-UAT-M1 | doing |
 | PLT-7 | Signed data channel | v2-platform | M5 | PLT-6 | G-UAT-M4 | todo |
 | PLT-8 | Optional permissions | v2-platform | M2 | PLT-2 | G-UAT-M1 | todo |
 | PLT-9 | Live FLM read | v2-platform | M5 | PLT-6, PLT-8 | G-UAT-M4 | todo |
@@ -251,3 +251,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-10-31 | F-9 | separator `-` without spaces added and made the default of every preset joined by a dash (`P.011-PRF192`, `P.011-FE-HCM202`); the spaced ` - ` stays as a choice labelled spaced; stored v2 options keep their own separator | 181 tests, lint, typecheck, build; m1-check titles `V.704-MRS083` | committed
 - 2026-10-31 | F-10 | shell geometry measures the visible page area without scrollbars (geometry.ts viewportSize, used by PanelApp and the host) and re-measures on a ResizeObserver of the page root; on the fixture page the window is 1440 and the visible width 1425: the tab, the docked pane and the drawer now end at 1425 (they ended at 1440 before, under the 15 px scrollbar) | 182 tests incl. a 15 px scrollbar case; lint, typecheck, build; m1-check 21 of 21 with visible-width assertions | committed
 - 2026-10-31 | G-UAT-M1 | owner passed G-UAT-M1 after F-9 and F-10: the M1 build (shell, Classes, Exams, Export with room-first titles, tiers, categories, separate files, P.xxx and NVH.xxx rooms) is accepted; M2 may start | none | committed
+- 2026-11-17 | PLT-6.1 | tools/data/packaged-manifest.mjs writes the unsigned data/manifest.json (format 1, dataVersion 1, SHA-256 and bytes per file, --check); Vite plugin copies the three files and the manifest into dist/data/ and fails on a stale manifest; src/shared/data/schemas.ts (subject-rules@1, subject-list@1, news-rules@1 with compiling patterns, data manifest), tokens.ts (NFD, no marks, đ to d, lowercase); src/background/data/db.ts (fap-aio-data with files, subjects, overrides, search; packaged files fetched, hash and schema checked, indexed in one transaction; index on a missing or incomplete database, re-index on update unless a channel copy is as new); fake-indexeddb 6.2.8 | tsc, eslint src, 191 passed and 1 skipped of 192 tests, build | committed (cloud/m2-ready)
