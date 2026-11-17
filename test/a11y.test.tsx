@@ -9,13 +9,13 @@ import { act } from 'react'
 import { installFakeChrome } from './helpers/fake-chrome'
 import { setSettings } from '../src/shared/settings'
 
-vi.mock('../src/content/fap/queue', () => ({ queuedGet: vi.fn(), queue: { current: { pending: 0, waiting: null, stopped: false }, subscribe: () => () => {} } }))
+vi.mock('../src/content/fap/queue', () => ({ queuedGet: vi.fn(async () => ({ ok: false, error: { kind: 'network' } })), queue: { current: { pending: 0, waiting: null, stopped: false }, subscribe: () => () => {} } }))
 
 const { mountPanel } = await import('../src/content/panel/host')
 const { registerSchedulerViews } = await import('../src/features/scheduler/index')
 const { clearViews, tabViews, routeOfView } = await import('../src/content/panel/views')
 const { setInboxOpen } = await import('../src/content/panel/inbox/store')
-const { registerGradeSettings } = await import('../src/features/grades/settings')
+const { registerGradeViews } = await import('../src/features/grades/index')
 const { write } = await import('../src/shared/storage/catalog')
 
 ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
@@ -109,7 +109,7 @@ describe('accessibility audit', () => {
         ] })
       })
       registerSchedulerViews()
-      registerGradeSettings()
+      registerGradeViews()
       let m!: Awaited<ReturnType<typeof mountPanel>>
       await act(async () => { m = await mountPanel(document, '') })
       await tick()

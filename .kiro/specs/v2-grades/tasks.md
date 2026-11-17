@@ -47,7 +47,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 4.9, 4.10_
 
 - [ ] 5. [GRD-5] Panel views
-- [ ] 5.1 [GRD-5.1] Build the Courses and GPA views
+- [x] 5.1 [GRD-5.1] Build the Courses and GPA views
   - Grades, Courses: current-term courses with code, name, average, status, effective goal and required scores; failed first; refresh one course at a time when the cache is stale; course detail with components, marks, criteria, warnings and the FLM link; rubric date.
   - Grades, GPA: cumulative and per-semester GPA, GPA goal and reachability, the replaced-subjects table as information only.
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 12.1, 2.4, 1.2_
