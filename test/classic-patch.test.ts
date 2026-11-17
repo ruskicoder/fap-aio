@@ -9,7 +9,8 @@ import { StylePipeline } from '../src/features/appearance/pipeline'
 import { write } from '../src/shared/storage/catalog'
 
 const tick = (ms = 0) => new Promise((r) => setTimeout(r, ms))
-const fixture = (n: string) => new DOMParser().parseFromString(readFileSync(`test/fixtures/en/${n}`, 'utf8'), 'text/html')
+// Scripts and stylesheets are stripped so happy-dom does not try to load them.
+const fixture = (n: string) => new DOMParser().parseFromString(readFileSync(`test/fixtures/en/${n}`, 'utf8').replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<link\b[^>]*>/gi, ''), 'text/html')
 const q = (d: Document, s: string) => () => d.querySelector(s)
 const host = (d: Document) => { const h = d.createElement('div'); h.textContent = 'classic'; return h }
 

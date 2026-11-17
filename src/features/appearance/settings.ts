@@ -7,6 +7,7 @@ import { panelRouter } from '../../content/panel/host'
 import { useStore } from '../../content/panel/use-store'
 import { button } from '../scheduler/views/common'
 import { TWEAK_KEY } from './layout/tweaks'
+import { CLASSIC_KEY } from './layout/classic/controller'
 import { parseActive } from './state'
 import { choiceOf } from './themes/store'
 import { PRESETS } from './themes/presets'
@@ -28,6 +29,11 @@ export function registerAppearanceSettings(): void {
     component: () => createElement(ThemeRow),
   })
   registerLayoutSettings()
+  // Shown once a Classic part ships (rule 10); it says only what is there today.
+  registerSetting<boolean>({
+    key: CLASSIC_KEY, section: 'appearance', type: 'toggle', default: false,
+    label: 'Classic FAP layout', description: 'On the FAP home page, the links grouped as the old FAP grouped them, with application deadlines on request.',
+  })
 }
 
 export function registerLayoutSettings(): void {

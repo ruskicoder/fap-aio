@@ -57,7 +57,7 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - The Classic setting turns on or off without reload, independent of the theme.
   - Tests: apply then revert restores the DOM byte-identically on the layout, home, grade and timetable fixtures.
   - _Requirements: 6.1, 6.8_
-- [ ] 7.2 [APP-7.2] Build the home link directory
+- [x] 7.2 [APP-7.2] Build the home link directory
   - Orange section headings with v2 links; FAP home content kept below.
   - The application deadline table from `/Application/GetFormSchema` (GET, one call per application type, 46 types) is filled only when the user presses "Load deadlines": one type per request at user priority under the shared budget, results cached for 24 hours, no background reads; hidden when the type list cannot be read.
   - _Requirements: 6.5; platform R3.1, R3.2_
