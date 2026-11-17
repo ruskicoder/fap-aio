@@ -173,7 +173,7 @@ interface AppearanceState {
 }
 ```
 
-Background images live inside their theme. Storage use is bounded by the 1.5 MB image cap; `unlimitedStorage` is requested only if a user exceeds the 10 MB `chrome.storage.local` quota.
+Background images live inside their theme. Storage use is bounded by the 300 KB image cap (D-6, 2026-11-17; was 1.5 MB); `unlimitedStorage` is requested only if a user exceeds the 10 MB `chrome.storage.local` quota.
 
 ## Error Handling
 

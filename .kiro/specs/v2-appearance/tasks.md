@@ -31,9 +31,9 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
 - [x] 4.1 [APP-4.1] Build the Theme view
   - Gear, Theme overlay: preset gallery with live preview before apply, "FAP default", duplicate a preset into a custom theme, auto mode with a light and a dark choice following `prefers-color-scheme`.
   - _Requirements: 2.5, 2.6, 1.4, 5.5_
-- [ ] 4.2 [APP-4.2] Build the colour editor and background images
+- [x] 4.2 [APP-4.2] Build the colour editor and background images
   - Swatches, free picker (hex, RGB, HSL, OKLCH), harmony helper, role assignment, measured ratios with a one-click fix, editing of any single `--ct-*` variable.
-  - Local file input, downscale to at most 2560 px, WebP or JPEG under 1.5 MB, stored as a `data:` URL in the theme; remote URLs rejected with an explanation.
+  - Local file input, downscale to at most 2560 px, WebP or JPEG under 300 KB (D-6, 2026-11-17; was 1.5 MB), stored as a `data:` URL in the theme; remote URLs rejected with an explanation.
   - _Requirements: 3.1, 3.2, 3.4, 3.5, 3.6, 4.4_
 - [ ] 4.3 [APP-4.3] Build the CSS editor
   - CodeMirror 6 in the shadow root; 300 ms debounced preview through a scratch sheet; `csstree` validation in a worker for error positions while the last valid CSS stays applied; snippets for variables and main FAP selectors; safe mode toggle.

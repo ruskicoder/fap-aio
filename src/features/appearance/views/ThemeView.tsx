@@ -11,6 +11,7 @@ import { sendPreview } from '../preview'
 import { parseTheme, toActiveStyle, type Theme } from '../themes/model'
 import { PRESETS, presetById } from '../themes/presets'
 import { applyAuto, applyFapDefault, applyTheme, choiceOf, deleteCustom, duplicateTheme, MAX_CUSTOM } from '../themes/store'
+import { ThemeEditor } from '../editor/ThemeEditor'
 
 type Mode = 'single' | 'auto'
 
@@ -35,6 +36,7 @@ export function ThemeView() {
   const [pair, setPair] = useState<{ light: string | null; dark: string | null }>(choice.mode === 'auto' ? { light: choice.light, dark: choice.dark } : { light: null, dark: null })
   const [previewing, setPreviewing] = useState<string | null>(null)
   const [note, setNote] = useState<{ tone: 'info' | 'error'; text: string } | null>(null)
+  const [editing, setEditing] = useState<Theme | null>(null)
   const all = [...PRESETS.map((p) => p.theme), ...custom]
   const byId = (id: string | null) => all.find((t) => t.id === id) ?? null
   const nameOf = (id: string) => byId(id)?.name ?? 'a theme that no longer exists'
@@ -59,7 +61,7 @@ export function ThemeView() {
   }
   const duplicate = async (t: Theme) => {
     const r = await duplicateTheme(t)
-    setNote(typeof r === 'string' ? { tone: 'error', text: r } : { tone: 'info', text: `${r.name} is in Your themes.` })
+    setNote(typeof r === 'string' ? { tone: 'error', text: r } : { tone: 'info', text: `${r.name} is in Your themes; choose Edit to change it.` })
   }
 
   const current = choice.mode === 'fap-default' ? 'FAP default' : choice.mode === 'single' ? nameOf(choice.id) : `${nameOf(choice.light)} (light) and ${nameOf(choice.dark)} (dark)`
@@ -77,6 +79,7 @@ export function ThemeView() {
               ? <button type="button" className={small} aria-label={`Apply ${t.name}`} onClick={() => void apply(t)}>Apply</button>
               : <button type="button" className={small} aria-pressed={pair[t.mode] === t.id} aria-label={`Use ${t.name} for ${t.mode}`} onClick={() => setPair((p) => ({ ...p, [t.mode]: t.id }))}>Use for {t.mode}</button>}
             <button type="button" className={small} aria-label={`Duplicate ${t.name}`} onClick={() => void duplicate(t)}>Duplicate</button>
+            {isCustom && <button type="button" className={small} aria-label={`Edit ${t.name}`} onClick={() => { preview(null); setNote(null); setEditing(t) }}>Edit</button>}
             {isCustom && <button type="button" className={small} aria-label={`Delete ${t.name}`} onClick={() => void deleteCustom(t.id)}>Delete</button>}
           </div>
         </div>
@@ -89,6 +92,10 @@ export function ThemeView() {
       <ul className="flex flex-col gap-2">{list.map((t) => card(t, isCustom))}</ul>
     </section>
   )
+
+  if (editing) {
+    return <ThemeEditor key={editing.id} theme={editing} onDone={(msg) => { setEditing(null); if (msg) setNote({ tone: 'info', text: msg }) }} />
+  }
 
   return (
     <div className="pb-4">

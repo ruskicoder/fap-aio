@@ -68,3 +68,24 @@ export function choiceOf(a: AppearanceActive): Choice {
   if (x.mode === 'auto') return { mode: 'auto', light: x.light.id, dark: x.dark.id }
   return { mode: 'fap-default' }
 }
+
+/**
+ * Saves an edited custom theme in place; when it is in use, the active style is refreshed so every FAP
+ * page shows the change. An error text when the theme does not validate or is not a custom theme.
+ */
+export async function saveCustom(t: Theme): Promise<string | null> {
+  const r = parseTheme(t)
+  if (!r.ok) return r.error
+  if (presetById(t.id)) return 'Presets cannot be changed; duplicate one first.'
+  let found = false
+  await update('appearance.themes', (old) => ({ themes: (old?.themes ?? []).map((x) => (x.id === t.id ? ((found = true), r.theme) : x)) }))
+  if (!found) return 'This theme is no longer in Your themes.'
+  const a = parseActive(await read('appearance.active'))
+  const x = a.active
+  if (x.mode === 'single' && x.style.id === t.id) await applyTheme(r.theme)
+  if (x.mode === 'auto' && (x.light.id === t.id || x.dark.id === t.id)) {
+    const style = toActiveStyle(r.theme)
+    await write('appearance.active', { ...a, active: { mode: 'auto', light: x.light.id === t.id ? style : x.light, dark: x.dark.id === t.id ? style : x.dark } })
+  }
+  return null
+}

@@ -54,7 +54,8 @@ export function userCss(style: ActiveStyle, safe: boolean): string {
     const dim = `linear-gradient(rgba(0,0,0,${bg.dim}),rgba(0,0,0,${bg.dim}))`
     const size = bg.fit === 'tile' ? 'auto' : bg.fit
     const repeat = bg.fit === 'tile' ? 'repeat' : 'no-repeat'
-    parts.push(`body{background-image:${dim},url("${bg.dataUrl}");background-size:${size};background-repeat:${repeat};background-position:center;background-attachment:fixed}`)
+    // Same specificity as the preset effects' body rule, so the later user layer wins (R4.5).
+    parts.push(`html[data-bs-theme] body{background-image:${dim},url("${bg.dataUrl}");background-size:${size};background-repeat:${repeat};background-position:center;background-attachment:fixed}`)
   }
   if (!safe && style.css) parts.push(style.css)
   return parts.join('\n')
