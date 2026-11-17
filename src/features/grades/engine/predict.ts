@@ -5,7 +5,8 @@
 // - Criteria: the FLM value, an FE never below 4, progress rows above 0, a group criterion on the weighted
 //   average of its children (R5.2, R4.3). Pass mark: minAvgMarkToPass or 5 (R5.3).
 // - Remaining components: the smallest uniform score x on a 0.1 grid, each at least its own floor, with
-//   known + bonus + Σ w·max(x, floor) at least the tier, as the reference computes it (R5.4).
+//   round1(known + bonus + Σ w·max(x, floor)) at least the tier, so the total may be 0.05 under it
+//   (design rule, D-8 and F-12; MAE101 in progress needs 4.1) (R5.4).
 import type { Criterion, ModelSubject, Scores } from './course-model'
 
 export type TierId = 'pass' | 'fair' | 'good' | 'excellent'
@@ -140,13 +141,15 @@ export function predict(subject: ModelSubject | null, scores: Scores = {}, opts:
       return { tier: t.id, target, reachable: issues.length === 0 && displayed >= target - EPS, final: +final.toFixed(2), displayed }
     }
     // Water-filling: smallest uniform score x so that Σ w·max(x, floor) reaches the target.
-    const total = (x: number) => known + bonus + remaining.reduce((s, p) => s + p.weight * Math.max(x, floorOf(p.criterion)), 0)
+    const total = (x: number) => Math.min(scale, known + bonus + remaining.reduce((s, p) => s + p.weight * Math.max(x, floorOf(p.criterion)), 0))
+    // The tier is checked on the displayed total: 0.05 under the target still shows the target.
+    const reaches = (x: number) => round1(total(x)) >= target - EPS
     let lo = 0
     let hi = scale
-    if (total(hi) < target - EPS) return { tier: t.id, target, reachable: false, reason: `needs more than ${scale} on every remaining component` }
+    if (!reaches(hi)) return { tier: t.id, target, reachable: false, reason: `needs more than ${scale} on every remaining component` }
     for (let i = 0; i < 40; i++) {
       const mid = (lo + hi) / 2
-      if (total(mid) >= target - EPS) hi = mid
+      if (reaches(mid)) hi = mid
       else lo = mid
     }
     // Grades are given to 0.1; `|| 0` turns a -0 from ceil into 0.

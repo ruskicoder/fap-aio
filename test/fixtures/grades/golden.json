@@ -1528,7 +1528,7 @@
       "tier": "pass",
       "target": 5,
       "reachable": true,
-      "uniformScore": 4.2,
+      "uniformScore": 4.1,
       "required": [
        {
         "index": 0,
@@ -1536,7 +1536,7 @@
         "label": "Assignments/Exercises #3",
         "kind": "ongoing",
         "weight": 0.1,
-        "min": 4.2
+        "min": 4.1
        },
        {
         "index": 1,
@@ -1544,7 +1544,7 @@
         "label": "Progress Test #2",
         "kind": "ongoing",
         "weight": 0.1,
-        "min": 4.2
+        "min": 4.1
        },
        {
         "index": 1,
@@ -1552,7 +1552,7 @@
         "label": "Progress Test #3",
         "kind": "ongoing",
         "weight": 0.1,
-        "min": 4.2
+        "min": 4.1
        },
        {
         "index": 2,
@@ -1560,7 +1560,7 @@
         "label": "Final Exam",
         "kind": "FE",
         "weight": 0.4,
-        "min": 4.2
+        "min": 4.1
        }
       ]
      },
@@ -1608,7 +1608,7 @@
       "tier": "good",
       "target": 8,
       "reachable": true,
-      "uniformScore": 8.5,
+      "uniformScore": 8.4,
       "required": [
        {
         "index": 0,
@@ -1616,7 +1616,7 @@
         "label": "Assignments/Exercises #3",
         "kind": "ongoing",
         "weight": 0.1,
-        "min": 8.5
+        "min": 8.4
        },
        {
         "index": 1,
@@ -1624,7 +1624,7 @@
         "label": "Progress Test #2",
         "kind": "ongoing",
         "weight": 0.1,
-        "min": 8.5
+        "min": 8.4
        },
        {
         "index": 1,
@@ -1632,7 +1632,7 @@
         "label": "Progress Test #3",
         "kind": "ongoing",
         "weight": 0.1,
-        "min": 8.5
+        "min": 8.4
        },
        {
         "index": 2,
@@ -1640,7 +1640,7 @@
         "label": "Final Exam",
         "kind": "FE",
         "weight": 0.4,
-        "min": 8.5
+        "min": 8.4
        }
       ]
      },
@@ -1648,7 +1648,7 @@
       "tier": "excellent",
       "target": 9,
       "reachable": true,
-      "uniformScore": 9.9,
+      "uniformScore": 9.8,
       "required": [
        {
         "index": 0,
@@ -1656,7 +1656,7 @@
         "label": "Assignments/Exercises #3",
         "kind": "ongoing",
         "weight": 0.1,
-        "min": 9.9
+        "min": 9.8
        },
        {
         "index": 1,
@@ -1664,7 +1664,7 @@
         "label": "Progress Test #2",
         "kind": "ongoing",
         "weight": 0.1,
-        "min": 9.9
+        "min": 9.8
        },
        {
         "index": 1,
@@ -1672,7 +1672,7 @@
         "label": "Progress Test #3",
         "kind": "ongoing",
         "weight": 0.1,
-        "min": 9.9
+        "min": 9.8
        },
        {
         "index": 2,
@@ -1680,7 +1680,7 @@
         "label": "Final Exam",
         "kind": "FE",
         "weight": 0.4,
-        "min": 9.9
+        "min": 9.8
        }
       ]
      }
@@ -2233,7 +2233,7 @@
       "tier": "fair",
       "target": 7,
       "reachable": true,
-      "uniformScore": 5.9,
+      "uniformScore": 5.7,
       "required": [
        {
         "index": 4,
@@ -2241,7 +2241,7 @@
         "label": "Thi cuối kỳ: Nói",
         "kind": "FE",
         "weight": 0.3,
-        "min": 5.9
+        "min": 5.7
        }
       ]
      },
@@ -2249,7 +2249,7 @@
       "tier": "good",
       "target": 8,
       "reachable": true,
-      "uniformScore": 9.2,
+      "uniformScore": 9,
       "required": [
        {
         "index": 4,
@@ -2257,7 +2257,7 @@
         "label": "Thi cuối kỳ: Nói",
         "kind": "FE",
         "weight": 0.3,
-        "min": 9.2
+        "min": 9
        }
       ]
      },

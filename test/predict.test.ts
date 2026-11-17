@@ -33,6 +33,19 @@ describe('Predictor', () => {
     expect(golden.cases.length).toBe(9)
   })
 
+  it('needs the smallest 0.1 score whose displayed total reaches the tier (F-12)', () => {
+    const c = golden.cases.find((x) => x.id === 'in-progress-mae101')!
+    const p = full(predict(c.model.subject, c.model.scores, c.opts))
+    const pass = p.tiers[0]!
+    expect('uniformScore' in pass && pass.uniformScore).toBe(4.1)
+    for (const t of p.tiers) {
+      if (!('required' in t)) continue
+      const at = (d: number) => round1(p.current.weightedSoFar + p.current.bonus + t.required.reduce((s, r) => s + r.weight * Math.max(r.min - d, 0), 0))
+      expect(at(0), t.tier).toBeGreaterThanOrEqual(t.target)
+      if (t.uniformScore > 0 && t.required.every((r) => r.min === t.uniformScore)) expect(at(0.1), t.tier).toBeLessThan(t.target)
+    }
+  })
+
   it('compares the displayed average: 4.95 passes and 4.94 fails', () => {
     const s = subject([assess({ index: 0, category: 'All', weight: 1 })])
     const pass = full(predict(s, { 0: [4.95] }))

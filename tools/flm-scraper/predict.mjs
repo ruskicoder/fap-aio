@@ -100,13 +100,15 @@ export function predict(subject, scores = {}, opts = {}) {
       return { tier: t.id, target, reachable: issues.length === 0 && final >= target - EPS, final: +final.toFixed(2), displayed: round1(final) };
     }
     // Water-filling: smallest uniform score x so that sum w * max(x, floor) reaches the target.
-    const total = (x) => known + bonus + remaining.reduce((s, p) => s + p.weight * Math.max(x, floorOf(p.criterion)), 0);
+    const total = (x) => Math.min(scale, known + bonus + remaining.reduce((s, p) => s + p.weight * Math.max(x, floorOf(p.criterion)), 0));
+    // Checked on the displayed total (one decimal, half up): 0.05 under the target still shows it.
+    const reaches = (x) => round1(total(x)) >= target - EPS;
     let lo = 0;
     let hi = scale;
-    if (total(hi) < target - EPS) return { tier: t.id, target, reachable: false, reason: `needs more than ${scale} on every remaining component` };
+    if (!reaches(hi)) return { tier: t.id, target, reachable: false, reason: `needs more than ${scale} on every remaining component` };
     for (let i = 0; i < 40; i++) {
       const mid = (lo + hi) / 2;
-      if (total(mid) >= target - EPS) hi = mid; else lo = mid;
+      if (reaches(mid)) hi = mid; else lo = mid;
     }
     const x = Math.ceil(hi * 10 - EPS) / 10; // grades are given to 0.1
     return {
