@@ -1,7 +1,7 @@
 // Theme overlay (appearance R2.5, R2.6, R1.4, R5.5): the preset gallery and custom themes, a live preview on
 // this page before applying, FAP default, duplicating a theme into an editable custom theme, and auto mode
 // with a light and a dark choice that follows the system colour scheme. A preview ends when the view closes.
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Chip, Message, button, primary } from '../../scheduler/views/common'
 
 const small = 'inline-flex h-7 items-center rounded border border-gray-300 px-2 text-xs hover:bg-gray-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 aria-pressed:border-orange-500 aria-pressed:bg-orange-50'
@@ -10,7 +10,8 @@ import { parseActive } from '../state'
 import { sendPreview } from '../preview'
 import { parseTheme, toActiveStyle, type Theme } from '../themes/model'
 import { PRESETS, presetById } from '../themes/presets'
-import { applyAuto, applyFapDefault, applyTheme, choiceOf, deleteCustom, duplicateTheme, MAX_CUSTOM } from '../themes/store'
+import { addCustom, applyAuto, applyFapDefault, applyTheme, choiceOf, deleteCustom, duplicateTheme, MAX_CUSTOM } from '../themes/store'
+import { downloadTheme, importTheme, newTheme, type Imported } from '../themes/io'
 import { ThemeEditor } from '../editor/ThemeEditor'
 
 type Mode = 'single' | 'auto'
@@ -37,9 +38,12 @@ export function ThemeView() {
   const [previewing, setPreviewing] = useState<string | null>(null)
   const [note, setNote] = useState<{ tone: 'info' | 'error'; text: string } | null>(null)
   const [editing, setEditing] = useState<Theme | null>(null)
+  const [incoming, setIncoming] = useState<Imported | null>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
   const all = [...PRESETS.map((p) => p.theme), ...custom]
   const byId = (id: string | null) => all.find((t) => t.id === id) ?? null
-  const nameOf = (id: string) => byId(id)?.name ?? 'a theme that no longer exists'
+  const nameOf = (id: string) => byId(id)?.name ?? (incoming?.theme.id === id ? incoming.theme.name : 'a theme that no longer exists')
 
   // The preview belongs to this view: it ends when the view closes.
   useEffect(() => () => sendPreview(null), [])
@@ -64,6 +68,33 @@ export function ThemeView() {
     setNote(typeof r === 'string' ? { tone: 'error', text: r } : { tone: 'info', text: `${r.name} is in Your themes; choose Edit to change it.` })
   }
 
+  const taken = custom.map((t) => t.id)
+  const create = async () => {
+    const t = newTheme(taken)
+    const err = await addCustom(t)
+    if (err) setNote({ tone: 'error', text: err })
+    else { preview(null); setNote(null); setEditing(t) }
+  }
+  const readFile = async (f: File | undefined) => {
+    if (!f) return
+    setNote(null)
+    const r = await importTheme(await f.text(), taken)
+    if ('error' in r) { setNote({ tone: 'error', text: r.error }); return }
+    setIncoming(r)
+  }
+  const saveIncoming = async () => {
+    if (!incoming) return
+    const err = await addCustom(incoming.theme)
+    if (previewing === incoming.theme.id) preview(null)
+    setIncoming(null)
+    setNote(err ? { tone: 'error', text: err } : { tone: 'info', text: `${incoming.theme.name} is in Your themes.` })
+  }
+  const previewIncoming = () => {
+    if (!incoming) return
+    if (previewing === incoming.theme.id) preview(null)
+    else { setPreviewing(incoming.theme.id); sendPreview({ kind: 'style', style: toActiveStyle(incoming.theme) }) }
+  }
+
   const current = choice.mode === 'fap-default' ? 'FAP default' : choice.mode === 'single' ? nameOf(choice.id) : `${nameOf(choice.light)} (light) and ${nameOf(choice.dark)} (dark)`
 
   const card = (t: Theme, isCustom: boolean) => {
@@ -80,6 +111,7 @@ export function ThemeView() {
               : <button type="button" className={small} aria-pressed={pair[t.mode] === t.id} aria-label={`Use ${t.name} for ${t.mode}`} onClick={() => setPair((p) => ({ ...p, [t.mode]: t.id }))}>Use for {t.mode}</button>}
             <button type="button" className={small} aria-label={`Duplicate ${t.name}`} onClick={() => void duplicate(t)}>Duplicate</button>
             {isCustom && <button type="button" className={small} aria-label={`Edit ${t.name}`} onClick={() => { preview(null); setNote(null); setEditing(t) }}>Edit</button>}
+            {isCustom && <button type="button" className={small} aria-label={`Export ${t.name}`} onClick={() => downloadTheme(rootRef.current ?? document.body, t)}>Export</button>}
             {isCustom && <button type="button" className={small} aria-label={`Delete ${t.name}`} onClick={() => void deleteCustom(t.id)}>Delete</button>}
           </div>
         </div>
@@ -98,7 +130,7 @@ export function ThemeView() {
   }
 
   return (
-    <div className="pb-4">
+    <div ref={rootRef} className="pb-4">
       {previewing && (
         <div role="status" className="sticky top-0 z-10 mx-3 mt-2 flex flex-wrap items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm text-gray-900 shadow-sm">
           <span className="flex-1">Previewing {previewing === 'fap-default' ? 'FAP default' : nameOf(previewing)} on this page. Nothing changes until you apply.</span>
@@ -123,6 +155,28 @@ export function ThemeView() {
           <button type="button" className={button} aria-pressed={previewing === 'fap-default'} onClick={() => preview(previewing === 'fap-default' ? null : 'fap-default')}>{previewing === 'fap-default' ? 'Stop preview' : 'Preview FAP default'}</button>
           <button type="button" className={button} disabled={choice.mode === 'fap-default'} onClick={() => void fapDefault()}>Use FAP default</button>
         </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          <button type="button" className={button} disabled={custom.length >= MAX_CUSTOM} onClick={() => void create()}>New theme</button>
+          <button type="button" className={button} disabled={custom.length >= MAX_CUSTOM} onClick={() => fileRef.current?.click()}>Import a theme</button>
+          <input ref={fileRef} type="file" accept="application/json,.json" className="sr-only" aria-label="Theme file" onChange={(e) => { void readFile(e.target.files?.[0]); e.target.value = '' }} />
+        </div>
+        {incoming && (
+          <div role="region" aria-label="Import a theme" className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+            <p className="font-medium">Import {incoming.theme.name}?</p>
+            <p className="text-xs">This theme comes from outside FAP-AIO. Its CSS can change how every FAP page looks; preview it before you save.</p>
+            {incoming.removed.length > 0 && (
+              <>
+                <p className="mt-1 text-xs font-medium">Removed for safety:</p>
+                <ul className="list-disc pl-5 text-xs">{incoming.removed.map((r, i) => <li key={i} className="break-all">{r}</li>)}</ul>
+              </>
+            )}
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              <button type="button" className={small} aria-pressed={previewing === incoming.theme.id} onClick={previewIncoming}>{previewing === incoming.theme.id ? 'Stop preview' : 'Preview on this page'}</button>
+              <button type="button" className={small} onClick={() => void saveIncoming()}>Save to Your themes</button>
+              <button type="button" className={small} onClick={() => { if (previewing === incoming.theme.id) preview(null); setIncoming(null) }}>Cancel</button>
+            </div>
+          </div>
+        )}
       </div>
       {section('Light themes', PRESETS.filter((p) => p.theme.mode === 'light').map((p) => p.theme))}
       {section('Dark themes', PRESETS.filter((p) => p.theme.mode === 'dark').map((p) => p.theme))}

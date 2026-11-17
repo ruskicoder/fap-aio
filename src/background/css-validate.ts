@@ -1,8 +1,9 @@
 // CSS editor validation (appearance R4.3; design, "CSS editor"): csstree parses the user's CSS in the
 // service worker, so the parser stays out of FAP pages and off their main thread, and reports each syntax
 // error with its line and column. Browsers drop invalid rules silently, which is why this check exists.
-import { parse } from 'css-tree'
+import { parse, walk } from 'css-tree'
 import { ok, register } from './router'
+import { isDataUrl as isData, stillUnsafe } from '../shared/css-safety'
 
 export interface CssProblem { line: number; column: number; offset: number; message: string }
 
@@ -24,4 +25,38 @@ export function validateCss(css: string): CssProblem[] {
 
 export function installCssValidate(): void {
   register('css.validate', async (m) => ok({ problems: validateCss(m.css) }))
+  register('css.sanitize', async (m) => ok(sanitizeCss(m.css)))
+}
+
+// ---- Import sanitizer (appearance R5.3, R5.4; platform R7.4) ----------------------------------------
+// Imported themes are untrusted: `@import` and every web address (`url()` that is not a `data:` URL, a
+// string inside `image-set()`) are cut out on the syntax tree, so CSS escapes and odd spacing do not hide
+// them, and the original text keeps its formatting. A last check on the escape-decoded text refuses
+// anything that still looks like a web address.
+
+export interface Sanitized { css: string; removed: string[] }
+
+export function sanitizeCss(css: string): Sanitized | { error: string } {
+  const cuts: { start: number; end: number; with: string; what: string }[] = []
+  let ast: unknown
+  try { ast = parse(css, { positions: true, parseCustomProperty: true, onParseError: () => {} }) } catch { return { error: 'The CSS could not be read.' } }
+  walk(ast, (node) => {
+    const loc = node.loc
+    if (!loc) return
+    if (node.type === 'Atrule' && node.name?.toLowerCase() === 'import') {
+      cuts.push({ start: loc.start.offset, end: loc.end.offset, with: '', what: '@import rule' })
+    } else if (node.type === 'Url' && !isData(node.value ?? '')) {
+      cuts.push({ start: loc.start.offset, end: loc.end.offset, with: 'none', what: `web address ${String(node.value ?? '').slice(0, 80)}` })
+    } else if (node.type === 'Function' && /^(-webkit-)?image-set$/i.test(node.name ?? '') && /['"]\s*(https?:|\/\/)/i.test(css.slice(loc.start.offset, loc.end.offset))) {
+      cuts.push({ start: loc.start.offset, end: loc.end.offset, with: 'none', what: 'web address in image-set()' })
+    }
+  })
+  // Outer ranges first; a range inside one already cut is dropped.
+  cuts.sort((a, b) => a.start - b.start || b.end - a.end)
+  const kept: typeof cuts = []
+  for (const c of cuts) if (!kept.some((k) => c.start >= k.start && c.end <= k.end)) kept.push(c)
+  let out = css
+  for (const c of [...kept].reverse()) out = out.slice(0, c.start) + c.with + out.slice(c.end)
+  if (stillUnsafe(out)) return { error: 'The CSS holds web addresses that could not be removed safely, so it was not imported.' }
+  return { css: out, removed: kept.map((c) => c.what) }
 }

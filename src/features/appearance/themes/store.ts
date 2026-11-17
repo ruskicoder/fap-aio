@@ -22,6 +22,20 @@ export async function allThemes(): Promise<Theme[]> {
   return [...PRESETS.map((p) => p.theme), ...(await customThemes())]
 }
 
+/** Adds a new or imported custom theme; an error text when 20 exist. */
+export async function addCustom(t: Theme): Promise<string | null> {
+  const r = parseTheme(t)
+  if (!r.ok) return r.error
+  let err: string | null = null
+  await update('appearance.themes', (old) => {
+    const themes = old?.themes ?? []
+    if (themes.length >= MAX_CUSTOM) { err = `You have ${MAX_CUSTOM} custom themes, the most there can be. Delete one first.`; return { themes } }
+    if (themes.some((x) => x.id === r.theme.id) || presetById(r.theme.id)) { err = 'A theme with this id already exists.'; return { themes } }
+    return { themes: [...themes, r.theme] }
+  })
+  return err
+}
+
 /** A copy of a preset or custom theme as a new custom theme (R2.6); an error text when 20 exist. */
 export async function duplicateTheme(source: Theme): Promise<Theme | string> {
   let made: Theme | string = ''

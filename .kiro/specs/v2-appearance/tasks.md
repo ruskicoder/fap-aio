@@ -39,8 +39,8 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - CodeMirror 6 in the shadow root; 300 ms debounced preview through a scratch sheet; `csstree` validation in a worker for error positions while the last valid CSS stays applied; snippets for variables and main FAP selectors; safe mode toggle.
   - _Requirements: 4.1, 4.2, 4.3, 4.5, 4.6_
 
-- [ ] 5. [APP-5] Theme management and import or export
-- [ ] 5.1 [APP-5.1] Implement custom theme management, import and export
+- [x] 5. [APP-5] Theme management and import or export
+- [x] 5.1 [APP-5.1] Implement custom theme management, import and export
   - Create, rename, duplicate, delete (up to 20 custom themes), pick active.
   - Export JSON through a blob link; import with zod validation, CSS sanitizing (drop `@import` and non-`data:` `url()`, 200 KB cap) listing what was removed, preview with the outside-CSS warning before saving.
   - Tests for the sanitizer.

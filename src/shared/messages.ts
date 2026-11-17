@@ -43,6 +43,8 @@ export const MsgSchema = z.discriminatedUnion('type', [
   }),
   // CSS editor validation, run by csstree in the service worker (appearance R4.3).
   msg('css.validate', { css: z.string().max(200_000) }),
+  // Imported theme CSS sanitizing (appearance R5.4; platform R7.4).
+  msg('css.sanitize', { css: z.string().max(200_000) }),
   msg('commands.list', {}),
   // Opens chrome://extensions/shortcuts, which a content script cannot open (panel-ux R7.4).
   msg('shortcuts.open', {}),
