@@ -68,10 +68,10 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - Usage per store and IndexedDB total (`data.status`), export all data, clear data, legacy cleanup, data version and source, "Check for data updates", "Use packaged data", last skip reason, optional permission states, "Copy diagnostics"; About shows version, rubric and rules dates and links.
   - _Requirements: 8.1; platform R4.6, R5.7, R7.3; core R5.5, R12.4_
 
-- [ ] 9. [PNL-9] Today view and first run
+- [x] 9. [PNL-9] Today view and first run
 - [x] 9.1 [PNL-9.1] Implement the Today view
   - `TodayProvider` registry in the R3.1 order, hidden empty sections, a calm state with the next class, last sync time and one "Refresh" that refreshes all provider sources within the budget; deep links.
   - _Requirements: 3.1, 3.2, 3.3, 3.4_
-- [ ] 9.2 [PNL-9.2] Build the first-run welcome
+- [x] 9.2 [PNL-9.2] Build the first-run welcome
   - `panel.prefs.firstRun`; opens docked at comfortable density; three skippable steps (tabs tour, "Sync this week" button with live progress, optional features all off); Help reopens it.
   - _Requirements: 9.1, 9.2, 9.3_

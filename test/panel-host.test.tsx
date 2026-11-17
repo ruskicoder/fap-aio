@@ -50,6 +50,8 @@ describe('panel host', () => {
   it('reopens with the saved state and clamps it into the viewport on resize', async () => {
     const saved = { ...defaultPanelState(), floating: { x: 900, y: 300, width: 400, height: 600 } }
     await c.storage.local.set({ 'panel.state': { schemaVersion: 2, updatedAt: 0, data: saved } })
+    // Not the first run, which would open docked (R9.1).
+    await c.storage.local.set({ 'panel.prefs': { schemaVersion: 1, updatedAt: 0, data: { pageAware: true, keybinds: {}, recents: [], firstRun: 'done', docked: 'narrow' } } })
     let mounted!: Awaited<ReturnType<typeof mountPanel>>
     await act(async () => { mounted = await mountPanel(document, '') })
     expect(mounted.host.style.getPropertyValue('left')).toBe('800px') // 1200 - 400

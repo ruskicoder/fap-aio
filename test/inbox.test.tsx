@@ -65,6 +65,7 @@ describe('inbox in the panel', () => {
       { id: 'r', kind: 'sync', title: 'Synced', at: now - 9000_000, read: true, dedupeKey: 'r' },
     ] })
     registerView({ tab: 'schedule', sub: 'exams', label: 'Exams', icon: 'school', component: async () => () => null })
+    await write('panel.prefs', { pageAware: true, keybinds: {}, recents: [], firstRun: 'done', docked: 'narrow' })
     let m!: Awaited<ReturnType<typeof mountPanel>>
     await act(async () => { m = await mountPanel(document, '') })
     await tick()
@@ -96,6 +97,7 @@ describe('inbox in the panel', () => {
   it('shows the unread count on the minimized edge tab', async () => {
     await write('alerts', { items: [{ id: 'g', kind: 'grade', title: 'x', at: Date.now(), read: false, dedupeKey: 'g' }] })
     await write('panel.state', { ...(await import('../src/shared/panel-state')).defaultPanelState({ width: 1200, height: 800 }), collapsed: true })
+    await write('panel.prefs', { pageAware: true, keybinds: {}, recents: [], firstRun: 'done', docked: 'narrow' })
     let m!: Awaited<ReturnType<typeof mountPanel>>
     await act(async () => { m = await mountPanel(document, '') })
     await tick()

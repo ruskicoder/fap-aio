@@ -1,5 +1,7 @@
 // General section (panel-ux R8.1, R4.3, R10.1, R1.5): page-aware tab, density and the docked layout.
+import { createElement } from 'react'
 import { registerSetting } from './registry'
+import { WelcomeAgain } from '../welcome/Welcome'
 
 export function registerGeneralSettings(): void {
   registerSetting<boolean>({
@@ -18,5 +20,11 @@ export function registerGeneralSettings(): void {
     options: [{ value: 'narrow', label: 'Narrow the page' }, { value: 'cover', label: 'Cover the page' }],
     label: 'When docked',
     description: 'Narrow the FAP page so nothing is hidden, or let the panel cover its right side.',
+  })
+  registerSetting<null>({
+    key: 'general.welcome', section: 'general', type: 'custom', default: null,
+    label: 'Welcome tour',
+    description: 'Show the first-run welcome again.',
+    component: () => createElement(WelcomeAgain),
   })
 }

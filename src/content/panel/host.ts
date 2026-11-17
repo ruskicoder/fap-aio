@@ -13,6 +13,7 @@ import { pageRoute } from './page-aware'
 import { SettingsView } from './SettingsView'
 import { registerGeneralSettings } from './settings/general'
 import { TodayView } from './today/TodayView'
+import { Welcome, isFirstRun } from './welcome/Welcome'
 import { viewportSize } from './geometry'
 import { runSyncAll, useSyncAll } from './actions'
 import { readPrefs } from '../../shared/panel-prefs'
@@ -54,7 +55,9 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   shadow.appendChild(mountPoint)
   doc.body.appendChild(host)
   const vp = viewportSize(doc)
-  const initial = await loadPanelState({ width: vp.w, height: vp.h })
+  const loaded = await loadPanelState({ width: vp.w, height: vp.h })
+  // First run on an authenticated page: open docked to show the welcome (panel-ux R9.1).
+  const initial = (await isFirstRun()) ? { ...loaded, mode: 'docked' as const, collapsed: false } : loaded
   const root = createRoot(mountPoint)
   let updater: ((fn: (s: PanelState) => PanelState) => void) | null = null
   const router = new PanelRouter(initial.route)
@@ -88,7 +91,7 @@ function Shell({ initial, host, version, router, bind }: { initial: PanelState; 
   const unread = useUnread()
   return createElement(Fragment, null, createElement(IconSprite), createElement(PanelApp, {
     initial, host, version, bind, syncing: sync.running,
-    headerActions: createElement(Bell), overlay: createElement(InboxPopover, { router }), tabBadge: unread,
+    headerActions: createElement(Bell), overlay: createElement(Fragment, null, createElement(InboxPopover, { router }), createElement(Welcome)), tabBadge: unread,
     onSync: () => void runSyncAll(),
     onSettings: () => router.go({ overlay: 'settings' }),
     status: createElement(ViewStatusStrip, { router }),
