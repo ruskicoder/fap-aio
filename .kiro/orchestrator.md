@@ -103,8 +103,8 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | PLT-8 | Optional permissions | v2-platform | M2 | PLT-2 | G-UAT-M1 | done |
 | PLT-9 | Live FLM read | v2-platform | M5 | PLT-6, PLT-8 | G-UAT-M4 | todo |
 | PLT-9.2 | Implement flm.refresh | v2-platform | M5 | PLT-9.1 | G-FLM-COOKIE, G-UAT-M4 | todo |
-| PLT-10 | Privacy, diagnostics and release | v2-platform | M3 | PLT-2, PLT-3 | G-UAT-M2 | doing |
-| PLT-10.2 | Release workflow | v2-platform | M5 | - | G-UAT-M4 | todo |
+| PLT-10 | Privacy, diagnostics and release | v2-platform | M3 | PLT-2, PLT-3 | G-UAT-M2 | done |
+| PLT-10.2 | Release workflow | v2-platform | M5 | - | G-UAT-M4 | done |
 | CORE-1 | Content bootstrap and page guard | v2-core-scheduler | M1 | PLT-2, PLT-5.1 | - | done |
 | CORE-2 | Read-only FAP access layer | v2-core-scheduler | M1 | CORE-1, PLT-4 | - | done |
 | CORE-3 | Source registry, constants and scheduler parsers | v2-core-scheduler | M1 | CORE-2, PLT-5.1 | - | done |
@@ -330,3 +330,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-11-17 | APP-4.3 | skipped: the task names CodeMirror 6 and csstree, both new dependencies; asked in the batch report | none | waiting for the owner
 - 2026-11-17 | APP-7.3 | src/features/appearance/layout/classic/report.ts (report pages: a shadow-rooted term tab strip and course cards built from FAP's selects, a choice sets the select and dispatches a bubbling change, redrawn on FAP changes while the block is on the page; FAP's select row visually hidden but focusable; timetable: session cells and mobile cards marked by attendance through the scheduler's attendanceOf, styled as cards in the classic layer), patch.ts markAll (classes on every match including later ones, original class text restored), registered in the document_start entry; tests on the grade, attendance and timetable fixtures with byte-identical restore; a browser peek showed the grade report tabs and cards (the fixture server does not run FAP's partial loader, so timetable cells are covered by the unit test); 3 vet-list lines | tsc, eslint src, 469 passed and 1 skipped of 470 tests, vitest exit 0, build | committed (cloud/build)
 - 2026-11-17 | F-19 | tools/uat/m2-check.mjs and m3-check.mjs: unused drag helper removed; found while dry-running the release workflow, whose lint step is the repository-wide `eslint .`; from now on the batch checks include `eslint .` | tsc, eslint src, eslint . exit 0, m3-check 31 of 31 | committed (cloud/build)
+- 2026-11-17 | PLT-10.2 | .github/workflows/release.yml (on v*.*.* tags: npm ci, typecheck, lint, tests, build, check:version against the tag, reproducible zip with its SHA-256, gh release create --draft --generate-notes --verify-tag; contents: write only; no signing); dry run here: check:version passes for v2.0.0 and fails for v9.9.9, the zip and its checksum verify; no tag pushed (G-RELEASE stays with the owner) | tsc, eslint src, eslint ., 469 passed and 1 skipped of 470 tests, vitest exit 0, build | committed (cloud/build)

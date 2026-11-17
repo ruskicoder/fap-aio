@@ -1,0 +1,44 @@
+name: release
+
+# Platform R9.2, R9.3: a pushed tag v<major>.<minor>.<patch> builds the extension, checks that the tag,
+# package.json and the built manifest agree, zips it reproducibly with its SHA-256, and attaches both to a
+# draft GitHub release for the owner to review and publish. Data signing never runs here (R9.4).
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - name: Tag, package.json and manifest versions agree
+        run: npm run check:version -- "$GITHUB_REF_NAME"
+      - name: Zip and checksum
+        run: npm run zip
+      - name: Draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" \
+            "fap-aio-${version}.zip" "fap-aio-${version}.zip.sha256" \
+            --draft --generate-notes --title "FAP-AIO ${version}" --verify-tag
