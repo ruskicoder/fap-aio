@@ -24,9 +24,14 @@ export interface SettingDef<T = unknown> {
   options?: { value: T; label: string }[]
   min?: number
   max?: number
+  step?: number
+  /** Shown as "Default: ..." when the value alone does not read well. */
+  defaultText?: string
   /** Returns an error text, or null when the value is valid. */
   validate?: (v: T) => string | null
   component?: ComponentType<{ def: SettingDef<T>; value: T; set: (v: T) => void }>
+  /** False for rows that hold no value of their own (they are left out of export, import and reset). */
+  transfer?: false
   /** Bind to a `panel.prefs` field instead of the `settings` store. */
   prefs?: keyof PanelPrefs
 }

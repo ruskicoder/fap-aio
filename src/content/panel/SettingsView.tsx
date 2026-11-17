@@ -57,6 +57,8 @@ const field = 'h-control rounded border border-gray-300 bg-white px-2 text-sm te
 
 function optionLabel(def: SettingDef, v: unknown): string {
   if (def.type === 'toggle') return v ? 'On' : 'Off'
+  if (v === null || v === undefined || v === '') return 'None'
+  if (Array.isArray(v)) return v.length ? v.join(', ') : 'None'
   return def.options?.find((o) => JSON.stringify(o.value) === JSON.stringify(v))?.label ?? String(v)
 }
 
@@ -95,7 +97,7 @@ function Control({ def, value, set, labelId }: { def: SettingDef; value: unknown
     )
   }
   if (def.type === 'number') {
-    return <input type="number" aria-labelledby={labelId} className={`${field} w-24`} min={def.min} max={def.max} value={String(value ?? '')} onChange={(e) => set(e.target.value === '' ? null : Number(e.target.value))} />
+    return <input type="number" aria-labelledby={labelId} className={`${field} w-24`} min={def.min} max={def.max} step={def.step} value={String(value ?? '')} onChange={(e) => set(e.target.value === '' ? null : Number(e.target.value))} />
   }
   if (def.type === 'list') {
     const list = Array.isArray(value) ? (value as string[]) : []
@@ -108,7 +110,7 @@ function Row({ def }: { def: SettingDef }) {
   const value = useSetting(def)
   const [error, setError] = useState<string | null>(null)
   const id = useId()
-  const modified = isModified(def, value)
+  const modified = def.transfer !== false && isModified(def, value)
   const set = (v: unknown) => void writeSetting(def, v).then(setError)
   const inline = def.type === 'toggle'
   return (
@@ -120,7 +122,7 @@ function Row({ def }: { def: SettingDef }) {
             {modified && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-orange-600 align-middle" title="Changed from the default" aria-label="Changed from the default" role="img" />}
           </p>
           <p className="text-xs text-gray-600">{def.description}</p>
-          <p className="text-[11px] text-gray-500">Default: {optionLabel(def, def.default)}</p>
+          {def.transfer !== false && <p className="text-[11px] text-gray-500">Default: {def.defaultText ?? optionLabel(def, def.default)}</p>}
         </div>
         {inline && <Control def={def} value={value} set={set} labelId={id} />}
       </div>

@@ -45,3 +45,7 @@ Choices made without an audit (owner instruction D-9, 2026-11-17). One line each
 - CORE-6.2 class line: `CODE · name` (name from the exam list when known), then room with its site (P.xxx, NVH.xxx, Online), "07:30 to 09:00" and the lecturer | alternative: the slot number instead of the times.
 - CORE-6.2 countdown text: "now", "in 25 min", "in 3 h 10 min", "tomorrow 07:30", "Mon 07:30" | alternative: always the start time.
 - CORE-6.2 exams: `FE · CODE · name`, then room or "Room not assigned yet" and the date and time; amber edge within 3 days, "today", "tomorrow" or "in N days" on the right | alternative: red edge on the exam day.
+- GRD-3.1 Grades section rows: "Default goal" as a select "Pass (5)" to "Excellent (9)", "Not counted in GPA" as a comma-separated text box saved when you leave it with a "Reset to default" button, "GPA goal" as a number field (empty for no goal, steps of 0.01), "MOOCs completed on time" as a checkbox per current course with a MOOC bonus | alternative: the non-GPA list as removable chips.
+- GRD-3.1 MOOC row without data: "No current course grants a MOOC bonus. Courses appear here after the grade page has been read." | alternative: hide the row until a course qualifies.
+- GRD-3.1 the default goal tier sits in the Grades section, as GRD-3.1 says, not under General as panel-ux R8.1 lists it | alternative: move it to General.
+- PNL-8.1 rows that hold no value of their own (the welcome button, the MOOC list) show no "Default:" line or changed dot and are left out of export, import and reset | alternative: show "Default: none".

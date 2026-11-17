@@ -11,7 +11,7 @@ export interface ImportPlan { changes: Change[]; refused: { key: string; reason:
 
 export async function exportSettings(now = new Date()): Promise<SettingsFile> {
   const settings: Record<string, unknown> = {}
-  for (const d of settingDefs()) if (!d.component || d.type !== 'custom') settings[d.key] = await readSetting(d)
+  for (const d of settingDefs()) if (d.transfer !== false) settings[d.key] = await readSetting(d)
   return { formatVersion: FORMAT_VERSION, exportedAt: now.toISOString(), settings }
 }
 
@@ -54,7 +54,7 @@ export async function planImport(text: string): Promise<ImportPlan | { error: st
   const plan: ImportPlan = { changes: [], refused: [], unknown: [] }
   for (const [key, to] of Object.entries(f.settings)) {
     const def = settingDef(key)
-    if (!def) { plan.unknown.push(key); continue }
+    if (!def || def.transfer === false) { plan.unknown.push(key); continue }
     const reason = checkValue(def, to)
     if (reason) { plan.refused.push({ key, reason }); continue }
     const from = await readSetting(def)
@@ -72,7 +72,7 @@ export async function applyChanges(changes: Change[]): Promise<void> {
 
 /** Restores the defaults of one section, or of every section. */
 export async function resetSettings(section: SectionId | null): Promise<void> {
-  for (const d of settingDefs()) if (section === null || d.section === section) await writeSetting(d, d.default)
+  for (const d of settingDefs()) if (d.transfer !== false && (section === null || d.section === section)) await writeSetting(d, d.default)
 }
 
 /** Starts a download from a blob link inside the panel (platform amendment: no `downloads`). */

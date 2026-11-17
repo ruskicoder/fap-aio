@@ -22,7 +22,7 @@ export function registerGeneralSettings(): void {
     description: 'Narrow the FAP page so nothing is hidden, or let the panel cover its right side.',
   })
   registerSetting<null>({
-    key: 'general.welcome', section: 'general', type: 'custom', default: null,
+    key: 'general.welcome', section: 'general', type: 'custom', default: null, transfer: false,
     label: 'Welcome tour',
     description: 'Show the first-run welcome again.',
     component: () => createElement(WelcomeAgain),

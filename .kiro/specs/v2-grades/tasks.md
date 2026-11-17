@@ -32,8 +32,8 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - Tests: reachable, capped and unreachable cases; derived targets reproduce the goal.
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
 
-- [ ] 3. [GRD-3] Grade settings
-- [ ] 3.1 [GRD-3.1] Declare the grade settings and store
+- [x] 3. [GRD-3] Grade settings
+- [x] 3.1 [GRD-3.1] Declare the grade settings and store
   - In the `SettingsRegistry` Grades section: default tier (Good), non-GPA list with a reset to default, GPA goal, MOOC completion per course; per-course goals in `grades.settings`; every change recomputes at once.
   - _Requirements: 2.3, 7.1, 7.2, 7.7; panel-ux R8.1_
 
