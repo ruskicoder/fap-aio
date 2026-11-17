@@ -19,7 +19,7 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
 - [ ] 3. [APP-3] Theme model and presets
-- [ ] 3.1 [APP-3.1] Define the theme model and role map
+- [x] 3.1 [APP-3.1] Define the theme model and role map
   - `Theme` with zod schema, `role-map.ts` from roles to `--ct-*` groups, explicit variable overrides.
   - _Requirements: 1.2, 3.6_
 - [ ] 3.2 [APP-3.2] Build the eleven presets

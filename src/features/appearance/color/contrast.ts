@@ -31,11 +31,12 @@ export interface Fixed { hex: string; ratio: number; changed: boolean; met: bool
 export function fixLightness(fg: string, bg: string, target = TEXT_RATIO): Fixed {
   const f = rgbToOklch(rgbOf(fg))
   const b = rgbOf(bg)
+  // Ratios are measured on the 8-bit hex that is returned, so rounding cannot drop it under the target.
   const start = toGamut(f)
-  const now = contrast(start.rgb, b)
+  const now = contrast(start.hex, b)
   if (now >= target) return { hex: start.hex, ratio: now, changed: false, met: true }
   const at = (l: number) => toGamut({ ...f, l })
-  const ok = (l: number) => contrast(at(l).rgb, b) >= target
+  const ok = (l: number) => contrast(at(l).hex, b) >= target
   const darkFirst = luminance(b) > 0.18
   for (const end of darkFirst ? [0, 1] : [1, 0]) {
     if (!ok(end)) continue
@@ -47,8 +48,8 @@ export function fixLightness(fg: string, bg: string, target = TEXT_RATIO): Fixed
       else near = mid
     }
     const m = at(far)
-    return { hex: m.hex, ratio: contrast(m.rgb, b), changed: true, met: true }
+    return { hex: m.hex, ratio: contrast(m.hex, b), changed: true, met: true }
   }
-  const best = [0, 1].map(at).sort((x, y) => contrast(y.rgb, b) - contrast(x.rgb, b))[0]!
-  return { hex: best.hex, ratio: contrast(best.rgb, b), changed: true, met: false }
+  const best = [0, 1].map(at).sort((x, y) => contrast(y.hex, b) - contrast(x.hex, b))[0]!
+  return { hex: best.hex, ratio: contrast(best.hex, b), changed: true, met: false }
 }
