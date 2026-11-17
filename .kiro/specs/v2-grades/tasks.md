@@ -16,7 +16,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - _Requirements: 4.1, 4.5_
 
 - [ ] 2. [GRD-2] Calculation engines
-- [ ] 2.1 [GRD-2.1] Implement `GpaEngine`
+- [x] 2.1 [GRD-2.1] Implement `GpaEngine`
   - `src/features/grades/engine/gpa.ts`: counted rows (passed, numeric grade, credits above 0, not excluded), case-insensitive prefix exclusion, per-semester order `year * 10 + term`, cumulative GPA, two decimals with credits.
   - Tests: prefix exclusion, Exempt and In progress not counted, the replaced table ignored.
   - _Requirements: 2.1, 2.2, 2.4, 2.5, 2.6, 1.2_
