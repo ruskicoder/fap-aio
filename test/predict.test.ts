@@ -50,6 +50,9 @@ describe('Predictor', () => {
     ])
     expect(full(predict(s, { 0: [9], 1: [3.5] })).issues).toEqual(['Final exam: 3.5 does not meet >= 4'])
     expect(full(predict(s, { 0: [0], 1: [9] })).issues).toEqual(['Progress test: 0 does not meet > 0'])
+    // F-11: rules that ask for less than 4 on the FE are raised to 4.
+    const low = { tiers: [{ id: 'pass' as const, minAverage: 5 }], finalExamMin: 3, attendanceMinPercent: 80 }
+    expect(full(predict(s, { 0: [9], 1: [3.5] }, { rules: low })).issues).toEqual(['Final exam: 3.5 does not meet >= 4'])
     const open = full(predict(s, { 0: [9] }))
     const pass = open.tiers[0]!
     expect(open.status).toBe('in-progress')

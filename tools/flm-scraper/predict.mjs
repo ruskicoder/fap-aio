@@ -30,6 +30,8 @@ export function predict(subject, scores = {}, opts = {}) {
     { id: 'fair', minAverage: 7 }, { id: 'good', minAverage: 8 }, { id: 'excellent', minAverage: 9 },
   ], finalExamMin: 4, attendanceMinPercent: 80 };
   const scale = subject.scoringScale || 10;
+  // An FE is never below 4, whatever the rules passed in say.
+  const feMin = Math.max(4, rules.finalExamMin);
   const issues = [];
   const warnings = [];
 
@@ -45,14 +47,14 @@ export function predict(subject, scores = {}, opts = {}) {
   for (const a of subject.assessments.filter((x) => x.parentIndex == null && x.weight)) {
     const kids = childrenOf(a.index);
     if (kids.length) {
-      groups.push({ label: a.category, index: a.index, criterion: a.type === 'final' && a.finalKind === 'FE' ? maxCrit(a.completion, { value: rules.finalExamMin, inclusive: true }) : a.completion, members: kids.map((k) => k.index) });
+      groups.push({ label: a.category, index: a.index, criterion: a.type === 'final' && a.finalKind === 'FE' ? maxCrit(a.completion, { value: feMin, inclusive: true }) : a.completion, members: kids.map((k) => k.index) });
       gradable.push(...kids.map((k) => ({ ...k, groupFloor: groups[groups.length - 1].criterion })));
     } else gradable.push(a);
   }
   for (const a of gradable) {
     let crit = a.groupFloor ? maxCrit(a.completion, a.groupFloor) : a.completion;
     // Owner rule: FE needs >= 4 even if the syllabus leaves the cell empty.
-    if (a.type === 'final' && a.finalKind === 'FE' && !a.groupFloor) crit = maxCrit(crit, { value: rules.finalExamMin, inclusive: true });
+    if (a.type === 'final' && a.finalKind === 'FE' && !a.groupFloor) crit = maxCrit(crit, { value: feMin, inclusive: true });
     // Owner rule: every progress score must be > 0.
     if (a.type !== 'final' && !crit) crit = { value: 0, inclusive: false };
     const given = scores[a.index] || [];
