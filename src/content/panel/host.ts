@@ -12,6 +12,7 @@ import { Navigation } from './nav'
 import { pageRoute } from './page-aware'
 import { SettingsView } from './SettingsView'
 import { registerGeneralSettings } from './settings/general'
+import { registerClearData } from './settings/clear-data'
 import { TodayView } from './today/TodayView'
 import { Welcome, isFirstRun } from './welcome/Welcome'
 import { viewportSize } from './geometry'
@@ -68,6 +69,7 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   // Page-aware tab, once per page load (panel-ux R4.1, R4.2).
   if ((await readPrefs()).pageAware) router.go(pageRoute(doc.location?.pathname ?? '/', doc), { source: 'page' })
   registerGeneralSettings()
+  registerClearData()
   // Today: composed from the modules' providers (panel-ux R3).
   const Today = () => createElement(TodayView, { router })
   registerView({ tab: 'today', label: 'Today', icon: 'home', component: async () => Today, lastSync: [{ label: 'Classes', key: 'timetable' }, { label: 'Exams', key: 'exams' }] })

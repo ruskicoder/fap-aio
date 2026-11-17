@@ -111,8 +111,8 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Tests: keys outside the list are never removed.
   - _Requirements: 12.1, 12.2, 12.3, 12.4_
 
-- [ ] 11. [CORE-11] Settings and data controls
-- [ ] 11.1 [CORE-11.1] Declare the core and scheduler settings and "Clear data"
+- [x] 11. [CORE-11] Settings and data controls
+- [x] 11.1 [CORE-11.1] Declare the core and scheduler settings and "Clear data"
   - Through the panel-ux `SettingsRegistry`: reminders (enabled, class offset), keep-alive (enabled, interval), legacy cleanup; every change applies through `storage.onChanged` without reload.
   - "Clear data" removes every key except `settings` after a confirmation dialog, and asks the service worker to clear IndexedDB caches except packaged data.
   - _Requirements: 13.1, 13.2, 5.5_

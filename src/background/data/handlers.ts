@@ -1,7 +1,7 @@
 // Data query handlers (platform R2.4, R6.5, R6.6; grades R12.2; info R2.1): content scripts cannot open
 // the extension's IndexedDB, so they ask the service worker by message.
 import { fail, ok, register } from '../router'
-import { openDataDb, queueEnsure, type DataDeps } from './db'
+import { indexPackaged, openDataDb, queueEnsure, type DataDeps } from './db'
 import { fileStatus, lookupSubject, newsRules, rulesFile, searchSubjects } from './query'
 import type { DataFileStatus, RulesReply } from '../../shared/data/types'
 
@@ -38,6 +38,16 @@ export function installDataHandlers(deps: DataDeps = {}): void {
   register('data.subject', async (m) => ok(await withData((db) => lookupSubject(db, m.code), deps)))
   register('data.search', async (m) =>
     ok(await withData((db) => searchSubjects(db, m.q, Math.min(m.limit, SEARCH_LIMIT_MAX)), deps)))
+  // "Clear data" (core R5.5): drop live FLM overrides and channel copies; packaged data stays indexed.
+  register('data.clearCaches', async () => ok(await withData(async (db) => {
+    const tx = db.transaction('overrides', 'readwrite')
+    tx.objectStore('overrides').clear()
+    await new Promise<void>((resolve, reject) => { tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error) })
+    const files = await fileStatus(db)
+    const channel = files.some((f) => f.source === 'channel')
+    if (channel) await indexPackaged(db, deps)
+    return { overrides: 'cleared', reindexed: channel }
+  }, deps)))
   register('data.file', async () => {
     const file = await withData(newsRules, deps)
     return file ? ok(file) : fail('data-unavailable', 'news-rules.json')
