@@ -41,7 +41,7 @@ Compacted on 2026-10-22 from 21 to 12 subtasks with no requirement dropped; the 
   - _Requirements: 1.4, 8.6_
 
 - [ ] 4. [INF-4] Subjects and syllabus
-- [ ] 4.1 [INF-4.1] Build Subjects search, subject detail and the learning path
+- [x] 4.1 [INF-4.1] Build Subjects search, subject detail and the learning path
   - Info, Subjects: search by code or name through `data.search`, merged with curriculum rows; virtualized list.
   - Detail from `data.subject` (names, credits, prerequisites, pass mark, assessments, attendance, Coursera, materials, outcomes, time allocation, approval date); FLM and FAP links; curriculum term and transcript status; prerequisite ancestors to depth 5 and direct dependents with a cycle guard; data-quality flags explained.
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6; panel-ux R10.7_
