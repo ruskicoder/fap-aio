@@ -43,7 +43,7 @@ Sources are cited in the design.
 
 #### Acceptance Criteria
 
-1. In M1 the panel SHALL have three tabs, in this order: Classes, Exams, Export. Tabs for other modules SHALL appear only when that module ships; their names and placement are decided in that module's UI audit.
+1. The panel SHALL group its views into four sections, in this order: Today, Schedule, Grades, Info. The section tabs SHALL show at the top, each with an icon, and the open section's views SHALL show below them in the sub-view bar of the agreed shell (Schedule: Classes, Exams, Export). A section SHALL appear only when one of its views ships; a row with a single item SHALL NOT be shown. No tab row SHALL scroll sideways or clip a label (F-18, 2026-11-17; in M1 only Schedule shipped, so the panel showed Classes, Exams and Export).
 2. The panel SHALL NOT show any tab, button or menu item for a feature that is not shipped.
 3. The header SHALL be one draggable bar holding, on the left, the title `FAP-AIO` with the extension version (from the manifest) as subtext, and on the right the buttons Sync, Dock, Settings and Minimize. Sync SHALL sync this week's classes and the exams in one action; the whole-term sync stays an action in Classes.
 4. Settings SHALL open as a full view inside the panel with a back control, and SHALL NOT be a tab.
@@ -106,8 +106,8 @@ Removed 2026-10-26 by the owner (decision D-3): no command palette, no search an
 
 1. The extension SHALL provide these actions with default keybinds:
    - toggle panel: Alt+Shift+F, through `chrome.commands` so that it works in any FAP tab;
-   - tabs in order: no default, recorded by the user (Alt+1 to Alt+9 are Chrome's tab keys on Linux, Ctrl+1 to Ctrl+9 switch macOS desktops; D-10, 2026-11-17);
-   - next and previous sub-view: Alt+] and Alt+[;
+   - sections in order (Open Today, Open Schedule, Open Grades, Open Info; F-18): no default, recorded by the user (Alt+1 to Alt+9 are Chrome's tab keys on Linux, Ctrl+1 to Ctrl+9 switch macOS desktops; D-10, 2026-11-17);
+   - next and previous sub-view within the open section: Alt+] and Alt+[;
    - refresh current view: Alt+R;
    - dock toggle: no default, recorded by the user (Alt+D is Chrome's address bar on Windows; D-10);
    - alerts inbox: Alt+N;

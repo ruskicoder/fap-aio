@@ -173,13 +173,27 @@ async function main() {
   await click('button', 'Sync this week')
   await sleep(4000)
   note('welcome Sync this week syncs', (await shadowText()).includes('This week is synced.'), '')
+  // M3 added the optional features step (Reminders).
+  await click('button', 'Next')
+  await sleep(300)
   await click('button', 'Done')
   note('welcome closes after Done', !(await ev(`!!${root$}.querySelector('[aria-labelledby="aio-welcome-title"]')`)), '')
 
-  const tabs = await ev(`[...${root$}.querySelectorAll('[role="tab"]')].map((t) => t.textContent.trim())`)
-  note('tabs are the shipped views (flat, as in the agreed shell)', JSON.stringify(tabs) === JSON.stringify(['Today', 'Classes', 'Exams', 'Export', 'Courses', 'GPA']), JSON.stringify(tabs))
-  const overflow = await ev(`[...${root$}.querySelectorAll('[role="tab"]')].filter((t) => t.scrollWidth > t.clientWidth + 1).map((t) => t.textContent.trim())`)
-  note('no tab label overflows its tab', overflow.length === 0, overflow.join(', ') || 'none')
+  // F-18: sections at the top, the open section's views in the sub-view bar below; no row may clip.
+  const rows = () => ev(`[...${root$}.querySelectorAll('[role="tablist"]')].map((l) => [l.getAttribute('aria-label'), [...l.querySelectorAll('[role="tab"]')].map((t) => t.textContent.trim())])`)
+  const clipped = () => ev(`[...${root$}.querySelectorAll('[role="tablist"], [role="tab"]')].filter((t) => t.scrollWidth > t.clientWidth + 1 || t.getBoundingClientRect().left < t.closest('nav').getBoundingClientRect().left - 0.5 || t.getBoundingClientRect().right > t.closest('nav').getBoundingClientRect().right + 0.5).map((t) => t.getAttribute('aria-label') ?? t.textContent.trim())`)
+  const r0 = await rows()
+  note('sections are Today, Schedule, Grades and Info (F-18)', JSON.stringify(r0[0]) === JSON.stringify(['Sections', ['Today', 'Schedule', 'Grades', 'Info']]), JSON.stringify(r0))
+  const subRows = {}
+  const clips = []
+  for (const sec of ['Today', 'Schedule', 'Grades', 'Info']) {
+    await click('[role="tab"]', sec)
+    await sleep(500)
+    subRows[sec] = (await rows())[1]?.[1] ?? []
+    clips.push(...(await clipped()).map((c) => `${sec}: ${c}`))
+  }
+  note('each section shows its views in the sub-view bar', JSON.stringify(subRows) === JSON.stringify({ Today: [], Schedule: ['Classes', 'Exams', 'Export'], Grades: ['Courses', 'GPA', 'What-if', 'Planner'], Info: [] }), JSON.stringify(subRows))
+  note('no tab row or tab clips or scrolls sideways', clips.length === 0, clips.join(', ') || 'none')
   await click('[role="tab"]', 'Today')
   await sleep(800)
   const today = await shadowText()
@@ -188,10 +202,14 @@ async function main() {
   const truncated = await ev(`${root$}.querySelectorAll('.truncate').length`)
   note('no truncated text', truncated === 0, `${truncated} elements with .truncate`)
 
+  await click('[role="tab"]', 'Schedule')
+  await sleep(300)
   await click('[role="tab"]', 'Classes')
   await sleep(600)
   await shot('schedule-classes')
 
+  await click('[role="tab"]', 'Grades')
+  await sleep(300)
   await click('[role="tab"]', 'Courses')
   await sleep(4000)
   const courses = await ev(`${root$}.querySelectorAll('[data-course]').length`)
@@ -216,7 +234,7 @@ async function main() {
   await click('button', 'Settings')
   await sleep(600)
   const sections = await ev(`[...${root$}.querySelectorAll('h3')].map((h) => h.textContent.trim())`)
-  note('Settings shows General and Grades first', JSON.stringify(sections.slice(0, 2)) === JSON.stringify(['General', 'Grades']), JSON.stringify(sections))
+  note('Settings shows General first, then the module sections', sections[0] === 'General' && sections.includes('Grades'), JSON.stringify(sections))
   await shot('settings')
   await click('button', 'Back').catch(() => {})
 

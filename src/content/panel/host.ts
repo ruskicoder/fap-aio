@@ -10,7 +10,8 @@ import { PanelRouter, isOverlay, routeKey, useRoute } from './router'
 import { installKeys, refresherFor, registerAction } from './keys'
 import { ShortcutsSheet, registerShortcutSettings } from './shortcuts'
 import { toggleInbox } from './inbox/store'
-import { ViewOutlet, registerView, routeOfView, tabViews } from './views'
+import { ViewOutlet, registerView, routeOfView, viewsOf } from './views'
+import { GROUPS, groupRoute } from './nav'
 import { Navigation } from './nav'
 import { pageRoute } from './page-aware'
 import { SettingsView } from './SettingsView'
@@ -104,21 +105,25 @@ let removeKeys: (() => void) | null = null
 /** The page actions of R7.1; each opens the panel when it is minimized. */
 export function registerPanelActions(router: PanelRouter, update: (fn: (s: PanelState) => PanelState) => void): void {
   const open = () => update((s) => (s.collapsed ? { ...s, collapsed: false } : s))
-  for (let n = 1; n <= 9; n++) {
+  // One action per section, in order (R7.1; F-18): no default, every candidate chord collides (F-16).
+  GROUPS.forEach((g, i) => {
     registerAction({
-      id: `tab.${n}`, title: `Open tab ${n}`, default: { win: '', mac: '' }, // no default: every candidate collides (F-16)
-      run: () => { const t = tabViews()[n - 1]; if (t) { open(); router.go(routeOfView(t)) } },
+      id: `tab.${i + 1}`, title: `Open ${g.label}`, default: { win: '', mac: '' },
+      run: () => { const r = groupRoute(g.id); if (r) { open(); router.go(r) } },
     })
-  }
+  })
+  // Next and previous sub-view within the open section (R7.1).
   const step = (by: number) => {
-    const tabs = tabViews()
-    if (!tabs.length) return
-    const i = tabs.findIndex((t) => routeKey(routeOfView(t)) === routeKey(router.current()))
+    const cur = router.current()
+    if (isOverlay(cur)) return
+    const views = viewsOf(cur.tab)
+    if (views.length < 2) return
+    const i = views.findIndex((v) => routeKey(routeOfView(v)) === routeKey(cur))
     open()
-    router.go(routeOfView(tabs[(i + by + tabs.length) % tabs.length]!))
+    router.go(routeOfView(views[(i + by + views.length) % views.length]!))
   }
-  registerAction({ id: 'view.next', title: 'Next view', default: { win: 'Alt+]', mac: 'Alt+]' }, run: () => step(1) })
-  registerAction({ id: 'view.prev', title: 'Previous view', default: { win: 'Alt+[', mac: 'Alt+[' }, run: () => step(-1) })
+  registerAction({ id: 'view.next', title: 'Next view in this section', default: { win: 'Alt+]', mac: 'Alt+]' }, run: () => step(1) })
+  registerAction({ id: 'view.prev', title: 'Previous view in this section', default: { win: 'Alt+[', mac: 'Alt+[' }, run: () => step(-1) })
   registerAction({ id: 'view.refresh', title: 'Refresh this view', default: { win: 'Alt+R', mac: 'Alt+R' }, run: () => { const fn = refresherFor(routeKey(router.current())); if (fn) fn(); else void runSyncAll() } })
   // No default: Alt+D is Chrome's address bar on Windows (F-16).
   registerAction({ id: 'panel.dock', title: 'Dock or undock the panel', default: { win: '', mac: '' }, run: () => update((s) => ({ ...s, collapsed: false, mode: s.mode === 'docked' ? 'floating' : 'docked' })) })

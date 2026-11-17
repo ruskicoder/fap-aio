@@ -28,9 +28,10 @@ export function registerView(def: ViewDef): void {
   notifyCounts() // views register after the panel mounts
 }
 export const viewFor = (r: Route): ViewDef | undefined => defs.get(routeKey(r))
-export const viewsOf = (tab: TabId): ViewDef[] => [...defs.values()].filter((d) => 'tab' in d && d.tab === tab)
-/** Every registered non-overlay view, in registration order: the tabs of the panel (R2.1, R2.2). */
+/** Every registered non-overlay view, in registration order (R2.1, R2.2). */
 export type TabViewDef = Extract<ViewDef, { tab: TabId }>
+/** The views of one section, in registration order: its sub-view bar (R2.2; F-18). */
+export const viewsOf = (tab: TabId): TabViewDef[] => [...defs.values()].filter((d): d is TabViewDef => 'tab' in d && d.tab === tab)
 export const tabViews = (): TabViewDef[] => [...defs.values()].filter((d): d is TabViewDef => 'tab' in d)
 export const routeOfView = (d: TabViewDef): Route => (d.sub ? { tab: d.tab, sub: d.sub } : { tab: d.tab }) as Route
 // Bumped when a view registers or a badge count changes.

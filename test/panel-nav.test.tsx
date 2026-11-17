@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client'
 import { parseHTML } from 'linkedom'
 import { installFakeChrome } from './helpers/fake-chrome'
 import { PanelRouter } from '../src/content/panel/router'
-import { Navigation } from '../src/content/panel/nav'
+import { Navigation, forgetViews } from '../src/content/panel/nav'
 import { clearViews, registerView } from '../src/content/panel/views'
 import { pageRoute } from '../src/content/panel/page-aware'
 import { mountPanel } from '../src/content/panel/host'
@@ -98,6 +98,84 @@ describe('tab bar', () => {
     expect(tabs()).toHaveLength(0)
     act(() => router.back())
     expect(tabs()).toHaveLength(3)
+    act(() => root.unmount())
+  })
+})
+
+describe('sections and sub-views (F-18)', () => {
+  beforeEach(() => {
+    installFakeChrome()
+    clearViews()
+    forgetViews()
+    document.body.innerHTML = ''
+    const v = (tab: 'today' | 'schedule' | 'grades' | 'info', sub: string | undefined, label: string) =>
+      registerView({ tab, ...(sub ? { sub } : {}), label, icon: 'x', component: async () => () => null } as Parameters<typeof registerView>[0])
+    // Registration order differs from the section order on purpose.
+    v('grades', 'courses', 'Courses'); v('grades', 'gpa', 'GPA'); v('grades', 'whatif', 'What-if'); v('grades', 'planner', 'Planner')
+    v('schedule', 'week', 'Classes'); v('schedule', 'exams', 'Exams'); v('schedule', 'export', 'Export')
+    v('info', 'subjects', 'Subjects'); v('today', undefined, 'Today')
+  })
+
+  function render(router: PanelRouter) {
+    const el = document.createElement('div')
+    document.body.appendChild(el)
+    const root = createRoot(el)
+    act(() => root.render(<Navigation router={router} />))
+    const list = (label: string) => [...(el.querySelector(`[role="tablist"][aria-label="${label}"]`)?.querySelectorAll<HTMLButtonElement>('[role="tab"]') ?? [])]
+    const names = (label: string) => list(label).map((t) => t.textContent)
+    return { el, root, list, names }
+  }
+
+  it('show Today, Schedule, Grades and Info in order, and the open section\'s views below', () => {
+    const router = new PanelRouter({ tab: 'grades', sub: 'gpa' })
+    const { names, list, el, root } = render(router)
+    expect(names('Sections')).toEqual(['Today', 'Schedule', 'Grades', 'Info'])
+    expect(list('Sections')[2]!.getAttribute('aria-selected')).toBe('true')
+    expect(names('Grades views')).toEqual(['Courses', 'GPA', 'What-if', 'Planner'])
+    expect(list('Grades views')[1]!.getAttribute('aria-selected')).toBe('true')
+    expect(el.querySelectorAll('[role="tablist"]')).toHaveLength(2)
+    expect(el.innerHTML).not.toMatch(/overflow-x|min-w-max/)
+    act(() => list('Sections')[1]!.click())
+    expect(router.current()).toEqual({ tab: 'schedule', sub: 'week' })
+    expect(names('Schedule views')).toEqual(['Classes', 'Exams', 'Export'])
+    act(() => list('Sections')[0]!.click())
+    expect(router.current()).toEqual({ tab: 'today' })
+    expect(el.querySelectorAll('[role="tablist"]')).toHaveLength(1)
+    act(() => list('Sections')[3]!.click())
+    expect(router.current()).toEqual({ tab: 'info', sub: 'subjects' })
+    expect(el.querySelectorAll('[role="tablist"]')).toHaveLength(1)
+    act(() => root.unmount())
+  })
+
+  it('return a section to its last open view', () => {
+    const router = new PanelRouter({ tab: 'grades', sub: 'courses' })
+    const { list, root } = render(router)
+    act(() => list('Grades views')[3]!.click())
+    act(() => list('Sections')[1]!.click())
+    act(() => list('Schedule views')[1]!.click())
+    act(() => list('Sections')[2]!.click())
+    expect(router.current()).toEqual({ tab: 'grades', sub: 'planner' })
+    act(() => list('Sections')[1]!.click())
+    expect(router.current()).toEqual({ tab: 'schedule', sub: 'exams' })
+    act(() => root.unmount())
+  })
+
+  it('open the section\'s first view for a stored or page-aware route without a view', () => {
+    const router = new PanelRouter({ tab: 'info', sub: 'news' })
+    const { root } = render(router)
+    expect(router.current()).toEqual({ tab: 'info', sub: 'subjects' })
+    act(() => router.go({ tab: 'grades', sub: 'courses', params: { courseId: 'x' } }))
+    expect(router.current()).toEqual({ tab: 'grades', sub: 'courses', params: { courseId: 'x' } })
+    act(() => root.unmount())
+  })
+
+  it('hide both rows while Settings is open', () => {
+    const router = new PanelRouter({ tab: 'grades', sub: 'gpa' })
+    const { el, root } = render(router)
+    act(() => router.go({ overlay: 'settings' }))
+    expect(el.querySelectorAll('[role="tab"]')).toHaveLength(0)
+    act(() => router.back())
+    expect(el.querySelectorAll('[role="tablist"]')).toHaveLength(2)
     act(() => root.unmount())
   })
 })
