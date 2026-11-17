@@ -4,8 +4,8 @@ Spec prefix `APP`. Phases are numbered `N.`, subtasks `N.M`; the global id is `A
 
 Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the gated Classic top navigation moved to the end of its phase. The previous list is in [`.deprecated/tasks.md`](.deprecated/tasks.md).
 
-- [ ] 1. [APP-1] Style pipeline and early application
-- [ ] 1.1 [APP-1.1] Implement `StylePipeline`, the `document_start` entry and the panel theme
+- [x] 1. [APP-1] Style pipeline and early application
+- [x] 1.1 [APP-1.1] Implement `StylePipeline`, the `document_start` entry and the panel theme
   - `src/features/appearance/pipeline.ts`: persistent sheets per layer (`base`, `vars`, `effects`, `classic`, `dock`, `user`) applied after FAP's adopted sheets in a stable order; `vars` scoped to `html[data-bs-theme=...]`; "FAP default" clears every layer but `base` and restores the saved `data-bs-theme`.
   - `src/content/appearance.ts`: read `appearance.active`, adopt sheets before first paint where possible, set `data-bs-theme`, detect Shift for safe mode, re-apply on `storage.onChanged` without reload; never write FAP storage.
   - A derived `panel-theme` sheet (mode, accent, roles) adopted by the panel's shadow root.

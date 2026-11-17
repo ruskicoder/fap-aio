@@ -16,6 +16,7 @@ import { runSyncAll, useSyncAll } from './actions'
 import { readPrefs } from '../../shared/panel-prefs'
 import { loadPanelState } from './store'
 import { onBoot } from '../modules'
+import { installPanelTheme } from '../../features/appearance/panel-theme'
 import { onMessage } from '../../shared/call'
 import type { PanelState } from '../../shared/panel-state'
 
@@ -39,6 +40,8 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   const sheet = new CSSStyleSheet()
   sheet.replaceSync(cssText)
   shadow.adoptedStyleSheets = [sheet]
+  // Theme mode and roles for the panel (appearance R1.7); empty under FAP default.
+  installPanelTheme(shadow, doc.defaultView ?? window)
   const mountPoint = doc.createElement('div')
   mountPoint.style.setProperty('height', '100%')
   shadow.appendChild(mountPoint)

@@ -23,7 +23,8 @@ describe('panel host', () => {
     let mounted!: Awaited<ReturnType<typeof mountPanel>>
     await act(async () => { mounted = await mountPanel(document, '.x { color: red } p { color: red }') })
     expect(document.getElementById(HOST_ID)).toBe(mounted.host)
-    expect(mounted.shadow.adoptedStyleSheets).toHaveLength(1)
+    // Tailwind and the panel-theme sheet (appearance R1.7).
+    expect(mounted.shadow.adoptedStyleSheets).toHaveLength(2)
     expect(document.querySelectorAll('style, link[rel="stylesheet"]')).toHaveLength(0)
     expect(document.body.querySelectorAll('style')).toHaveLength(0)
     expect(getComputedStyle(document.getElementById('fap')!).color).toBe(before)
