@@ -148,7 +148,10 @@ export function loadCourses(opts: { force?: boolean; rules?: RulesLookup } = {})
     }
     set({ loading: false })
     notify(state.rows)
-  })().finally(() => { running = null })
+  })()
+    // An unexpected failure ends the load with a message instead of an unhandled rejection (fix F-15).
+    .catch((e: unknown) => set({ loading: false, error: `Courses could not be read: ${e instanceof Error ? e.message : String(e)}` }))
+    .finally(() => { running = null })
   return running
 }
 

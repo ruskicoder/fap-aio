@@ -16,6 +16,7 @@ const { registerSchedulerViews } = await import('../src/features/scheduler/index
 const { clearViews, tabViews, routeOfView } = await import('../src/content/panel/views')
 const { setInboxOpen } = await import('../src/content/panel/inbox/store')
 const { registerGradeViews } = await import('../src/features/grades/index')
+const { registerGradeSources } = await import('../src/features/grades/sources')
 const { write } = await import('../src/shared/storage/catalog')
 
 ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
@@ -109,6 +110,7 @@ describe('accessibility audit', () => {
         ] })
       })
       registerSchedulerViews()
+      registerGradeSources()
       registerGradeViews()
       let m!: Awaited<ReturnType<typeof mountPanel>>
       await act(async () => { m = await mountPanel(document, '') })
