@@ -1,8 +1,10 @@
 // @vitest-environment happy-dom
 // PNL-3.2: accessibility checks on the shell and every registered view, in both densities (panel-ux
-// R10.2, R10.3, R10.8). axe-core is not a dependency (see the batch report), so this suite checks what it
-// can without it: an accessible name on every control, no control styled below 24 px, sentence case copy.
+// R10.2, R10.3, R10.8): axe-core on every screen, plus checks axe does not make here: an accessible name
+// on every control, no control styled below 24 px, and sentence case copy. happy-dom has no layout, so
+// axe's colour contrast and target size rules cannot measure; contrast is checked in the browser check.
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import axe from 'axe-core'
 import { act } from 'react'
 import { installFakeChrome } from './helpers/fake-chrome'
 import { setSettings } from '../src/shared/settings'
@@ -58,6 +60,13 @@ export function sentenceCaseProblem(s: string): string | null {
 
 const SMALL = /(^|\s)(h|w|size|min-h|min-w)-(0|0\.5|1|1\.5|2|2\.5|3|3\.5|4|5)(\s|$)/
 
+const AXE_OFF = ['color-contrast', 'target-size', 'region', 'landmark-one-main', 'page-has-heading-one', 'html-has-lang', 'document-title', 'bypass']
+
+async function axeAudit(host: Element, where: string): Promise<string[]> {
+  const r = await axe.run(host, { rules: Object.fromEntries(AXE_OFF.map((id) => [id, { enabled: false }])), resultTypes: ['violations'] })
+  return r.violations.flatMap((v) => v.nodes.map((n) => `${where}: axe ${v.id}: ${n.target.join(' ')}`))
+}
+
 function audit(root: ShadowRoot, where: string): string[] {
   const problems: string[] = []
   for (const el of root.querySelectorAll(CONTROLS)) {
@@ -110,14 +119,24 @@ describe('accessibility audit', () => {
         await act(async () => { m.router.go(r) })
         await tick(); await tick()
         problems.push(...audit(m.shadow, JSON.stringify(r)))
+        problems.push(...(await axeAudit(m.host, JSON.stringify(r))))
       }
       await act(async () => { setInboxOpen(true) })
       expect(m.shadow.querySelector('[role="dialog"]')).toBeTruthy()
       problems.push(...audit(m.shadow, 'inbox'))
+      problems.push(...(await axeAudit(m.host, 'inbox')))
       await act(async () => { setInboxOpen(false) })
       expect(problems).toEqual([])
     })
   }
+
+  it('lets axe see inside the shadow root', async () => {
+    const host = document.createElement('div')
+    document.body.appendChild(host)
+    host.attachShadow({ mode: 'open' }).innerHTML = '<button type="button"><svg aria-hidden="true"></svg></button>'
+    expect((await axeAudit(host, 'probe')).join()).toMatch(/axe button-name/)
+    host.remove()
+  })
 
   it('checks sentence case the way the copy rules say', () => {
     expect(sentenceCaseProblem('Sync this week')).toBeNull()
