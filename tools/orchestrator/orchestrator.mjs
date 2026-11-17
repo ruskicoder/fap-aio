@@ -60,7 +60,8 @@ function loadTasks() {
 function load() {
   const md = readFileSync(orchPath, 'utf8');
   const registry = table(section(md, 'Task registry'));
-  const gates = table(section(md, 'Gates'));
+  // A gate status may carry a note after its keyword: `waived 2026-11-17 (owner: ...)`.
+  const gates = table(section(md, 'Gates')).map((g) => ({ ...g, note: g.status, status: String(g.status).split(/\s/)[0] }));
   const fixes = table(section(md, 'Fix queue'));
   const control = Object.fromEntries([...section(md, 'Loop control').matchAll(/^([a-z_]+):\s*([^#\n]*)/gm)].map((m) => [m[1], m[2].trim()]));
   return { registry, gates, fixes, control, units: loadTasks() };

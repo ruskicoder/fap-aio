@@ -206,7 +206,7 @@ Sizes are estimates from the record shapes in the feature designs, not measureme
 | `info.user` (lecturer notes, watch keywords, Coursera done) | info | 1 | < 50 KB | permanent |
 | `info.state` (news cursor, course cursor, news seen) | info | 1 | < 50 KB | news seen 30 days |
 | `bg` (pausedUntil, lastFapRequestAt) | info | 1 | < 1 KB | permanent |
-| `appearance.active` | appearance | 1 | < 50 KB | permanent |
+| `appearance.active` | appearance | 1 | < 450 KB (resolved active style; background image up to 300 KB encoded, D-6 2026-11-17) | permanent |
 | `appearance.themes` | appearance | 1 | up to 1.5 MB per theme with an image | 20 custom themes |
 | `data.status` (accepted version, active source, last check, last skip reason) | platform | 1 | < 2 KB | permanent |
 | `diag.counters` | platform | 1 | < 2 KB | reset by "Copy diagnostics" |

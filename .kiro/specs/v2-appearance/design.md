@@ -58,7 +58,7 @@ interface StylePipeline {
 
 - Our sheets are appended after FAP's own adopted sheets, if any, and keep a stable order (R4.5).
 - `vars` is generated as `html[data-bs-theme=light|dark] { --ct-...: ...; }` with higher specificity than Jidox's `:root` and `[data-bs-theme=dark]` rules (R1.2, R3.6).
-- "FAP default" sets every layer except `base` to null and restores the saved original `data-bs-theme` (R1.4).
+- "FAP default" sets the theme layers (`vars`, `effects`, `user`) to null and restores the saved original `data-bs-theme` (R1.4). The `classic` and `dock` layers are layout and stay (D-6, 2026-11-17).
 - No FAP storage is written; the original mode is kept in extension storage (R1.6).
 - The panel's shadow root adopts a derived `panel-theme` sheet carrying the theme's mode and accent (R1.7).
 
@@ -113,7 +113,7 @@ interface Theme {
 - CodeMirror 6 with the CSS language, bundled. It runs inside the panel's shadow root; CodeMirror's own styles are adopted there (R4.1).
 - Live preview: a 300 ms debounced parse into a scratch `CSSStyleSheet`. On success the `user` layer is replaced; on error the last valid CSS stays and the error line is marked (R4.3). `replaceSync` throws on syntax errors in some cases, but browsers also drop invalid rules silently. The editor therefore also runs a light parser (`csstree` validation in a worker) to report positions.
 - Snippets: theme variables and the FAP selector list (R4.2).
-- Background image: an `<input type=file>` reads the file; it is downscaled to at most 2560 px on a canvas, encoded as WebP or JPEG under 1.5 MB, and stored as a data URL (R4.4).
+- Background image: an `<input type=file>` reads the file; it is downscaled to at most 2560 px on a canvas, encoded as WebP or JPEG under 300 KB (D-6, 2026-11-17; was 1.5 MB), and stored as a data URL (R4.4).
 - Safe mode: a setting flag; holding Shift during load is detected in the `document_start` script (R4.6).
 
 ### Import and export (`themes/io.ts`)

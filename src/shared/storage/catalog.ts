@@ -71,7 +71,7 @@ export const CATALOG = {
     }),
   },
   bg: { owner: 'info', version: 1, size: '< 1 KB', retention: 'permanent' },
-  'appearance.active': { owner: 'appearance', version: 1, size: '< 50 KB', retention: 'permanent' },
+  'appearance.active': { owner: 'appearance', version: 1, size: '< 450 KB (image up to 300 KB encoded)', retention: 'permanent' },
   'appearance.themes': { owner: 'appearance', version: 1, size: 'up to 1.5 MB per theme with an image', retention: '20 custom themes' },
   'data.status': { owner: 'platform', version: 1, size: '< 2 KB', retention: 'permanent' },
   'diag.counters': { owner: 'platform', version: 1, size: '< 2 KB', retention: 'reset by Copy diagnostics' },

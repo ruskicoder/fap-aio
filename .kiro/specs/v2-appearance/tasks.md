@@ -6,7 +6,7 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
 
 - [x] 1. [APP-1] Style pipeline and early application
 - [x] 1.1 [APP-1.1] Implement `StylePipeline`, the `document_start` entry and the panel theme
-  - `src/features/appearance/pipeline.ts`: persistent sheets per layer (`base`, `vars`, `effects`, `classic`, `dock`, `user`) applied after FAP's adopted sheets in a stable order; `vars` scoped to `html[data-bs-theme=...]`; "FAP default" clears every layer but `base` and restores the saved `data-bs-theme`.
+  - `src/features/appearance/pipeline.ts`: persistent sheets per layer (`base`, `vars`, `effects`, `classic`, `dock`, `user`) applied after FAP's adopted sheets in a stable order; `vars` scoped to `html[data-bs-theme=...]`; "FAP default" clears the theme layers (`vars`, `effects`, `user`) and restores the saved `data-bs-theme`; `classic` and `dock` stay (D-6, 2026-11-17; R6.1, panel-ux R1.5).
   - `src/content/appearance.ts`: read `appearance.active`, adopt sheets before first paint where possible, set `data-bs-theme`, detect Shift for safe mode, re-apply on `storage.onChanged` without reload; never write FAP storage.
   - A derived `panel-theme` sheet (mode, accent, roles) adopted by the panel's shadow root.
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 4.5, 4.6; panel-ux R1.5, R10.2_
