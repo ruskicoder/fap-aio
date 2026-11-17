@@ -147,9 +147,10 @@ describe('early application', () => {
 describe('panel theme', () => {
   beforeEach(() => { installFakeChrome() })
 
-  it('is empty under FAP default and carries mode, accent and roles under a theme', async () => {
+  it('is empty under FAP default, carries accent and roles under a theme, and sets no color-scheme', async () => {
     expect(panelThemeCss(null)).toBe('')
-    expect(panelThemeCss(style())).toBe(':host{color-scheme:dark;--aio-accent:#3b82f6;--aio-surface:#000000;--aio-text:#ffffff;}')
+    expect(panelThemeCss(style())).toBe(':host{--aio-accent:#3b82f6;--aio-surface:#000000;--aio-text:#ffffff;}')
+    expect(panelThemeCss(style({ roles: {} }))).toBe('')
     const host = document.createElement('div')
     const shadow = host.attachShadow({ mode: 'open' })
     installPanelTheme(shadow, fakeMedia(false).win)
@@ -159,5 +160,24 @@ describe('panel theme', () => {
     await write('appearance.active', single(style()))
     await tick()
     expect(shadow.adoptedStyleSheets[0]!.cssRules[0]!.cssText).toContain('--aio-accent')
+  })
+})
+
+describe('no theme saved', () => {
+  beforeEach(() => {
+    installFakeChrome()
+    document.adoptedStyleSheets = []
+    document.documentElement.setAttribute('data-bs-theme', 'light')
+  })
+
+  it('leaves the FAP page and the panel exactly as they are', async () => {
+    const a = startAppearance(document, fakeMedia(true).win)
+    await a.ready
+    expect(document.adoptedStyleSheets).toHaveLength(0)
+    expect(document.documentElement.getAttribute('data-bs-theme')).toBe('light')
+    const shadow = document.createElement('div').attachShadow({ mode: 'open' })
+    installPanelTheme(shadow, fakeMedia(true).win)
+    await tick()
+    expect(shadow.adoptedStyleSheets.every((s) => s.cssRules.length === 0)).toBe(true)
   })
 })

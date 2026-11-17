@@ -1,6 +1,7 @@
 // Derived `panel-theme` sheet adopted by the panel's shadow root (R1.7; panel-ux design "Visual system"):
-// the active theme's mode and roles as `--aio-*` variables. Under FAP default the sheet is empty, so the
-// agreed panel look is unchanged until a theme is chosen.
+// the active theme's roles as `--aio-*` variables. Under FAP default the sheet is empty. No panel rule
+// reads these variables yet (PNL-3), and `color-scheme` is not set because it would change the panel's
+// native controls; the agreed look of ui/shell.html stays until the G-UI-APPEARANCE audit decides.
 import { read, subscribe } from '../../shared/storage/catalog'
 import { parseActive, resolveStyle, type ActiveStyle, type PanelRole } from './state'
 
@@ -17,14 +18,14 @@ const AIO_VARS: [PanelRole, string][] = [
 
 export function panelThemeCss(style: ActiveStyle | null): string {
   if (!style) return ''
-  const decls = [`color-scheme:${style.mode};`]
+  const decls: string[] = []
   const accent = style.roles.accent ?? style.roles.primary
   if (accent) decls.push(`--aio-accent:${accent};`)
   for (const [role, name] of AIO_VARS) {
     const v = style.roles[role]
     if (v) decls.push(`${name}:${v};`)
   }
-  return `:host{${decls.join('')}}`
+  return decls.length ? `:host{${decls.join('')}}` : ''
 }
 
 /** Adopts the panel-theme sheet into the shadow root and keeps it current. Returns an unsubscribe. */
