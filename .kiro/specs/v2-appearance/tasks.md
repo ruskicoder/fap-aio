@@ -11,8 +11,8 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - A derived `panel-theme` sheet (mode, accent, roles) adopted by the panel's shadow root.
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 4.5, 4.6; panel-ux R1.5, R10.2_
 
-- [ ] 2. [APP-2] Colour engine
-- [ ] 2.1 [APP-2.1] Implement conversions, harmony, contrast and role assignment
+- [x] 2. [APP-2] Colour engine
+- [x] 2.1 [APP-2.1] Implement conversions, harmony, contrast and role assignment
   - `color/`: sRGB, linear, OKLab, OKLCH, hex, rgb, hsl; `harmony(base, scheme)` for the six schemes; `toGamut` by chroma bisection with an adjusted flag.
   - WCAG `contrast`, `fixLightness`, `assignRoles(palette, mode)` with AMOLED surfaces in dark mode; curated swatches (8 families, 12 hues) as constants.
   - Tests: round-trip conversions, gamut mapping, contrast against known pairs.
