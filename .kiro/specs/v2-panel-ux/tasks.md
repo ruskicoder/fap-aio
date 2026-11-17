@@ -24,7 +24,7 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - _Requirements: 2.1, 2.2, 2.5, 4.1, 4.2, 4.3; core R1.8_
 
 - [ ] 3. [PNL-3] Visual system and accessibility
-- [ ] 3.1 [PNL-3.1] Add tokens, theme variables, icons, focus, motion and the virtualized list
+- [x] 3.1 [PNL-3.1] Add tokens, theme variables, icons, focus, motion and the virtualized list
   - Comfortable and compact tokens from the design; `--aio-*` variables derived from the active theme's `panel-theme` sheet with a neutral fallback before appearance loads; system UI font.
   - Tabler outline icons as an SVG sprite inside the shadow root; a visible focus ring on every control; 24 px minimum targets; transitions of 200 ms or less, removed under `prefers-reduced-motion`.
   - A virtualized list component used by lists over 100 items (news, subjects).

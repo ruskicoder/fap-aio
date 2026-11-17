@@ -2,7 +2,7 @@
 import type { ReactNode } from 'react'
 
 export const button = 'inline-flex h-8 items-center rounded border border-gray-300 px-3 text-sm hover:bg-gray-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500'
-export const primary = 'inline-flex h-8 items-center rounded bg-orange-600 px-3 text-sm font-medium text-white hover:bg-orange-700 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1'
+export const primary = 'inline-flex h-control items-center rounded bg-orange-600 px-3 text-sm font-medium text-white hover:bg-orange-700 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1'
 export const select = 'h-8 rounded border border-gray-300 bg-white px-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500'
 
 /** Names the space and offers the single action that fills it (panel-ux R9.3; core R8.5). */

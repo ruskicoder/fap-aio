@@ -2,12 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Panel tokens (panel-ux design, "Layout": density tokens; R10.1 to R10.5). The neutral values match the
+ * agreed light look (ui/shell.html); the derived panel-theme sheet (appearance R1.7) overrides the colour
+ * variables when a theme is active. Density follows the `general.density` setting through data-density.
+ */
 :host {
   all: initial;
   position: fixed;
   z-index: 2147483000;
+  --aio-surface: #ffffff;
+  --aio-surface-alt: #eeede6;
+  --aio-text: #1f2937;
+  --aio-text-muted: #6b7280;
+  --aio-border: #e2e0d8;
+  --aio-accent: #ea580c;
+  --aio-success: #15803d;
+  --aio-warning: #b45309;
+  --aio-danger: #b91c1c;
+  --aio-font-size: 14px;
+  --aio-line: 1.5;
+  --aio-small: 12px;
+  --aio-control-h: 32px;
+  --aio-row-py: 8px;
+  --aio-row-px: 12px;
+  --aio-gap: 16px;
+  --aio-hit: 24px;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #1f2937;
+  font-size: var(--aio-font-size);
+  line-height: var(--aio-line);
+  color: var(--aio-text);
+}
+
+:host([data-density='compact']) {
+  --aio-font-size: 13px;
+  --aio-line: 1.4;
+  --aio-small: 11.5px;
+  --aio-control-h: 28px;
+  --aio-row-py: 4px;
+  --aio-row-px: 8px;
+  --aio-gap: 10px;
+}
+
+@layer base {
+  /* A visible focus ring on every control without its own ring (R10.4). */
+  :where(button, a[href], input, select, textarea, summary, [tabindex]:not([tabindex='-1'])):focus-visible {
+    outline: 2px solid var(--aio-accent);
+    outline-offset: 2px;
+  }
+  /* 24 by 24 px minimum targets (R10.3, WCAG 2.2 target size). */
+  :where(button, [role='tab'], [role='option']) {
+    min-height: var(--aio-hit);
+    min-width: var(--aio-hit);
+  }
+}
+
+/* Motion is short (Tailwind transitions are 150 ms) and removed when the user asks for less (R10.5). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,7 +1,7 @@
 // Panel host (core design, "Panel"): #fap-aio-root on document.body with an open shadow root,
 // the compiled Tailwind CSS adopted as a constructable stylesheet (FAP's CSP blocks <style>),
 // and a React root. Registers itself as the bootstrap's mount hook.
-import { createElement } from 'react'
+import { Fragment, createElement } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import css from './panel.css?inline'
 import { PanelApp } from './PanelApp'
@@ -17,6 +17,9 @@ import { readPrefs } from '../../shared/panel-prefs'
 import { loadPanelState } from './store'
 import { onBoot } from '../modules'
 import { installPanelTheme } from '../../features/appearance/panel-theme'
+import { IconSprite } from './icons'
+import { getSetting } from '../../shared/settings'
+import { subscribe } from '../../shared/storage/catalog'
 import { onMessage } from '../../shared/call'
 import type { PanelState } from '../../shared/panel-state'
 
@@ -42,6 +45,7 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   shadow.adoptedStyleSheets = [sheet]
   // Theme mode and roles for the panel (appearance R1.7); empty under FAP default.
   installPanelTheme(shadow, doc.defaultView ?? window)
+  installDensity(host)
   const mountPoint = doc.createElement('div')
   mountPoint.style.setProperty('height', '100%')
   shadow.appendChild(mountPoint)
@@ -69,12 +73,22 @@ type Updater = (fn: (s: PanelState) => PanelState) => void
 /** The agreed shell (ui/shell.html): header Sync and Settings, tabs, view outlet, status strip. */
 function Shell({ initial, host, version, router, bind }: { initial: PanelState; host: HTMLElement; version: string; router: PanelRouter; bind: (u: Updater) => void }) {
   const sync = useSyncAll()
-  return createElement(PanelApp, {
+  return createElement(Fragment, null, createElement(IconSprite), createElement(PanelApp, {
     initial, host, version, bind, syncing: sync.running,
     onSync: () => void runSyncAll(),
     onSettings: () => router.go({ overlay: 'settings' }),
     status: createElement(ViewStatusStrip, { router }),
-  }, createElement(Navigation, { router }), createElement(ViewOutlet, { router }))
+  }, createElement(Navigation, { router }), createElement(ViewOutlet, { router })))
+}
+
+export type Density = 'comfortable' | 'compact'
+
+/** Keeps `data-density` on the host in step with the `general.density` setting (panel-ux R10.1). */
+export function installDensity(host: HTMLElement): () => void {
+  const apply = (v: unknown) => host.setAttribute('data-density', v === 'compact' ? 'compact' : 'comfortable')
+  apply('comfortable')
+  void getSetting<Density>('general.density', 'comfortable').then(apply)
+  return subscribe('settings', (all) => apply(all?.['general.density']))
 }
 
 export function registerPanelHost(): void {
