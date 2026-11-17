@@ -1,10 +1,11 @@
 // `data.status` handler: storage usage per key, the IndexedDB estimate (platform R4.6) and the data
-// files in use (PLT-6.2). Channel fields (last check, skip reason) come with the data channel (PLT-7).
+// files in use (PLT-6.2), and the data channel's accepted version, last check and skip reason (PLT-7.2).
 import { ok, register } from './router'
 import { usage } from '../shared/storage/catalog'
 import { dataFilesStatus } from './data/handlers'
 import type { DataDeps } from './data/db'
 import type { DataFileStatus } from '../shared/data/types'
+import { channelStatus, type ChannelStatus } from './data-channel'
 
 export interface StorageStatus {
   usage: { perKey: Record<string, number>; total: number }
@@ -24,11 +25,12 @@ export async function storageStatus(): Promise<StorageStatus> {
 
 export interface DataStatus extends StorageStatus {
   data: { files: DataFileStatus[]; version: number | null } | null
+  channel: ChannelStatus
 }
 
 export async function dataStatus(deps: DataDeps = {}): Promise<DataStatus> {
   const data = await dataFilesStatus(deps).catch(() => null)
-  return { ...(await storageStatus()), data }
+  return { ...(await storageStatus()), data, channel: await channelStatus() }
 }
 
 export function installStatus(deps: DataDeps = {}): void {

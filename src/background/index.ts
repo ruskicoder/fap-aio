@@ -11,6 +11,7 @@ import { installDiagnostics } from './diagnostics'
 import { installReminders } from './reminders'
 import { installKeepAlive } from './keepalive'
 import { installCssValidate } from './css-validate'
+import { installDataChannel } from './data-channel'
 
 registerMigrationSteps()
 installRouter()
@@ -24,6 +25,7 @@ installDiagnostics()
 installReminders()
 installKeepAlive()
 installCssValidate()
+installDataChannel()
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'update') void runMigrations()
