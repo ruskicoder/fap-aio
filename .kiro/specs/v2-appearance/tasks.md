@@ -18,11 +18,11 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - Tests: round-trip conversions, gamut mapping, contrast against known pairs.
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 3. [APP-3] Theme model and presets
+- [x] 3. [APP-3] Theme model and presets
 - [x] 3.1 [APP-3.1] Define the theme model and role map
   - `Theme` with zod schema, `role-map.ts` from roles to `--ct-*` groups, explicit variable overrides.
   - _Requirements: 1.2, 3.6_
-- [ ] 3.2 [APP-3.2] Build the eleven presets
+- [x] 3.2 [APP-3.2] Build the eleven presets
   - Light: Glassmorphism, Neumorphism, Minimalist White, Frutiger Aero Green, Frutiger Aero Blue, Liquid Glass, Claymorphism. Dark (true black base): Glassmorphism Dark, Minimalist Black, Liquid Glass Dark, Claymorphism Vibrant Dark. Each with its `effects` block on FAP selectors.
   - A test checks 4.5:1 text and 3:1 component contrast for every preset.
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
