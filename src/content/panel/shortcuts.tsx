@@ -84,7 +84,10 @@ export function registerShortcutSettings(): void {
   for (const a of actionDefs()) {
     registerSetting<null>({
       key: `keys.${a.id}`, section: 'shortcuts', type: 'custom', default: null, transfer: false,
-      label: a.title, description: `Default: ${isMac() ? a.default.mac : a.default.win}. Not active while you type in a field.`,
+      label: a.title,
+      description: (isMac() ? a.default.mac : a.default.win)
+        ? `Default: ${isMac() ? a.default.mac : a.default.win}. Not active while you type in a field.`
+        : 'No default, so it never clashes with Chrome or your system: record your own.',
       component: () => createElement(KeybindRow, { action: a }),
     })
   }
@@ -97,7 +100,7 @@ export function ShortcutsSheet({ mac = isMac() }: { mac?: boolean }) {
   return (
     <div className="p-3">
       <table className="w-full border-collapse text-left text-sm">
-        <caption className="pb-2 text-left text-xs text-gray-600">Shortcuts do not run while you type in a field, except Show or hide the panel.</caption>
+        <caption className="pb-2 text-left text-xs text-gray-600">Shortcuts do not run while you type in a field, except Show or hide the panel. Actions marked None have no default; record one in Settings, Shortcuts.</caption>
         <tbody>
           <tr className="border-b border-gray-100"><td className="py-1.5 pr-3">Show or hide the panel</td><td className="py-1.5">{toggle === null ? null : <Kbd chord={toggle} />}</td></tr>
           {actionDefs().map((a) => (

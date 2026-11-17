@@ -106,7 +106,7 @@ export function registerPanelActions(router: PanelRouter, update: (fn: (s: Panel
   const open = () => update((s) => (s.collapsed ? { ...s, collapsed: false } : s))
   for (let n = 1; n <= 9; n++) {
     registerAction({
-      id: `tab.${n}`, title: `Open tab ${n}`, default: { win: `Alt+${n}`, mac: `Ctrl+${n}` },
+      id: `tab.${n}`, title: `Open tab ${n}`, default: { win: '', mac: '' }, // no default: every candidate collides (F-16)
       run: () => { const t = tabViews()[n - 1]; if (t) { open(); router.go(routeOfView(t)) } },
     })
   }
@@ -120,7 +120,8 @@ export function registerPanelActions(router: PanelRouter, update: (fn: (s: Panel
   registerAction({ id: 'view.next', title: 'Next view', default: { win: 'Alt+]', mac: 'Alt+]' }, run: () => step(1) })
   registerAction({ id: 'view.prev', title: 'Previous view', default: { win: 'Alt+[', mac: 'Alt+[' }, run: () => step(-1) })
   registerAction({ id: 'view.refresh', title: 'Refresh this view', default: { win: 'Alt+R', mac: 'Alt+R' }, run: () => { const fn = refresherFor(routeKey(router.current())); if (fn) fn(); else void runSyncAll() } })
-  registerAction({ id: 'panel.dock', title: 'Dock or undock the panel', default: { win: 'Alt+D', mac: 'Alt+D' }, run: () => update((s) => ({ ...s, collapsed: false, mode: s.mode === 'docked' ? 'floating' : 'docked' })) })
+  // No default: Alt+D is Chrome's address bar on Windows (F-16).
+  registerAction({ id: 'panel.dock', title: 'Dock or undock the panel', default: { win: '', mac: '' }, run: () => update((s) => ({ ...s, collapsed: false, mode: s.mode === 'docked' ? 'floating' : 'docked' })) })
   registerAction({ id: 'inbox', title: 'Open alerts', default: { win: 'Alt+N', mac: 'Alt+N' }, run: () => { open(); toggleInbox() } })
   registerAction({ id: 'sheet', title: 'Show shortcuts', default: { win: '?', mac: '?' }, run: () => { open(); router.go({ overlay: 'shortcuts' }) } })
 }

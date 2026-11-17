@@ -106,14 +106,14 @@ Removed 2026-10-26 by the owner (decision D-3): no command palette, no search an
 
 1. The extension SHALL provide these actions with default keybinds:
    - toggle panel: Alt+Shift+F, through `chrome.commands` so that it works in any FAP tab;
-   - tabs in order: Alt+1 to Alt+9, or Ctrl+1 to Ctrl+9 on macOS;
+   - tabs in order: no default, recorded by the user (Alt+1 to Alt+9 are Chrome's tab keys on Linux, Ctrl+1 to Ctrl+9 switch macOS desktops; D-10, 2026-11-17);
    - next and previous sub-view: Alt+] and Alt+[;
    - refresh current view: Alt+R;
-   - dock toggle: Alt+D;
+   - dock toggle: no default, recorded by the user (Alt+D is Chrome's address bar on Windows; D-10);
    - alerts inbox: Alt+N;
    - shortcuts sheet: `?` when focus is not in a text field.
 2. Settings SHALL list every action with its current keybind, and SHALL let the user record a new keybind, clear it or reset it.
-3. WHEN a recorded keybind is already used by another FAP-AIO action, or is reserved by the browser (Ctrl+T, Ctrl+W, Ctrl+N, Ctrl+Tab and similar), THEN Settings SHALL refuse it and name the conflict.
+3. WHEN a recorded keybind is already used by another FAP-AIO action, or is reserved by the browser (Ctrl+T, Ctrl+W, Ctrl+N, Ctrl+Tab and similar), THEN Settings SHALL refuse it and name the conflict. No default keybind SHALL collide with a Chrome or operating system shortcut (D-10, following D-3).
 4. The toggle-panel keybind SHALL be changed on Chrome's own shortcuts page, which Settings SHALL link to, because `chrome.commands` bindings are managed by the browser.
 5. Page-level shortcuts SHALL NOT fire while focus is in an input, a textarea, a select or a contenteditable element, on FAP or in the panel. The only exception is the toggle key.
 6. A shortcuts sheet SHALL show all current keybinds.

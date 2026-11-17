@@ -42,10 +42,13 @@ export function chordOf(e: Pick<KeyboardEvent, 'key' | 'code' | 'ctrlKey' | 'met
   return [...mods, key].join('+')
 }
 
-/** Chords the browser keeps for itself (R7.3), as a table. */
+/** Chords the browser or the operating system keeps for itself (R7.3), as a table. */
 export const RESERVED: string[] = (['Ctrl', 'Cmd'] as const).flatMap((m) =>
   ['T', 'W', 'N', 'Shift+N', 'Shift+T', 'Tab', 'Shift+Tab', 'L', 'D', 'R', 'F', 'P', 'S', 'H', 'J', 'Q', 'K', 'E', 'O', 'U', 'Shift+Delete', 'Shift+I', 'Shift+J', 'Shift+C', 'F4', 'PageUp', 'PageDown', ...'123456789'].map((k) => `${m}+${k}`),
 ).concat(['Alt+F4', 'Alt+Left', 'Alt+Right', 'Alt+Home', 'F5', 'F6', 'F11', 'F12', 'Alt+F', 'Alt+E', 'Esc', 'Tab', 'Shift+Tab'])
+  // Chrome on Linux switches tabs with Alt+1 to Alt+9, Chrome on Windows focuses the address bar with Alt+D,
+  // and macOS switches desktops with Ctrl+1 to Ctrl+9 and Ctrl+arrows (F-16, D-10).
+  .concat([...'123456789'].map((d) => `Alt+${d}`), ['Alt+D', 'Ctrl+Left', 'Ctrl+Right', 'Ctrl+Up', 'Ctrl+Down'])
 
 export type Overrides = Record<string, string>
 
@@ -55,13 +58,12 @@ export function keybindOf(id: string, overrides: Overrides, mac: boolean): strin
   return id in overrides ? overrides[id]! : mac ? a.default.mac : a.default.win
 }
 
-/** Why a chord cannot be used for this action, or null (R7.3). The tab chords on macOS are allowed defaults. */
+/** Why a chord cannot be used for this action, or null (R7.3). */
 export function conflict(id: string, chord: string, overrides: Overrides, mac: boolean, toggleChord = 'Alt+Shift+F'): string | null {
   if (chord === toggleChord) return 'It opens and closes the panel (set on Chrome\'s shortcuts page).'
   const other = actionDefs().find((a) => a.id !== id && keybindOf(a.id, overrides, mac) === chord)
   if (other) return `It is already used by "${other.title}".`
-  const isDefault = actionDefs().some((a) => (mac ? a.default.mac : a.default.win) === chord)
-  if (RESERVED.includes(chord) && !isDefault) return 'The browser uses it.'
+  if (RESERVED.includes(chord)) return 'The browser or the operating system uses it.'
   if (!/[A-Za-z0-9[\]?]|F\d|Up|Down|Left|Right|Space/.test(chord.split('+').at(-1) ?? '')) return 'Pick a letter, digit or bracket key.'
   if (chord !== '?' && !/^(Ctrl|Cmd|Alt)\+/.test(chord)) return 'Add Ctrl, Alt or Cmd so typing on FAP does not trigger it.'
   return null
