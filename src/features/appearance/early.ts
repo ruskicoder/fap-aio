@@ -6,6 +6,7 @@ import { StylePipeline, THEME_LAYERS, userCss, varsCss } from './pipeline'
 import { ModeGuard } from './mode'
 import { parseActive, resolveStyle, type AppearanceActive } from './state'
 import { startTweaks, type Tweaks } from './layout/tweaks'
+import { startClassic, type Classic } from './layout/classic/controller'
 
 export const SAFE_CLASS = 'fap-aio-safe'
 
@@ -14,6 +15,8 @@ export interface Appearance {
   mode: ModeGuard
   /** Compact, wide and sticky (R7), independent of the theme and of FAP default. */
   tweaks: Tweaks
+  /** Classic layout (R6), independent of the theme and of FAP default. */
+  classic: Classic
   /** Applies a state now (used on load, on storage change and on a colour-scheme change). */
   render(state: AppearanceActive): void
   ready: Promise<void>
@@ -58,6 +61,7 @@ export function startAppearance(doc: Document = document, win: Window = window):
   subscribe('appearance.active', (v) => { changed = true; render(parseActive(v)) })
   const first = (v: unknown) => { if (!changed) render(parseActive(v)) }
   const tweaks = startTweaks(pipeline, doc, win)
-  const ready = Promise.all([read('appearance.active').then(first, () => first(null)), tweaks.ready]).then(() => undefined)
-  return { pipeline, mode, tweaks, render, ready }
+  const classic = startClassic(pipeline, doc)
+  const ready = Promise.all([read('appearance.active').then(first, () => first(null)), tweaks.ready, classic.ready]).then(() => undefined)
+  return { pipeline, mode, tweaks, classic, render, ready }
 }

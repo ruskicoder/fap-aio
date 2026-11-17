@@ -52,7 +52,7 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
 - [ ] 7. [APP-7] Classic FAP layout
-- [ ] 7.1 [APP-7.1] Build the patch framework and wire the Classic setting
+- [x] 7.1 [APP-7.1] Build the patch framework and wire the Classic setting
   - Reversible `Patch` (`hide`, `move`, `insert`) with a log reverted in reverse order; a `MutationObserver` re-applies patches after partial swaps.
   - The Classic setting turns on or off without reload, independent of the theme.
   - Tests: apply then revert restores the DOM byte-identically on the layout, home, grade and timetable fixtures.
