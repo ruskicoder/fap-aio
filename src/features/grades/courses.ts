@@ -90,6 +90,34 @@ export async function recompute(): Promise<void> {
   const s = await readGradeSettings()
   const transcript = (await peek<Transcript>(GRADES_TRANSCRIPT))?.value ?? null
   set({ rows: sortRows(withTargets(state.rows.map((r) => predictRow(r.ref, r.rule, r.sheet, s, r.error)), s, transcript)) })
+  notify(state.rows)
+}
+
+/** Rows from cached pages only, with no FAP request (for Today before Courses has run). */
+export async function cachedRows(rules: RulesLookup = (codes) => dataClient().rules(codes)): Promise<CourseRow[]> {
+  if (state.rows.length) return state.rows
+  const tc = await peek<TermCourses>(GRADES_TERM_COURSES)
+  if (!tc) return []
+  const refs = tc.value.courses.filter((c) => !tc.value.selectedTermId || c.termId === tc.value.selectedTermId)
+  const codes = [...new Set(refs.map((c) => c.code).filter((c): c is string => !!c))]
+  const r = codes.length ? await rules(codes) : null
+  const s = await readGradeSettings()
+  const transcript = (await peek<Transcript>(GRADES_TRANSCRIPT))?.value ?? null
+  const rows = await Promise.all(refs.map(async (ref) => {
+    const sheet = (await peek<MarkSheet>(GRADES_MARK_SHEET, { termId: ref.termId, courseId: ref.id }))?.value ?? null
+    return predictRow(ref, ref.code && r?.ok ? r.value.subjects[ref.code] ?? null : null, sheet, s, null)
+  }))
+  return sortRows(withTargets(rows, s, transcript))
+}
+
+// Alerts and Today listen for new course results (GRD-5.2).
+const resultListeners = new Set<(rows: CourseRow[]) => void>()
+export function onCourseResults(l: (rows: CourseRow[]) => void): () => void {
+  resultListeners.add(l)
+  return () => resultListeners.delete(l)
+}
+function notify(rows: CourseRow[]): void {
+  for (const l of resultListeners) l(rows)
 }
 
 let running: Promise<void> | null = null
@@ -119,6 +147,7 @@ export function loadCourses(opts: { force?: boolean; rules?: RulesLookup } = {})
       if (!ms.ok && ['challenge', 'session-expired', 'feedback-required'].includes(ms.error.kind)) break
     }
     set({ loading: false })
+    notify(state.rows)
   })().finally(() => { running = null })
   return running
 }

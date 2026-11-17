@@ -8,6 +8,7 @@ import { mountTranscriptSummary } from './inline/TranscriptSummary'
 import { mountGradeInline } from './inline/GradeInline'
 import { CoursesView } from './views/CoursesView'
 import { GpaView } from './views/GpaView'
+import { registerGradeToday } from './today'
 
 export const TRANSCRIPT_PATH = /^\/Report\/Transcript(\/|$)/i
 export const GRADE_PATH = /^\/Report\/Grade(\/|$)/i
@@ -17,6 +18,7 @@ export function registerGradeViews(): void {
   // Static loaders: the content script is one IIFE bundle without code splitting.
   registerView({ tab: 'grades', sub: 'courses', label: 'Courses', icon: 'chart', component: async () => CoursesView })
   registerView({ tab: 'grades', sub: 'gpa', label: 'GPA', icon: 'chart', component: async () => GpaView })
+  registerGradeToday()
 }
 
 addModule({

@@ -51,7 +51,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - Grades, Courses: current-term courses with code, name, average, status, effective goal and required scores; failed first; refresh one course at a time when the cache is stale; course detail with components, marks, criteria, warnings and the FLM link; rubric date.
   - Grades, GPA: cumulative and per-semester GPA, GPA goal and reachability, the replaced-subjects table as information only.
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 12.1, 2.4, 1.2_
-- [ ] 5.2 [GRD-5.2] Register the grade Today provider and alerts
+- [x] 5.2 [GRD-5.2] Register the grade Today provider and alerts
   - The `gradeRisk` Today provider (failed or below goal), inbox alerts for grade failures and goal changes.
   - _Requirements: panel-ux R3.1, R6.1_
 - [ ] 5.3 [GRD-5.3] Build the What-if and Planner views
