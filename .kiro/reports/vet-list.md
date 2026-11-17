@@ -41,3 +41,7 @@ Choices made without an audit (owner instruction D-9, 2026-11-17). One line each
 - PNL-9.2 sync step: the primary "Sync this week" runs the header sync (this week and exams), the button reads "Syncing this week" while it runs, the status strip shows progress, then "This week is synced." or the error | alternative: a progress bar inside the dialog.
 - PNL-9.2 reopening: a "Welcome tour" row in Settings, General, with a "Show the welcome" button, because the agreed header has no gear menu with Help | alternative: a Help button in the header.
 - PNL-9.2 first run: the panel opens docked without changing the saved density (comfortable is the default) | alternative: force comfortable on first run even if a setting says compact.
+- CORE-6.2 Today sections: "Next class" (the running class shows "now"), "Later today" (today's classes after it, time on the right), "Exams within 14 days" | alternative: one "Classes today" section with the next class marked.
+- CORE-6.2 class line: `CODE · name` (name from the exam list when known), then room with its site (P.xxx, NVH.xxx, Online), "07:30 to 09:00" and the lecturer | alternative: the slot number instead of the times.
+- CORE-6.2 countdown text: "now", "in 25 min", "in 3 h 10 min", "tomorrow 07:30", "Mon 07:30" | alternative: always the start time.
+- CORE-6.2 exams: `FE · CODE · name`, then room or "Room not assigned yet" and the date and time; amber edge within 3 days, "today", "tomorrow" or "in N days" on the right | alternative: red edge on the exam day.

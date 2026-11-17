@@ -55,7 +55,7 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Tests: resume after interruption, wrong week rejected, empty week, session merge, exam merge.
   - _Requirements: 6.1, 6.2, 6.3, 6.6, 6.7, 6.9, 7.2, 7.3_
 
-- [ ] 6. [CORE-6] Schedule views
+- [x] 6. [CORE-6] Schedule views
 - [x] 6.1 [CORE-6.1] Build the Week and Exams views
   - Schedule, Week through the panel view registry: sessions grouped by day, range filters (today, this week, next two weeks, this month, all), sync week and sync term actions with progress, last-sync stamp, empty state with the sync action.
   - Schedule, Exams with a count badge: upcoming and past, days left, type filter, last-sync stamp, empty state.
@@ -66,7 +66,7 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Exams: Sync exams at the top, Upcoming (n) and Past (n), type chips, cards with the full title, type and countdown tags, format, room, date, time and results lines.
   - Soft tint tags; no `truncate` anywhere in the views; the M1 browser check asserts it.
   - _Requirements: 8.1 to 8.8 (revised 2026-10-31)_
-- [ ] 6.2 [CORE-6.2] Register scheduler Today providers
+- [x] 6.2 [CORE-6.2] Register scheduler Today providers
   - Today providers `nextClass`, `todayClasses`, `examsSoon`. (Palette commands removed 2026-10-26 with panel-ux requirement 5.)
   - _Requirements: panel-ux R3.1_
 

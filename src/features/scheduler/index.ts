@@ -10,6 +10,7 @@ import { WeekView } from './views/WeekView'
 import { ExamsView } from './views/ExamsView'
 import { ExportView } from './views/ExportView'
 import type { ExamStore } from './types'
+import { registerSchedulerToday } from './today'
 
 // Upcoming exams for the segmented-control badge (panel-ux R2.2).
 let upcoming: number | null = null
@@ -28,6 +29,7 @@ export function registerSchedulerViews(): void {
   registerView({ tab: 'schedule', sub: 'export', label: 'Export', icon: 'download', component: async () => ExportView, lastSync: [{ label: 'Classes', key: 'timetable' }, { label: 'Exams', key: 'exams' }] })
   void read('exams').then(countExams)
   subscribe('exams', countExams)
+  registerSchedulerToday()
 }
 
 // Header Sync: this week's classes and the exams (panel-ux R2.3).
