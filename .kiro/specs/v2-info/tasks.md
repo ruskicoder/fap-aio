@@ -60,8 +60,8 @@ Compacted on 2026-10-22 from 21 to 12 subtasks with no requirement dropped; the 
   - Schedule, Exams: grade publication date, resit marking, a link to the course's grade status, and "Refresh mark sheet" once the publication date has passed.
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 4.3, 6.1, 6.2, 6.3_
 
-- [ ] 6. [INF-6] Alerts and settings
-- [ ] 6.1 [INF-6.1] Emit alerts and declare the info settings
+- [x] 6. [INF-6] Alerts and settings
+- [x] 6.1 [INF-6.1] Emit alerts and declare the info settings
   - Attendance level changes, important P1 news (deadline within 14 days, exam eligibility, own subject code, or posted within 3 days) and Coursera before FE pushed to the inbox with dedupe key `${kind}|${itemId}|${level}`; clicks open the panel on the related section.
   - Settings: background refresh (enabled, period), notifications per kind (off by default; turning one on requests `notifications`), watch keywords with the diacritic-insensitive hint, Coursera checks and lecturer notes in `info.user`.
   - _Requirements: 4.4, 7.7, 7.8, 7.9, 8.1, 9.1, 9.2, 9.3; platform R1.3; panel-ux R8.1_
