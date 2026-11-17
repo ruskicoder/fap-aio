@@ -17,7 +17,7 @@ Compacted on 2026-10-22 from 21 to 12 subtasks with no requirement dropped; the 
   - Selectors, news columns and the attendance partial with absences confirmed in gate G-SELECTORS.
   - _Requirements: 7.1, 7.2, 7.6, 4.1; Gate: G-SELECTORS_
 
-- [ ] 2. [INF-2] Analyzers and lecturer directory
+- [x] 2. [INF-2] Analyzers and lecturer directory
 - [x] 2.1 [INF-2.1] Implement `attendanceRisk` and `courseraDue`
   - `allowed = floor(total × (1 − minPercent/100))` with the FLM attendance requirement (80% default, 100% where stated); levels safe, warning, last chance, failed; figures exposed to the grades predictor.
   - A warning per current Coursera course whose item is unchecked and whose FE is synced, with days left.
@@ -27,7 +27,7 @@ Compacted on 2026-10-22 from 21 to 12 subtasks with no requirement dropped; the 
   - Title normalization, tag, families, flags, priority, term tokens, title deadline, personalization (subject codes, Coursera, thesis, cohort, campus; other campus to P4; staff-only hidden), user watch keywords to P1, repost dedupe on the normalized title within 30 days, detail enrichment.
   - Parity test against `tools/news/analyze-news.py` output on a committed fixture of synthetic titles built from the rule families.
   - _Requirements: 7.4, 7.5, 7.6, 7.8, 7.9_
-- [ ] 2.3 [INF-2.3] Build the lecturer directory
+- [x] 2.3 [INF-2.3] Build the lecturer directory
   - Collect from timetable sessions and attendance rows; case-insensitive key with the latest casing for display; pattern check; derived `@fe.edu.vn` (preferred) and `@fpt.edu.vn` addresses; local display names and notes.
   - _Requirements: 3.1, 3.2, 3.3, 3.6, 3.7_
 
