@@ -93,8 +93,8 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - Tests: every form seen on FAP (timetable `P.011`, `NVH 302`; exam list `011`), case and spacing variants, Online and unknown texts unchanged, cards and export.
   - _Requirements: 8.9, 9.14_
 
-- [ ] 8. [CORE-8] Reminders
-- [ ] 8.1 [CORE-8.1] Schedule reminder alarms and fire notifications
+- [x] 8. [CORE-8] Reminders
+- [x] 8.1 [CORE-8.1] Schedule reminder alarms and fire notifications
   - On a `timetable` or `exams` store change and on a reminder setting change, clear `reminder:*` alarms and create one per class (15 or 30 minutes before) and per exam (1 day and 1 hour before) within 30 days, nearest first, below 500 alarms.
   - Turning reminders on requests `notifications` through the platform grant flow; on fire, a notification and an inbox alert; a click focuses a FAP tab on `/WeeklyTimetable` or `/ExamSchedule` or opens one.
   - _Requirements: 10.1, 10.2, 10.3, 10.4; platform R1.3, R1.7_

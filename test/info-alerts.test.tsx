@@ -97,7 +97,7 @@ describe('notification settings', () => {
     await act(async () => { sw.click() })
     await wait()
     expect(sw.getAttribute('aria-checked')).toBe('false')
-    expect(el.querySelector('[role="alert"]')!.textContent).toContain('Chrome did not grant the permission')
+    expect(el.querySelector('[role="alert"]')!.textContent).toContain('Chrome did not grant the notifications permission')
     granted = true
     await act(async () => { sw.click() })
     await wait()

@@ -2,7 +2,10 @@
 // store and is read through storage.onChanged, so a change applies without reload.
 // Reminders (CORE-8) and keep-alive (CORE-9) register their rows when those features ship: a row whose
 // value nothing reads yet would be a control that does not work (conventions rule 10).
+import { createElement } from 'react'
 import { registerSetting } from '../../content/panel/settings/registry'
+import { PermissionToggle } from '../../content/panel/settings/permission-toggle'
+import { registerOptionalFeature } from '../../content/panel/welcome/Welcome'
 
 export const SCHEDULER_KEYS = {
   remindersEnabled: 'schedule.reminders.enabled',
@@ -13,9 +16,12 @@ export const SCHEDULER_KEYS = {
 
 export function registerReminderSettings(): void {
   registerSetting<boolean>({
-    key: SCHEDULER_KEYS.remindersEnabled, section: 'schedule', type: 'toggle', default: false,
-    label: 'Reminders', description: 'Browser notifications before classes and exams; asks for permission first.',
+    key: SCHEDULER_KEYS.remindersEnabled, section: 'schedule', type: 'custom', default: false,
+    label: 'Reminders', description: 'Browser notifications before classes (15 or 30 minutes) and exams (1 day and 1 hour); asks for permission first.',
+    component: () => createElement(PermissionToggle, { settingKey: SCHEDULER_KEYS.remindersEnabled, reason: 'Remind you before classes and exams.' }),
   })
+  // Listed, off, in the first-run welcome (panel-ux R9.1).
+  registerOptionalFeature(SCHEDULER_KEYS.remindersEnabled)
   registerSetting<15 | 30>({
     key: SCHEDULER_KEYS.classOffset, section: 'schedule', type: 'select', default: 15,
     options: [{ value: 15, label: '15 minutes before' }, { value: 30, label: '30 minutes before' }],

@@ -57,6 +57,19 @@ const quiet = 'inline-flex h-control items-center rounded px-3 text-sm font-medi
 function FeatureRow({ settingKey }: { settingKey: string }) {
   const def = settingDef(settingKey)!
   const on = useSetting(def) === true
+  // A setting with its own control (one that asks for a permission first) keeps it here too.
+  if (def.component) {
+    const C = def.component
+    return (
+      <li className="flex items-start gap-3 py-1.5">
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13px] font-medium text-gray-900">{def.label}</span>
+          <span className="block text-xs text-gray-600">{def.description}</span>
+        </span>
+        <C def={def} value={on} set={(v) => void writeSetting(def, v)} />
+      </li>
+    )
+  }
   return (
     <li className="flex items-start gap-3 py-1.5">
       <span className="min-w-0 flex-1">
