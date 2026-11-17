@@ -216,7 +216,7 @@ async function main() {
   await click('button', 'Settings')
   await sleep(600)
   const sections = await ev(`[...${root$}.querySelectorAll('h3')].map((h) => h.textContent.trim())`)
-  note('Settings shows General and Grades', JSON.stringify(sections) === JSON.stringify(['General', 'Grades']), JSON.stringify(sections))
+  note('Settings shows General and Grades first', JSON.stringify(sections.slice(0, 2)) === JSON.stringify(['General', 'Grades']), JSON.stringify(sections))
   await shot('settings')
   await click('button', 'Back').catch(() => {})
 

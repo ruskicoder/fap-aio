@@ -104,8 +104,8 @@ Compacted on 2026-10-22 from 24 to 15 subtasks with no requirement dropped; the 
   - `src/background/keepalive.ts`: alarm `keepalive` at the configured period (default 7, minimum 1); `runOnFapTab('keepalive')`; the tab calls `fapGetJson('/Notification/UnreadCount')` as a background read; skipped when `now − lastFapRequestAt < period`; `session-expired` turns the setting off and pushes an alert; turning it off clears the alarm.
   - _Requirements: 11.1, 11.2, 11.3, 11.4; info R8.7_
 
-- [ ] 10. [CORE-10] Legacy storage cleanup
-- [ ] 10.1 [CORE-10.1] Detect, export and remove legacy keys
+- [x] 10. [CORE-10] Legacy storage cleanup
+- [x] 10.1 [CORE-10.1] Detect, export and remove legacy keys
   - `src/features/legacy/`: match FAP `localStorage` keys against the legacy list and patterns; a one-time banner in the panel; decline stores `legacy.dismissed`.
   - Build the JSON export, start the blob-link download, then remove only the matched keys; reopen from Settings Data.
   - Tests: keys outside the list are never removed.

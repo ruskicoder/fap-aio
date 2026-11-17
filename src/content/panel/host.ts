@@ -21,6 +21,7 @@ import { loadPanelState } from './store'
 import { onBoot } from '../modules'
 import { installPanelTheme } from '../../features/appearance/panel-theme'
 import { IconSprite } from './icons'
+import { useBanners } from './banners'
 import { Bell, InboxPopover, useUnread } from './inbox/Inbox'
 import { getSetting } from '../../shared/settings'
 import { subscribe } from '../../shared/storage/catalog'
@@ -105,7 +106,13 @@ function Shell({ initial, host, version, router, bind }: { initial: PanelState; 
     onSync: () => void runSyncAll(),
     onSettings: () => router.go({ overlay: 'settings' }),
     status: createElement(ViewStatusStrip, { router }),
-  }, createElement(Navigation, { router }), createElement(ViewOutlet, { router })))
+  }, createElement(Banners), createElement(Navigation, { router }), createElement(ViewOutlet, { router })))
+}
+
+/** Module banners above the tabs (the legacy cleanup offer). */
+function Banners() {
+  const list = useBanners()
+  return createElement(Fragment, null, ...list.map((B, i) => createElement(B, { key: i })))
 }
 
 export type Density = 'comfortable' | 'compact'
