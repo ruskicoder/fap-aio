@@ -34,6 +34,9 @@ export default defineConfig(({ mode }) => ({
   // The IIFE content-script build does not set NODE_ENV by itself; without it React ships its dev build.
   define: { 'process.env.NODE_ENV': JSON.stringify(mode === 'development' ? 'development' : 'production') },
   resolve: { alias: { '@': resolve(__dirname, 'src') } },
+  // Escape every non-ASCII character in the output. Chrome refuses a content script that holds a Unicode
+  // noncharacter such as U+FFFF ("isn't UTF-8 encoded"), and CodeMirror's view defines one as a sentinel.
+  esbuild: { charset: 'ascii' },
   build: {
     outDir: 'dist',
     emptyOutDir: true,

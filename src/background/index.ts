@@ -10,6 +10,7 @@ import { installPermissions } from './permissions'
 import { installDiagnostics } from './diagnostics'
 import { installReminders } from './reminders'
 import { installKeepAlive } from './keepalive'
+import { installCssValidate } from './css-validate'
 
 registerMigrationSteps()
 installRouter()
@@ -22,6 +23,7 @@ installPermissions()
 installDiagnostics()
 installReminders()
 installKeepAlive()
+installCssValidate()
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'update') void runMigrations()

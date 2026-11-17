@@ -1,6 +1,6 @@
-// Theme editor for a custom theme (appearance R3.1 to R3.6, R4.4): name and mode, the harmony helper that
-// fills the roles from one colour, a picker per role, measured contrast with a one-click fix, single
-// `--ct-*` variables, and a background image from a local file. Every change previews on this page; Save
+// Theme editor for a custom theme (appearance R3.1 to R3.6, R4.1 to R4.6): name and mode, the harmony helper
+// that fills the roles from one colour, a picker per role, measured contrast with a one-click fix, single
+// `--ct-*` variables, custom CSS, and a background image from a local file. Every change previews on this page; Save
 // keeps it, Cancel drops it.
 import { useEffect, useRef, useState, type DragEvent } from 'react'
 import { Chip, Message, button, primary, select } from '../../scheduler/views/common'
@@ -12,6 +12,7 @@ import { applyTheme, saveCustom } from '../themes/store'
 import { ColorField, field, small } from './ColorField'
 import { checks, fixRole } from './checks'
 import { ACCEPT, REMOTE_REFUSED, imageFromFile, isRemote } from './image'
+import { CssEditor, SafeModeSwitch } from './CssEditor'
 
 export const ROLE_LABELS: Record<RoleName, string> = {
   primary: 'Primary', secondary: 'Secondary', accent: 'Accent', surface: 'Page background', surfaceAlt: 'Panels and menus',
@@ -143,6 +144,10 @@ export function ThemeEditor({ theme, onDone }: { theme: Theme; onDone: (message:
           <button type="button" className={small} disabled={!newVar.name || newVar.value.trim() === '' || varBad} onClick={addVar}>Set</button>
         </div>
         {varBad && <p className="text-xs text-red-700">A value cannot contain ; {'{'} {'}'} {'<'} {'>'} or a backslash.</p>}
+
+        <h3 className={heading}>Custom CSS</h3>
+        <CssEditor value={draft.css} onChange={(c) => set({ css: c })} />
+        <div className="mt-1.5"><SafeModeSwitch /></div>
 
         <h3 className={heading}>Background image</h3>
         <div onDragOver={(e) => e.preventDefault()} onDrop={onDrop} className="rounded-lg border border-dashed border-gray-300 p-3 text-sm text-gray-700">
