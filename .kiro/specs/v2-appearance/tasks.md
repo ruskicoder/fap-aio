@@ -28,7 +28,7 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
 - [ ] 4. [APP-4] Theme view and editors
-- [ ] 4.1 [APP-4.1] Build the Theme view
+- [x] 4.1 [APP-4.1] Build the Theme view
   - Gear, Theme overlay: preset gallery with live preview before apply, "FAP default", duplicate a preset into a custom theme, auto mode with a light and a dark choice following `prefers-color-scheme`.
   - _Requirements: 2.5, 2.6, 1.4, 5.5_
 - [ ] 4.2 [APP-4.2] Build the colour editor and background images

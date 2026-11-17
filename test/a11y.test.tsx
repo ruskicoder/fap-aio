@@ -16,6 +16,7 @@ const { registerSchedulerViews } = await import('../src/features/scheduler/index
 const { clearViews, tabViews, routeOfView } = await import('../src/content/panel/views')
 const { setInboxOpen } = await import('../src/content/panel/inbox/store')
 const { registerGradeViews } = await import('../src/features/grades/index')
+const { registerAppearanceViews } = await import('../src/features/appearance/index')
 const { registerGradeSources } = await import('../src/features/grades/sources')
 const { registerInfoViews } = await import('../src/features/info/index')
 const { registerInfoSources } = await import('../src/features/info/sources')
@@ -44,6 +45,8 @@ export function nameOf(el: Element, root: ParentNode): string {
 
 // Words that keep a capital inside a sentence: names, acronyms, terms, months and days.
 const KEEP = /^(FAP|FAP-AIO|FLM|Coursera|ICS|Google|Outlook|Apple|Calendar|Chrome|Spring|Summer|Fall|Mon|Tue|Wed|Thu|Fri|Sat|Sun|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|I|OK)$/
+// Preset theme names are proper names fixed by appearance R2.1 (Frutiger Aero Blue, Liquid Glass Dark).
+const THEME_WORDS = new Set(['Glassmorphism', 'Neumorphism', 'Minimalist', 'White', 'Black', 'Frutiger', 'Aero', 'Green', 'Blue', 'Liquid', 'Glass', 'Claymorphism', 'Vibrant', 'Dark'])
 /** Sentence case: the first letter capital, other words lower case unless a name, acronym or code. */
 export function sentenceCaseProblem(s: string): string | null {
   // A label built of parts (`Room · Code`) is checked part by part.
@@ -56,7 +59,7 @@ export function sentenceCaseProblem(s: string): string | null {
   for (const w of words.slice(1)) {
     const core = w.replace(/^[^A-Za-zÀ-ỹ]+|[^A-Za-zÀ-ỹ0-9'.-]+$/g, '')
     if (!/^[A-ZÀ-Ỹ]/.test(core)) continue
-    if (KEEP.test(core) || /^[A-Z0-9.\-+]{2,}$/.test(core) || /\d/.test(core) || /^[A-Z]\.?$/.test(core)) continue
+    if (KEEP.test(core) || THEME_WORDS.has(core) || /^[A-Z0-9.\-+]{2,}$/.test(core) || /\d/.test(core) || /^[A-Z]\.?$/.test(core)) continue
     return `"${s}" has a capital on "${core}"`
   }
   return null
@@ -116,11 +119,12 @@ describe('accessibility audit', () => {
       registerGradeViews()
       registerInfoSources()
       registerInfoViews()
+      registerAppearanceViews()
       let m!: Awaited<ReturnType<typeof mountPanel>>
       await act(async () => { m = await mountPanel(document, '') })
       await tick()
       expect(m.host.getAttribute('data-density')).toBe(density)
-      const routes = [...tabViews().map(routeOfView), { overlay: 'settings' as const }]
+      const routes = [...tabViews().map(routeOfView), { overlay: 'settings' as const }, { overlay: 'theme' as const }]
       expect(routes.length).toBeGreaterThanOrEqual(4)
       const problems: string[] = []
       for (const r of routes) {

@@ -7,6 +7,7 @@ import { ModeGuard } from './mode'
 import { parseActive, resolveStyle, type AppearanceActive } from './state'
 import { startTweaks, type Tweaks } from './layout/tweaks'
 import { startClassic, type Classic } from './layout/classic/controller'
+import { PREVIEW_EVENT, readPreview, type Preview } from './preview'
 
 export const SAFE_CLASS = 'fap-aio-safe'
 
@@ -28,10 +29,12 @@ export function startAppearance(doc: Document = document, win: Window = window):
   const media = win.matchMedia?.('(prefers-color-scheme: dark)')
   let state: AppearanceActive = parseActive(null)
   let shiftSafe = false
+  // A theme previewed from the panel on this page; it wins over the stored choice until it ends (R2.5).
+  let preview: Preview | null = null
 
   const render = (next: AppearanceActive) => {
     state = next
-    const style = resolveStyle(state, media?.matches ?? false)
+    const style = preview ? (preview.kind === 'style' ? preview.style : null) : resolveStyle(state, media?.matches ?? false)
     if (!style) {
       for (const l of THEME_LAYERS) pipeline.set(l, null)
       pipeline.apply()
@@ -56,6 +59,7 @@ export function startAppearance(doc: Document = document, win: Window = window):
   win.addEventListener('load', () => doc.removeEventListener('keydown', onKey, true), { once: true })
 
   media?.addEventListener?.('change', () => render(state))
+  doc.addEventListener(PREVIEW_EVENT, (e) => { preview = readPreview(e); render(state) })
   // A change that arrives before the first read wins over that read's older value.
   let changed = false
   subscribe('appearance.active', (v) => { changed = true; render(parseActive(v)) })
