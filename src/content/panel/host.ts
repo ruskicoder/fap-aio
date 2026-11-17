@@ -12,6 +12,7 @@ import { Navigation } from './nav'
 import { pageRoute } from './page-aware'
 import { SettingsView } from './SettingsView'
 import { registerGeneralSettings } from './settings/general'
+import { TodayView } from './today/TodayView'
 import { viewportSize } from './geometry'
 import { runSyncAll, useSyncAll } from './actions'
 import { readPrefs } from '../../shared/panel-prefs'
@@ -63,6 +64,9 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   // Page-aware tab, once per page load (panel-ux R4.1, R4.2).
   if ((await readPrefs()).pageAware) router.go(pageRoute(doc.location?.pathname ?? '/', doc), { source: 'page' })
   registerGeneralSettings()
+  // Today: composed from the modules' providers (panel-ux R3).
+  const Today = () => createElement(TodayView, { router })
+  registerView({ tab: 'today', label: 'Today', icon: 'home', component: async () => Today })
   // The route's section (deep links such as the non-GPA setting) scrolls Settings to it.
   const SettingsOverlay = () => {
     const r = useRoute(router)

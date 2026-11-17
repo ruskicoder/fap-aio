@@ -25,3 +25,9 @@ Choices made without an audit (owner instruction D-9, 2026-11-17). One line each
 - PNL-8.1 section index: hidden while only one section exists; with two or more, a sticky list on the left while docked and a "Go to section" select while floating | alternative: always show it.
 - PNL-8.1 General copy: "Open the tab for the page", "Density" ("Compact fits more rows; comfortable is easier to read."), "When docked" ("Narrow the FAP page so nothing is hidden, or let the panel cover its right side.") | alternative: wording from the en and vi copy pass.
 - PNL-8.1 the default goal tier listed under General in R8.1 is left to GRD-3.1, whose task places it in the Grades section | alternative: move it to General.
+- PNL-9.1 Today tab: registered as the first tab ("Today", home icon) and the page-aware route for FAP pages without their own tab (home and others) | alternative: keep Schedule first until more providers ship.
+- PNL-9.1 calm state: "Nothing needs your attention today." in a soft green box when no attention section has items; the next class and today's classes do not count as attention | alternative: count today's remaining classes as attention.
+- PNL-9.1 no next class: "No upcoming class in your synced schedule." under the calm line | alternative: a "Sync this week" button there.
+- PNL-9.1 items: cards with a coloured left edge by tone (grey, amber, red, green), the time text ("in 25 min") in coral on the right, the detail line below; the whole card is the deep link | alternative: tone as a tag chip like the schedule cards.
+- PNL-9.1 sync line: "Synced 2 min ago" from the most recent provider sync, left of a grey outline "Refresh" button; the button is hidden while no provider can refresh, and Refresh stops at the first failure and shows its text | alternative: the oldest sync time, and refresh all sources even after a failure.
+- PNL-9.1 section headings: small grey upper-case labels, as in Settings | alternative: sentence-case headings.

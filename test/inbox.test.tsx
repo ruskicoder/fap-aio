@@ -9,6 +9,7 @@ vi.mock('../src/content/fap/queue', () => ({ queuedGet: vi.fn(), queue: { curren
 const { alerts, setInboxOpen } = await import('../src/content/panel/inbox/store')
 const { ago } = await import('../src/content/panel/inbox/Inbox')
 const { mountPanel } = await import('../src/content/panel/host')
+const { registerView } = await import('../src/content/panel/views')
 
 ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
 const tick = () => act(async () => { await new Promise((r) => setTimeout(r, 0)) })
@@ -63,6 +64,7 @@ describe('inbox in the panel', () => {
       { id: 's', kind: 'sync', title: 'Sync failed', detail: 'Try again later', at: now - 7200_000, read: false, dedupeKey: 's' },
       { id: 'r', kind: 'sync', title: 'Synced', at: now - 9000_000, read: true, dedupeKey: 'r' },
     ] })
+    registerView({ tab: 'schedule', sub: 'exams', label: 'Exams', icon: 'school', component: async () => () => null })
     let m!: Awaited<ReturnType<typeof mountPanel>>
     await act(async () => { m = await mountPanel(document, '') })
     await tick()
