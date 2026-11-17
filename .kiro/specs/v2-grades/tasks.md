@@ -46,7 +46,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - Integration test reacting to a partial swap.
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 4.9, 4.10_
 
-- [ ] 5. [GRD-5] Panel views
+- [x] 5. [GRD-5] Panel views
 - [x] 5.1 [GRD-5.1] Build the Courses and GPA views
   - Grades, Courses: current-term courses with code, name, average, status, effective goal and required scores; failed first; refresh one course at a time when the cache is stale; course detail with components, marks, criteria, warnings and the FLM link; rubric date.
   - Grades, GPA: cumulative and per-semester GPA, GPA goal and reachability, the replaced-subjects table as information only.
@@ -54,7 +54,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
 - [x] 5.2 [GRD-5.2] Register the grade Today provider and alerts
   - The `gradeRisk` Today provider (failed or below goal), inbox alerts for grade failures and goal changes.
   - _Requirements: panel-ux R3.1, R6.1_
-- [ ] 5.3 [GRD-5.3] Build the What-if and Planner views
+- [x] 5.3 [GRD-5.3] Build the What-if and Planner views
   - What-if: expected averages or component marks per in-progress course, hypothetical future courses, instant term and cumulative GPA, clear in one action, nothing persisted.
   - Planner: target GPA and remaining credits (default from `info.curriculum` not passed, minus the non-GPA list), needed average, unreachable handling.
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 10.1, 10.2, 10.3_
