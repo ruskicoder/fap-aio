@@ -130,6 +130,26 @@ export function isSupportedSchema(id: string): id is SchemaId {
   return Object.prototype.hasOwnProperty.call(DATA_SCHEMAS, id)
 }
 
+/**
+ * Rubric guard (grades R12.3): a `subject-rules` file of another major version is accepted only when the
+ * grades module ships a migration from that major to version 1. None exists yet, so only @1 is accepted.
+ */
+const rubricMigrations = new Map<number, (raw: unknown) => unknown>()
+export function registerRubricMigration(fromMajor: number, migrate: (raw: unknown) => unknown): void {
+  if (fromMajor !== 1) rubricMigrations.set(fromMajor, migrate)
+}
+export function clearRubricMigrations(): void {
+  rubricMigrations.clear()
+}
+
+/** The validator for a schema id, and for a migratable rubric the migration to apply before it. */
+export function resolveSchema(id: string): { id: SchemaId; schema: (typeof DATA_SCHEMAS)[SchemaId]; migrate?: (raw: unknown) => unknown } | null {
+  if (isSupportedSchema(id)) return { id, schema: DATA_SCHEMAS[id] }
+  const m = /^subject-rules@(\d+)$/.exec(id)
+  const migrate = m ? rubricMigrations.get(Number(m[1])) : undefined
+  return migrate ? { id: 'subject-rules@1', schema: DATA_SCHEMAS['subject-rules@1'], migrate } : null
+}
+
 /** The unsigned manifest shipped in the package; the channel manifest adds `keyId` and a signature (PLT-7). */
 export const dataManifest = z.object({
   format: z.literal(1),

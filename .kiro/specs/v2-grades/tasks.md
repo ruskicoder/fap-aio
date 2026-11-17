@@ -59,8 +59,8 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - Planner: target GPA and remaining credits (default from `info.curriculum` not passed, minus the non-GPA list), needed average, unreachable handling.
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 10.1, 10.2, 10.3_
 
-- [ ] 6. [GRD-6] Export and rubric guard
-- [ ] 6.1 [GRD-6.1] Implement the exporter and the rubric schema guard
+- [x] 6. [GRD-6] Export and rubric guard
+- [x] 6.1 [GRD-6.1] Implement the exporter and the rubric schema guard
   - CSV (UTF-8 with BOM) and JSON with transcript rows, per-semester and cumulative GPA, the non-GPA list used and the export date, downloaded through a blob link.
   - Reject a `subject-rules` file whose schema major is not 1 unless a migration exists; show the rubric scrape date and the active data version.
   - _Requirements: 11.1, 11.2, 11.3, 12.1, 12.3; platform R5.4; platform amendment (no `downloads`)_

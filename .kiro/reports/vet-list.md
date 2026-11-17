@@ -49,3 +49,6 @@ Choices made without an audit (owner instruction D-9, 2026-11-17). One line each
 - GRD-3.1 MOOC row without data: "No current course grants a MOOC bonus. Courses appear here after the grade page has been read." | alternative: hide the row until a course qualifies.
 - GRD-3.1 the default goal tier sits in the Grades section, as GRD-3.1 says, not under General as panel-ux R8.1 lists it | alternative: move it to General.
 - PNL-8.1 rows that hold no value of their own (the welcome button, the MOOC list) show no "Default:" line or changed dot and are left out of export, import and reset | alternative: show "Default: none".
+- GRD-6.1 CSV layout: a header block (title, export date, non-GPA list, cumulative GPA and credits), then a per-semester table, the transcript rows with a "Counted in GPA" Yes or No column, and the replaced subjects last as "not counted" | alternative: one flat table with the summary in a second file.
+- GRD-6.1 CSV safety: cells that begin with =, +, - or @ (other than numbers) get a leading ' so a spreadsheet does not run them as formulas | alternative: export the raw text.
+- GRD-6.1 file names: `fap-aio-grades-<yyyy-mm-dd>.csv` and `.json`; the export buttons will sit in the Grades GPA view (GRD-5.1), which also shows "FLM rubric of 10 Oct 2026, data version 1" | alternative: buttons on the transcript page summary.

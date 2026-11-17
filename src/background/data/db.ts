@@ -2,9 +2,8 @@
 // The packaged data files are read with fetch(chrome.runtime.getURL(...)), checked against the packaged
 // manifest (SHA-256 and schema), validated with zod and indexed in one transaction.
 import {
-  DATA_SCHEMAS,
   dataManifest,
-  isSupportedSchema,
+  resolveSchema,
   type DataFileName,
   type DataManifest,
   type SubjectFull,
@@ -129,13 +128,17 @@ export async function checkFile(
   entry: DataManifest['files'][number],
   bytes: Uint8Array,
 ): Promise<{ text: string; value: unknown }> {
-  if (!isSupportedSchema(entry.schema)) throw new Error(`${entry.name}: unsupported schema ${entry.schema}`)
+  // A rubric of another major version is accepted only through a migration to subject-rules@1 (grades R12.3).
+  const resolved = resolveSchema(entry.schema)
+  if (!resolved) throw new Error(`${entry.name}: unsupported schema ${entry.schema}`)
   const hash = await sha256Hex(bytes)
   if (hash !== entry.sha256) throw new Error(`${entry.name}: SHA-256 mismatch`)
   const text = new TextDecoder().decode(bytes)
-  const parsed = DATA_SCHEMAS[entry.schema].safeParse(JSON.parse(text))
-  if (!parsed.success) throw new Error(`${entry.name}: does not match ${entry.schema}`)
-  return { text, value: parsed.data }
+  const raw: unknown = JSON.parse(text)
+  const parsed = resolved.schema.safeParse(resolved.migrate ? resolved.migrate(raw) : raw)
+  if (!parsed.success) throw new Error(`${entry.name}: does not match ${resolved.id}`)
+  // A migrated file is stored in its version 1 form, so readers parse it with the version 1 schema.
+  return { text: resolved.migrate ? JSON.stringify(parsed.data) : text, value: parsed.data }
 }
 
 /** Builds the subject and search records from the two FLM files. */
