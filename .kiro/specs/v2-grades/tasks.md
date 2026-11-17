@@ -38,7 +38,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - _Requirements: 2.3, 7.1, 7.2, 7.7; panel-ux R8.1_
 
 - [ ] 4. [GRD-4] Inline page enhancements
-- [ ] 4.1 [GRD-4.1] Build `TranscriptSummary`
+- [x] 4.1 [GRD-4.1] Build `TranscriptSummary`
   - Shadow-rooted block before the transcript card with cumulative GPA, counted credits and per-semester GPA; `fap-aio-gpa-counted` row class styled through a page-level constructable sheet; links to the Grades view, the what-if simulator and the non-GPA setting; a layout-changed notice instead of a summary on parse failure.
   - _Requirements: 3.1, 3.2, 3.3, 3.4_
 - [ ] 4.2 [GRD-4.2] Build `GradeInline`

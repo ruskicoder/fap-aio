@@ -25,7 +25,7 @@ import { Bell, InboxPopover, useUnread } from './inbox/Inbox'
 import { getSetting } from '../../shared/settings'
 import { subscribe } from '../../shared/storage/catalog'
 import { onMessage } from '../../shared/call'
-import type { PanelState } from '../../shared/panel-state'
+import type { PanelState, Route } from '../../shared/panel-state'
 
 export const HOST_ID = 'fap-aio-root'
 
@@ -80,7 +80,17 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   root.render(createElement(Shell, { initial: { ...initial, route: router.current() }, host, version, router, bind: (u: Updater) => { updater = u } }))
   // Toolbar button and the toggle-panel command (panel-ux R7.1).
   onMessage('panel.toggle', () => updater?.((s) => ({ ...s, collapsed: !s.collapsed })))
+  opener = (r) => {
+    updater?.((s) => ({ ...s, collapsed: false }))
+    router.go(r, { source: 'deeplink' })
+  }
   return { host, shadow, root, router }
+}
+
+let opener: ((r: Route) => void) | null = null
+/** Opens the panel (if minimized) at a route: for links in inline page blocks (grades R3.3). */
+export function openPanelAt(r: Route): void {
+  opener?.(r)
 }
 
 type Updater = (fn: (s: PanelState) => PanelState) => void
