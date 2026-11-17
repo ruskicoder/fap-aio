@@ -24,13 +24,13 @@ export function Tablist({ label, items, active, onActivate }: { label: string; i
     e.preventDefault()
   }
   return (
-    <div role="tablist" aria-label={label} className="flex shrink-0 border-b border-gray-200">
+    <div role="tablist" aria-label={label} className="flex shrink-0 overflow-x-auto border-b border-gray-200">
       {items.map((it, i) => {
         const on = it.id === active
         return (
           <button key={it.id} ref={(el) => { refs.current[i] = el }} type="button" role="tab" aria-selected={on}
             tabIndex={i === tabStop ? 0 : -1} onClick={() => onActivate(it.id)} onKeyDown={(e) => onKey(e, i)}
-            className={`inline-flex h-10 flex-1 items-center justify-center border-b-2 px-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 ${on ? 'border-orange-600 font-semibold text-gray-900' : 'border-transparent text-gray-600 hover:text-gray-900'}`}>
+            className={`inline-flex h-10 min-w-max flex-1 items-center justify-center whitespace-nowrap border-b-2 px-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 ${on ? 'border-orange-600 font-semibold text-gray-900' : 'border-transparent text-gray-600 hover:text-gray-900'}`}>
             {it.label}
           </button>
         )
