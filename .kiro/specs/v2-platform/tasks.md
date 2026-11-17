@@ -70,13 +70,13 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - Synthetic mark sheets for the validation categories (pass, fail with an average of 5 or more, bonus, resit, unscored, uneven groups, summary rows only); expected results from `tools/flm-scraper/marksheet.mjs` and `predict.mjs`, written to `test/fixtures/grades/golden.json`.
   - _Requirements: 8.4; grades R4, R5_
 
-- [ ] 6. [PLT-6] Packaged data and IndexedDB data service
+- [x] 6. [PLT-6] Packaged data and IndexedDB data service
 - [x] 6.1 [PLT-6.1] Package the data files and build the IndexedDB store
   - Copy `data/flm/subject-rules.json`, `data/flm/subject-list.json` and `data/news/news-rules.json` into the build; generate an unsigned `data/manifest.json` with `dataVersion` and SHA-256 values; zod schemas `subject-rules@1`, `subject-list@1`, `news-rules@1` validated against the committed files in a test.
   - `src/background/data/db.ts` with stores `files`, `subjects`, `overrides`, `search`; on install, read the packaged files with `fetch(chrome.runtime.getURL(...))` and index them in one transaction; re-index from packaged files when the database is missing.
   - Tests with `fake-indexeddb`.
   - _Requirements: 4.2, 5.1, 7.4_
-- [ ] 6.2 [PLT-6.2] Add the data query handlers and client
+- [x] 6.2 [PLT-6.2] Add the data query handlers and client
   - Handlers `data.rules`, `data.subject`, `data.search` (normalized tokens: NFD, diacritics removed, `đ` to `d`, lowercase), `data.file`, `data.status`; the content-side `dataClient` with an in-memory cache per tab.
   - Lookup order: override when its syllabus is newer than or equal to the active entry, else the active entry.
   - _Requirements: 2.4, 6.5, 6.6; grades R12.2; info R2.1_
