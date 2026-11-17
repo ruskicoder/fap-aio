@@ -126,8 +126,7 @@
    "title": "Thông báo về BHYT năm 2027 bắt buộc với sinh viên",
    "tag": "other",
    "families": [
-    "health-insurance",
-    "thesis"
+    "health-insurance"
    ],
    "priority": "P1",
    "deadline": null,
@@ -491,10 +490,8 @@
   {
    "title": "Thông báo về việc gia hạn nộp hồ sơ",
    "tag": "other",
-   "families": [
-    "thesis"
-   ],
-   "priority": "P1",
+   "families": [],
+   "priority": "P4",
    "deadline": null,
    "term": {
     "season": null,
@@ -552,6 +549,35 @@
    ],
    "priority": "P2",
    "deadline": "2026-11-25",
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thông báo về lịch bảo vệ khóa luận tốt nghiệp đợt 2",
+   "tag": "other",
+   "families": [
+    "thesis",
+    "graduation"
+   ],
+   "priority": "P1",
+   "deadline": null,
+   "term": {
+    "season": null,
+    "half": null,
+    "block": null,
+    "cohort": null
+   }
+  },
+  {
+   "title": "Thông báo về việc nộp đơn xin nghỉ học",
+   "tag": "other",
+   "families": [],
+   "priority": "P4",
+   "deadline": null,
    "term": {
     "season": null,
     "half": null,

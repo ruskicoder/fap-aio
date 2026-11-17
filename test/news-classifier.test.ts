@@ -31,6 +31,13 @@ describe('title step parity', () => {
     expect(JSON.parse(out)).toEqual(expected)
   })
 
+  it('does not read "Thông báo về" as a thesis defence (fix F-17)', () => {
+    expect(classifyTitle('Thông báo về việc nộp đơn xin nghỉ học', rules).families).not.toContain('thesis')
+    expect(classifyTitle('Thông báo về BHYT năm 2027', rules).families).toEqual(['health-insurance'])
+    expect(classifyTitle('Lịch bảo vệ khóa luận tốt nghiệp', rules).families).toContain('thesis')
+    expect(classifyTitle('Thông báo về lịch bảo vệ khóa luận', rules).families).toContain('thesis')
+  })
+
   it('normalizes as the rules say', () => {
     expect(normTitle('  [QLĐT]  Đăng ký   MÔN học ')).toBe('[qldt] dang ky mon hoc')
   })
