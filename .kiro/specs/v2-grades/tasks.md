@@ -23,7 +23,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
 - [x] 2.2 [GRD-2.2] Implement `CourseModeler`
   - Port of `courseModel`: token-overlap mapping with aliases and confidence, even and uneven groups, resit replacement, summary rows, FLM plan without items, `unscored` and `none` results, rubric lookup through `dataClient` with the trailing lowercase fallback, flags.
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 4.10, 12.2_
-- [ ] 2.3 [GRD-2.3] Implement `Predictor`
+- [x] 2.3 [GRD-2.3] Implement `Predictor`
   - Port of `predict` with `displayed = round1(min(10, Σ w·score + bonus))`, component criteria (FE never below 4, progress above 0, group criterion on the weighted average), pass mark from FLM or 5, tier bisection with the 0.05 allowance in 0.1 steps, attendance allowance, Coursera warning, assumed MOOC bonus.
   - Golden tests: every case in `test/fixtures/grades/golden.json` matches; 4.95 passes and 4.94 fails.
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8_
