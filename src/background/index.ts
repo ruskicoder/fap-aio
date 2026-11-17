@@ -6,6 +6,7 @@ import { installStatus } from './status'
 import { installBudget } from './budget-handlers'
 import { installDataStore } from './data/db'
 import { installDataHandlers } from './data/handlers'
+import { installPermissions } from './permissions'
 
 registerMigrationSteps()
 installRouter()
@@ -14,6 +15,7 @@ installStatus()
 installBudget()
 installDataStore()
 installDataHandlers()
+installPermissions()
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'update') void runMigrations()

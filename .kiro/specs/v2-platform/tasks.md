@@ -94,8 +94,8 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - Integration tests with a stubbed `fetch`: valid update, wrong key, tampered file, lower version, high `minExtensionVersion`, rollback republish under a new version.
   - _Requirements: 5.6, 5.7, 5.8_
 
-- [ ] 8. [PLT-8] Optional permissions
-- [ ] 8.1 [PLT-8.1] Build the grant flow and handle removal
+- [x] 8. [PLT-8] Optional permissions
+- [x] 8.1 [PLT-8.1] Build the grant flow and handle removal
   - `grant.html` (one sentence of purpose, one button) opened with `chrome.windows.create`; `perm.request` and `perm.result` with the 120 s timeout; a closed window counts as refused.
   - `permissions.onRemoved` turns off reminders and alert notifications (`notifications`) or live FLM read (FLM host) and pushes an alert with the reason; a `notify` handler mirrors alerts only when the kind is enabled and the permission is held.
   - _Requirements: 1.3, 1.4, 1.6, 1.7; panel-ux R6.5_

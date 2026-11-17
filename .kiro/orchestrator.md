@@ -100,7 +100,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | PLT-5.1 | Anonymizer, deny-list check and committed fixtures | v2-platform | M1 | - | G-CAPTURE | todo |
 | PLT-6 | Packaged data and IndexedDB data service | v2-platform | M2 | PLT-2, PLT-3 | G-UAT-M1 | done |
 | PLT-7 | Signed data channel | v2-platform | M5 | PLT-6 | G-UAT-M4 | todo |
-| PLT-8 | Optional permissions | v2-platform | M2 | PLT-2 | G-UAT-M1 | todo |
+| PLT-8 | Optional permissions | v2-platform | M2 | PLT-2 | G-UAT-M1 | done |
 | PLT-9 | Live FLM read | v2-platform | M5 | PLT-6, PLT-8 | G-UAT-M4 | todo |
 | PLT-9.2 | Implement flm.refresh | v2-platform | M5 | PLT-9.1 | G-FLM-COOKIE, G-UAT-M4 | todo |
 | PLT-10 | Privacy, diagnostics and release | v2-platform | M3 | PLT-2, PLT-3 | G-UAT-M2 | todo |
@@ -272,3 +272,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-11-17 | owner decisions | D-4 to D-9 recorded (owner: build with defaults, vet at final UAT); G-UI-TODAY, G-UI-SETTINGS, G-UI-GRADES, G-UI-INFO, G-UI-APPEARANCE and G-UAT-M2 to M4 waived; F-11 and F-12 added; APP-1.1 task and appearance design text (FAP default, 300 KB image cap), GRD-2.3 task text and platform catalog estimate revised with old copies in `.deprecated/2026-11-17-owner-defaults/`; checker reads the first word of a gate status; `.kiro/reports/vet-list.md` started | orchestrator check ok | committed (cloud/build)
 - 2026-11-17 | F-11 | FE floor `Math.max(4, finalExamMin)` in `src/features/grades/engine/predict.ts` and `tools/flm-scraper/predict.mjs`; test with rules asking 3 | tsc, eslint src, 246 passed and 1 skipped of 247 tests | committed (cloud/build)
 - 2026-11-17 | F-12 | needed score per remaining component checked as round1(total) at least the tier (0.05 allowance) in `predict.ts` and `tools/flm-scraper/predict.mjs`; `golden.json` regenerated with `tools/fixtures/grade-cases.mjs`, only required scores changed | tsc, eslint src, 247 passed and 1 skipped of 248 tests | committed (cloud/build)
+- 2026-11-17 | PLT-8.1 | src/background/permissions.ts (perm.request opens grant.html in a 420 x 280 popup when missing, joins an open request, refused on a closed window or 120 s; perm.result settles and turns dependents off on refusal; permissions.onRemoved turns dependent settings off and pushes an alert; notify mirrors an alert only when alerts.notify.<kind> is on and notifications are held), src/pages/grant/ (GrantPage per D-4: header bar with the mark, one sentence, one coral button, waiting, granted closing after 1.5 s, refused with Close, expired; Tailwind sheet), src/shared/{permissions,settings,alerts}.ts; 5 vet-list lines | tsc, eslint src, 255 passed and 1 skipped of 256 tests, build | committed (cloud/build)
