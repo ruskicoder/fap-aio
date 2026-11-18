@@ -125,7 +125,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | PNL-4.2 | Reserve the width through the appearance pipeline | v2-panel-ux | M3 | PNL-4.1 | G-SELECTORS, G-UAT-M2 | todo |
 | PNL-6 | Alerts inbox | v2-panel-ux | M2 | PNL-2, PLT-8 | G-UI-SHELL, G-UAT-M1 | done |
 | PNL-7 | Keyboard shortcuts and keybinds | v2-panel-ux | M3 | PNL-6, PNL-8.1 | G-UI-SHELL, G-UAT-M2 | done |
-| PNL-8 | Settings registry and Settings view | v2-panel-ux | M2 | PNL-2 | G-UI-SETTINGS, G-UAT-M1 | doing |
+| PNL-8 | Settings registry and Settings view | v2-panel-ux | M2 | PNL-2 | G-UI-SETTINGS, G-UAT-M1 | done |
 | PNL-8.3 | Data and privacy and About sections | v2-panel-ux | M5 | PLT-3.1, PLT-7.3, PLT-10.1 | G-UAT-M4 | done |
 | PNL-9 | Today view and first run | v2-panel-ux | M2 | PNL-2, CORE-5 | G-UI-TODAY, G-UAT-M1 | done |
 | GRD-1 | Grade sources and parsers | v2-grades | M2 | CORE-3 | G-UAT-M1 | done |
