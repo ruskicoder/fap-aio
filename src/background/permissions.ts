@@ -64,6 +64,10 @@ async function onRemoved(removed: chrome.permissions.Permissions): Promise<void>
 
 export function installPermissions(): void {
   register('perm.request', async (m) => ok({ granted: await requestPermission(m.perm) }))
+  register('perm.state', async () => ok({
+    notifications: await chrome.permissions.contains(PERMS.notifications).catch(() => false),
+    flm: await chrome.permissions.contains(PERMS.flm).catch(() => false),
+  }))
   register('perm.result', async (m) => {
     settle(m.perm, m.granted)
     if (!m.granted) await disableDependents(m.perm)

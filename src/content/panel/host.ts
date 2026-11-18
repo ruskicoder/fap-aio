@@ -16,6 +16,7 @@ import { Navigation } from './nav'
 import { pageRoute } from './page-aware'
 import { SettingsView } from './SettingsView'
 import { registerGeneralSettings } from './settings/general'
+import { registerDataAndAbout } from './settings/data-privacy'
 import { registerClearData } from './settings/clear-data'
 import { TodayView } from './today/TodayView'
 import { Welcome, isFirstRun } from './welcome/Welcome'
@@ -73,6 +74,7 @@ export async function mountPanel(doc: Document = document, cssText: string = css
   // Page-aware tab, once per page load (panel-ux R4.1, R4.2).
   if ((await readPrefs()).pageAware) router.go(pageRoute(doc.location?.pathname ?? '/', doc), { source: 'page' })
   registerGeneralSettings()
+  registerDataAndAbout()
   registerClearData()
   // Today: composed from the modules' providers (panel-ux R3).
   const Today = () => createElement(TodayView, { router })

@@ -27,6 +27,8 @@ export const MsgSchema = z.discriminatedUnion('type', [
   msg('budget.acquire', { priority: z.enum(['user', 'background']), source: z.string() }),
   msg('budget.release', { grantId: z.string(), outcome: z.enum(['ok', 'error', 'challenge']) }),
   msg('perm.request', { perm, reason: z.string() }),
+  // Which optional permissions are held; content scripts cannot ask chrome.permissions (platform R1.6).
+  msg('perm.state', {}),
   msg('notify', { alert: AlertSummarySchema }),
   msg('data.rules', { codes: z.array(z.string()) }),
   msg('data.subject', { code: z.string() }),

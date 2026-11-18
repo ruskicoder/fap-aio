@@ -64,7 +64,7 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
 - [x] 8.2 [PNL-8.2] Add export, import and reset
   - JSON `{ formatVersion: 1, settings }`; import validates each key and shows a diff before applying; reset section and reset all with confirmation.
   - _Requirements: 8.4, 8.5_
-- [ ] 8.3 [PNL-8.3] Build the Data and privacy and About sections
+- [x] 8.3 [PNL-8.3] Build the Data and privacy and About sections
   - Usage per store and IndexedDB total (`data.status`), export all data, clear data, legacy cleanup, data version and source, "Check for data updates", "Use packaged data", last skip reason, optional permission states, "Copy diagnostics"; About shows version, rubric and rules dates and links.
   - _Requirements: 8.1; platform R4.6, R5.7, R7.3; core R5.5, R12.4_
 
