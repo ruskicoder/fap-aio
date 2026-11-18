@@ -81,7 +81,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - Lookup order: override when its syllabus is newer than or equal to the active entry, else the active entry.
   - _Requirements: 2.4, 6.5, 6.6; grades R12.2; info R2.1_
 
-- [ ] 7. [PLT-7] Signed data channel
+- [x] 7. [PLT-7] Signed data channel
 - [x] 7.1 [PLT-7.1] Write the offline signing tool `tools/data-sign/`
   - `keygen` (32 random bytes as a Crockford base32 phrase), deterministic HKDF-SHA256 derivation to a P-256 key, `keyId`, `publish <dir>` (hash, next `dataVersion`, sign, verify against `src/shared/keyring.ts`, print the git commands for `data/live` and `data/<date>`), `verify`.
   - Tests: the same phrase gives the same `keyId` twice; a signature verifies with WebCrypto in Node.
@@ -89,7 +89,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
 - [x] 7.2 [PLT-7.2] Implement the channel client
   - `src/background/data-channel.ts`: alarm `data-check` (60 s after install or update, then weekly), manifest and signature GET with `cache: 'no-store'` and `credentials: 'omit'`, verification (key ring, signature, increasing `dataVersion`, `minExtensionVersion`, `format`), download of changed files only, SHA-256 and schema checks, one-transaction activation, `data.progress` broadcasts and `data.status.lastSkip`.
   - _Requirements: 5.2, 5.3, 5.4, 5.5, 5.6, 7.1_
-- [ ] 7.3 [PLT-7.3] Add "Check for data updates" and "Use packaged data"
+- [x] 7.3 [PLT-7.3] Add "Check for data updates" and "Use packaged data"
   - Handlers `data.check` and `data.usePackaged`; the weekly check pauses while packaged data is forced.
   - Integration tests with a stubbed `fetch`: valid update, wrong key, tampered file, lower version, high `minExtensionVersion`, rollback republish under a new version.
   - _Requirements: 5.6, 5.7, 5.8_

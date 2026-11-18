@@ -6,7 +6,8 @@
 import { KEYRING, type RingKey } from '../shared/keyring'
 import { dataManifest, type DataFileName, type DataManifest, type SubjectListFile, type SubjectRulesFile } from '../shared/data/schemas'
 import { read, update } from '../shared/storage/catalog'
-import { buildIndex, checkFile, openDataDb, readFiles, writeIndex, type FileRecord, type PreparedData } from './data/db'
+import { buildIndex, checkFile, indexPackaged, openDataDb, readFiles, readPackagedManifest, writeIndex, type FileRecord, type PreparedData } from './data/db'
+import { ok, register } from './router'
 import { broadcast } from './tabs'
 
 export const CHANNEL_BASE = 'https://raw.githubusercontent.com/ruskicoder/fap-aio/refs/heads/data/live/'
@@ -38,6 +39,8 @@ export interface ChannelDeps {
   extensionVersion?: string
   now?: () => number
   notify?: (m: { state: 'syncing' | 'idle'; version: number | null; skipped?: string }) => Promise<void>
+  /** After "Use packaged data", a manual check may restore the version already accepted (never a lower one). */
+  allowEqual?: boolean
 }
 
 export type CheckResult = { kind: 'updated'; version: number } | { kind: 'current'; version: number } | { kind: 'skipped'; reason: string }
@@ -104,7 +107,7 @@ async function runCheck(deps: ChannelDeps): Promise<CheckResult> {
     let sig: Uint8Array
     try { sig = b64(sigText) } catch { throw new Skip('the signature file is not base64') }
     const m = await verifyManifest(bytes, sig, ring)
-    if (m.dataVersion <= status.acceptedVersion) throw new Skip(`the channel offers version ${m.dataVersion}, not newer than ${status.acceptedVersion}`)
+    if (m.dataVersion < status.acceptedVersion || (m.dataVersion === status.acceptedVersion && !deps.allowEqual)) throw new Skip(`the channel offers version ${m.dataVersion}, not newer than ${status.acceptedVersion}`)
     if (m.minExtensionVersion && !versionAtMost(m.minExtensionVersion, extVersion)) throw new Skip(`the data needs FAP-AIO ${m.minExtensionVersion} or newer`)
     if (m.dataVersion <= activeVersion) {
       await update('data.status', (o) => ({ ...EMPTY_STATUS, ...(o ?? {}), acceptedVersion: m.dataVersion, lastCheck: now(), lastSkip: null }))
@@ -142,8 +145,34 @@ async function runCheck(deps: ChannelDeps): Promise<CheckResult> {
   }
 }
 
+/**
+ * "Use packaged data" (R5.7): index the packaged files again and pause the weekly check; the accepted
+ * version stays, so an older channel manifest is still refused later (R5.8).
+ */
+export async function usePackaged(deps: ChannelDeps & { getURL?: (p: string) => string } = {}): Promise<number> {
+  await update('data.status', (o) => ({ ...EMPTY_STATUS, ...(o ?? {}), forcePackaged: true }))
+  const { db } = await openDataDb(deps.idb)
+  try {
+    const manifest = await readPackagedManifest({ fetch: deps.fetch, getURL: deps.getURL })
+    await indexPackaged(db, { fetch: deps.fetch, getURL: deps.getURL }, manifest)
+    await (deps.notify ?? ((m) => broadcast({ type: 'data.progress', ...m })))({ state: 'idle', version: manifest.dataVersion })
+    return manifest.dataVersion
+  } finally {
+    db.close()
+  }
+}
+
+/** "Check for data updates" (R5.6, R5.7): ends a forced packaged state and checks the channel now. */
+export async function checkNow(deps: ChannelDeps = {}): Promise<CheckResult> {
+  const forced = (await channelStatus()).forcePackaged
+  if (forced) await update('data.status', (o) => ({ ...EMPTY_STATUS, ...(o ?? {}), forcePackaged: false }))
+  return checkChannel({ ...deps, allowEqual: forced })
+}
+
 /** 60 s after install or update, then weekly; paused while packaged data is forced (R5.2, R5.7). */
 export function installDataChannel(): void {
+  register('data.check', async () => ok(await checkNow()))
+  register('data.usePackaged', async () => ok({ version: await usePackaged() }))
   chrome.runtime.onInstalled.addListener(() => {
     void chrome.alarms.create(ALARM, { when: Date.now() + 60_000, periodInMinutes: WEEK_MIN })
   })
