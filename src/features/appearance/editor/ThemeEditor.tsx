@@ -12,7 +12,9 @@ import { applyTheme, saveCustom } from '../themes/store'
 import { ColorField, field, small } from './ColorField'
 import { checks, fixRole } from './checks'
 import { ACCEPT, REMOTE_REFUSED, imageFromFile, isRemote } from './image'
-import { CssEditor, SafeModeSwitch } from './CssEditor'
+import { SafeModeSwitch } from './SafeModeSwitch'
+import { call } from '../../../shared/call'
+import { useStore } from '../../../content/panel/use-store'
 
 export const ROLE_LABELS: Record<RoleName, string> = {
   primary: 'Primary', secondary: 'Secondary', accent: 'Accent', surface: 'Page background', surfaceAlt: 'Panels and menus',
@@ -32,6 +34,16 @@ export function ThemeEditor({ theme, onDone }: { theme: Theme; onDone: (message:
   const [imgNote, setImgNote] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  const [cssNote, setCssNote] = useState<string | null>(null)
+  // The CSS belongs to the CSS editor window (F-21): saved CSS flows back here, and this editor never
+  // overwrites it with an older copy.
+  const storedCss = useStore('appearance.themes').data?.themes.find((t) => t.id === theme.id)?.css
+  useEffect(() => { if (storedCss !== undefined) setDraft((d) => (d.css === storedCss ? d : { ...d, css: storedCss })) }, [storedCss])
+  const openCss = async () => {
+    setCssNote(null)
+    const r = await call({ type: 'editor.open', mode: 'css', themeId: theme.id }).catch(() => null)
+    if (!r || !r.ok) setCssNote('The CSS editor could not open. Reload this page and try again.')
+  }
 
   // Live preview on this page, 150 ms after the last change; it ends when the editor closes.
   useEffect(() => {
@@ -147,7 +159,12 @@ export function ThemeEditor({ theme, onDone }: { theme: Theme; onDone: (message:
         {varBad && <p className="text-xs text-red-700">A value cannot contain ; {'{'} {'}'} {'<'} {'>'} or a backslash.</p>}
 
         <h3 className={heading}>Custom CSS</h3>
-        <CssEditor value={draft.css} onChange={(c) => set({ css: c })} />
+        <p className="text-sm text-gray-700">{draft.css.trim() ? `${draft.css.split('\n').length} lines of custom CSS.` : 'No custom CSS yet.'}</p>
+        <p className="text-xs text-gray-600">The CSS editor opens in its own window; this page shows your CSS as you type there.</p>
+        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+          <button type="button" className={button} onClick={() => void openCss()}>Open the CSS editor</button>
+        </div>
+        {cssNote && <p role="status" className="mt-1 text-xs text-red-700">{cssNote}</p>}
         <div className="mt-1.5"><SafeModeSwitch /></div>
 
         <h3 className={heading}>Background image</h3>

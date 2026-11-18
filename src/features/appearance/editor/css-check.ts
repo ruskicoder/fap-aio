@@ -1,18 +1,14 @@
 // Checking custom CSS before it applies (appearance R4.3): a scratch constructed sheet catches what the
-// browser rejects outright, and csstree in the service worker reports positions for the rest. Only CSS
-// without problems is passed on, so the last valid CSS stays applied while the student types.
-import { call } from '../../../shared/call'
+// browser rejects outright, and csstree reports positions for the rest. Only CSS without problems is passed
+// on, so the last valid CSS stays applied while the student types. Used by the theme editor page only (F-21).
+import { validateCss, type CssProblem } from './csstree'
 
-export interface CssProblem { line: number; column: number; offset: number; message: string }
+export type { CssProblem }
 export type Validate = (css: string) => Promise<CssProblem[] | null>
 
-/** Asks the service worker; null when it cannot answer (the scratch sheet still checks). */
-export const validateInWorker: Validate = async (css) => {
-  const r = await call<{ problems: CssProblem[] }>({ type: 'css.validate', css }).catch(() => null)
-  return r && r.ok ? r.value.problems : null
-}
+export const validateHere: Validate = async (css) => validateCss(css)
 
-export async function checkCss(css: string, validate: Validate = validateInWorker): Promise<CssProblem[]> {
+export async function checkCss(css: string, validate: Validate = validateHere): Promise<CssProblem[]> {
   try {
     new CSSStyleSheet().replaceSync(css)
   } catch (e) {

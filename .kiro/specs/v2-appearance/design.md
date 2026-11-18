@@ -110,8 +110,8 @@ interface Theme {
 
 ### CSS editor (`editor/CssEditor.tsx`)
 
-- CodeMirror 6 with the CSS language, bundled. It runs inside the panel's shadow root; CodeMirror's own styles are adopted there (R4.1).
-- Live preview: a 300 ms debounced parse into a scratch `CSSStyleSheet`. On success the `user` layer is replaced; on error the last valid CSS stays and the error line is marked (R4.3). `replaceSync` throws on syntax errors in some cases, but browsers also drop invalid rules silently. The editor therefore also runs a light parser (`csstree` validation in a worker) to report positions.
+- CodeMirror 6 with the CSS language, bundled into the theme editor page (`src/pages/theme-editor/`), an extension page the service worker opens with `chrome.windows.create` on `editor.open` (F-21, 2026-11-18; was inside the panel's shadow root). No script that runs on every FAP page carries CodeMirror or csstree. The page previews on the FAP tab that opened it with a typed `theme.preview` message, which the panel relays to the `document_start` entry, and saves through storage (R4.1).
+- Live preview: a 300 ms debounced parse into a scratch `CSSStyleSheet`. On success the `user` layer is replaced; on error the last valid CSS stays and the error line is marked (R4.3). `replaceSync` throws on syntax errors in some cases, but browsers also drop invalid rules silently. The editor therefore also runs a light parser (`csstree`, in the editor page) to report positions.
 - Snippets: theme variables and the FAP selector list (R4.2).
 - Background image: an `<input type=file>` reads the file; it is downscaled to at most 2560 px on a canvas, encoded as WebP or JPEG under 300 KB (D-6, 2026-11-17; was 1.5 MB), and stored as a data URL (R4.4).
 - Safe mode: a setting flag; holding Shift during load is detected in the `document_start` script (R4.6).

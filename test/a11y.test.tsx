@@ -65,16 +65,6 @@ export function sentenceCaseProblem(s: string): string | null {
   return null
 }
 
-// happy-dom's CSS parser rejects CodeMirror's generated class names (`.ͼ1`), which Chrome accepts; the
-// audit retries such a rule with an ASCII stand-in so the editor can mount in the shadow root here.
-const insertRule = CSSStyleSheet.prototype.insertRule
-CSSStyleSheet.prototype.insertRule = function (rule: string, index?: number) {
-  try { return insertRule.call(this, rule, index) } catch (e) {
-    if (!/[^\t\n\r -~]/.test(rule)) throw e
-    return insertRule.call(this, rule.replace(/[^\t\n\r -~]/g, 'cmx'), index)
-  }
-}
-
 const SMALL = /(^|\s)(h|w|size|min-h|min-w)-(0|0\.5|1|1\.5|2|2\.5|3|3\.5|4|5)(\s|$)/
 
 const AXE_OFF = ['color-contrast', 'target-size', 'region', 'landmark-one-main', 'page-has-heading-one', 'html-has-lang', 'document-title', 'bypass']

@@ -1,8 +1,7 @@
 // Theme files (appearance R5.1 to R5.4; design, "Import and export"; platform R7.4): export a theme as JSON
 // through a blob link, and import one as untrusted input: size caps, the zod schema, then the CSS, the
 // preset-style effects and every variable value sanitized (`@import` and web addresses removed, each listed
-// for the student). The caller previews the result with an outside-CSS warning before it is saved.
-import { call } from '../../../shared/call'
+// for the student). The theme editor page previews the result with an outside-CSS warning before saving.
 import { stillUnsafe } from '../../../shared/css-safety'
 import { assignRoles } from '../color/roles'
 import { parseTheme, type Theme } from './model'
@@ -27,11 +26,8 @@ export function downloadTheme(container: Node, t: Theme): void {
   setTimeout(() => URL.revokeObjectURL(url), 10_000)
 }
 
+/** The sanitizer; the theme editor page passes csstree's (F-21), so the panel never loads the parser. */
 export type Sanitize = (css: string) => Promise<{ css: string; removed: string[] } | { error: string }>
-export const sanitizeInWorker: Sanitize = async (css) => {
-  const r = await call<{ css: string; removed: string[] } | { error: string }>({ type: 'css.sanitize', css }).catch(() => null)
-  return r && r.ok ? r.value : { error: 'The CSS could not be checked right now; try again.' }
-}
 
 const slug = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'theme'
 
@@ -49,7 +45,7 @@ export function newTheme(taken: readonly string[]): Theme {
 
 export interface Imported { theme: Theme; removed: string[] }
 
-export async function importTheme(text: string, taken: readonly string[], sanitize: Sanitize = sanitizeInWorker): Promise<Imported | { error: string }> {
+export async function importTheme(text: string, taken: readonly string[], sanitize: Sanitize): Promise<Imported | { error: string }> {
   if (text.length > MAX_FILE) return { error: 'This file is over 2 MB, which is too large for a theme.' }
   let raw: unknown
   try { raw = JSON.parse(text) } catch { return { error: 'This file is not a FAP-AIO theme (it is not JSON).' } }

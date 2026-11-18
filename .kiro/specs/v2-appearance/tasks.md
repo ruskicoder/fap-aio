@@ -36,7 +36,7 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - Local file input, downscale to at most 2560 px, WebP or JPEG under 300 KB (D-6, 2026-11-17; was 1.5 MB), stored as a `data:` URL in the theme; remote URLs rejected with an explanation.
   - _Requirements: 3.1, 3.2, 3.4, 3.5, 3.6, 4.4_
 - [x] 4.3 [APP-4.3] Build the CSS editor
-  - CodeMirror 6 in the shadow root; 300 ms debounced preview through a scratch sheet; `csstree` validation in a worker for error positions while the last valid CSS stays applied; snippets for variables and main FAP selectors; safe mode toggle.
+  - CodeMirror 6 in the theme editor page opened from the panel (F-21, 2026-11-18; was in the shadow root); 300 ms debounced preview through a scratch sheet and a `theme.preview` message to the FAP tab; `csstree` validation in that page for error positions while the last valid CSS stays applied; snippets for variables and main FAP selectors; safe mode toggle in the panel.
   - _Requirements: 4.1, 4.2, 4.3, 4.5, 4.6_
 
 - [x] 5. [APP-5] Theme management and import or export

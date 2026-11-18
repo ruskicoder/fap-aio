@@ -4,11 +4,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { installFakeChrome } from './helpers/fake-chrome'
-import { sanitizeCss } from '../src/background/css-validate'
+import { sanitizeCss } from '../src/features/appearance/editor/csstree'
 import { stillUnsafe } from '../src/shared/css-safety'
 import { exportText, importTheme, newTheme, type Sanitize } from '../src/features/appearance/themes/io'
 import { presetById } from '../src/features/appearance/themes/presets'
-import { customThemes } from '../src/features/appearance/themes/store'
+import { addCustom, customThemes } from '../src/features/appearance/themes/store'
 import { ThemeView } from '../src/features/appearance/views/ThemeView'
 import type { Theme } from '../src/features/appearance/themes/model'
 
@@ -104,24 +104,15 @@ describe('Theme view', () => {
     expect(el.querySelector<HTMLInputElement>('input[maxlength="60"]')!.value).toBe('My theme')
   })
 
-  it('imports with a warning and the removed list, and saves on request; exports through a blob link', async () => {
-    const chrome = (globalThis as unknown as { chrome: { runtime: { onMessage: { addListener: (f: (m: { type: string; css: string }, s: unknown, r: (x: unknown) => void) => boolean) => void } } } }).chrome
-    chrome.runtime.onMessage.addListener((m, _s, respond) => { if (m.type === 'css.sanitize') respond({ ok: true, value: sanitizeCss(m.css) }); return false })
-    const { el, b } = await render()
-    const file = new File([JSON.stringify({ ...base, id: 'z', name: 'Shared', css: '@import "x.css";\n.card{}' })], 'shared.json', { type: 'application/json' })
-    const input = el.querySelector<HTMLInputElement>('input[type="file"][aria-label="Theme file"]')!
-    Object.defineProperty(input, 'files', { value: [file], configurable: true })
-    await act(async () => { input.dispatchEvent(new Event('change', { bubbles: true })) })
-    await tick(20)
-    const region = el.querySelector('[role="region"][aria-label="Import a theme"]')!
-    expect(region.textContent).toContain('Import Shared?')
-    expect(region.textContent).toContain('This theme comes from outside FAP-AIO')
-    expect(region.textContent).toContain('@import rule (custom CSS)')
-    expect(await customThemes()).toEqual([])
-    await act(async () => { b('Save to Your themes').click() })
+  it('opens the import window, and exports through a blob link', async () => {
+    const sent: { type: string; mode?: string }[] = []
+    const chrome = (globalThis as unknown as { chrome: { runtime: { onMessage: { addListener: (f: (m: { type: string; mode?: string }, s: unknown, r: (x: unknown) => void) => boolean) => void } } } }).chrome
+    chrome.runtime.onMessage.addListener((m, _s, respond) => { sent.push(m); respond({ ok: true, value: { opened: true } }); return false })
+    await addCustom({ ...base, id: 'shared', name: 'Shared', preset: undefined })
+    const { b } = await render()
+    await act(async () => { b('Import a theme').click() })
     await tick()
-    expect((await customThemes()).map((t) => [t.id, t.css])).toEqual([['imported-shared', '\n.card{}']])
-    expect(el.textContent).toContain('Shared is in Your themes.')
+    expect(sent.map((m) => [m.type, m.mode])).toContainEqual(['editor.open', 'import'])
     const create = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:x')
     await act(async () => { b('Export Shared').click() })
     expect(create).toHaveBeenCalledTimes(1)

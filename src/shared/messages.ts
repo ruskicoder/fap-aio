@@ -41,10 +41,8 @@ export const MsgSchema = z.discriminatedUnion('type', [
     jobId: z.string(),
     result: z.union([z.record(z.unknown()), z.object({ error: z.string() }).strict()]),
   }),
-  // CSS editor validation, run by csstree in the service worker (appearance R4.3).
-  msg('css.validate', { css: z.string().max(200_000) }),
-  // Imported theme CSS sanitizing (appearance R5.4; platform R7.4).
-  msg('css.sanitize', { css: z.string().max(200_000) }),
+  // Opens the theme editor page (CSS editor or theme import) beside the FAP tab (appearance R4, R5; F-21).
+  msg('editor.open', { mode: z.enum(['css', 'import']), themeId: z.string().max(80).optional() }),
   msg('commands.list', {}),
   // Opens chrome://extensions/shortcuts, which a content script cannot open (panel-ux R7.4).
   msg('shortcuts.open', {}),
@@ -56,6 +54,8 @@ export const MsgSchema = z.discriminatedUnion('type', [
   msg('timer.run', { job: z.enum(['bg-refresh', 'keepalive']) }),
   msg('reads.stop', { reason: z.literal('challenge') }),
   msg('reads.resume', {}),
+  // From the theme editor page to its FAP tab: a theme preview as JSON (validated by the tab), or null to end it.
+  msg('theme.preview', { preview: z.string().max(1_000_000).nullable() }),
   msg('data.progress', {
     state: z.enum(['syncing', 'idle']),
     version: z.number().nullable(),

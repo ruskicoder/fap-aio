@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // M4 browser check (conventions rule 10) without live FAP: the M3 check (tools/uat/m3-check.mjs) with the
-// M4 screens: the Theme view (preview, apply, FAP default), the theme editor with the CSS editor, the
+// M4 screens: the Theme view (preview, apply, FAP default), the theme editor and the CSS editor window, the
 // compact, wide and sticky switches, and the Classic layout on the home and grade pages. The Classic top
 // navigation (APP-7.4) waits on G-SELECTORS and is not checked; the timetable cards need FAP's own partial
 // loader, which the fixture server does not run, so the unit tests cover them.
@@ -322,17 +322,36 @@ async function main() {
   await sleep(500)
   await click('button', 'Edit Frutiger Aero Blue copy')
   await sleep(800)
-  await ev(`(() => { const c = ${root$}.querySelector('.cm-content'); c.scrollIntoView({ block: 'center' }); c.focus(); return !!c })()`)
-  await send('Input.insertText', { text: '.card { outline: 3px solid red; }}' }, S)
+  // F-21: the CSS editor is its own extension window; the panel only opens it.
+  note('the panel holds no code editor', !(await ev(`!!${root$}.querySelector('.cm-editor')`)), '')
+  await click('button', 'Open the CSS editor')
+  let edTarget = null
+  for (let i = 0; i < 20 && !edTarget; i++) {
+    await sleep(250)
+    edTarget = (await send('Target.getTargets')).targetInfos.find((t) => t.url.includes('/src/pages/theme-editor/editor.html'))
+  }
+  note('Open the CSS editor opens its own window', !!edTarget, edTarget?.url.replace(/^chrome-extension:\/\/[a-z]+/, '') ?? '')
+  const { sessionId: E } = await send('Target.attachToTarget', { targetId: edTarget.targetId, flatten: true })
+  const evE = async (expr) => (await send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true }, E)).result.value
+  await sleep(1200)
+  note('the editor window shows the theme', (await evE(`document.querySelector('h1')?.textContent ?? ''`)) === 'Custom CSS for Frutiger Aero Blue copy', '')
+  await evE(`(() => { const c = document.querySelector('.cm-content'); c.focus(); return !!c })()`)
+  await send('Input.insertText', { text: '.card { outline: 3px solid red; }}' }, E)
   await sleep(1500)
-  const cssStatus = await ev(`[...${root$}.querySelectorAll('[role="status"]')].map((s) => s.textContent).find((t) => /Line \\d+, column \\d+/.test(t)) ?? ''`)
+  const cssStatus = await evE(`[...document.querySelectorAll('[role="status"]')].map((s) => s.textContent).find((t) => /Line \\d+, column \\d+/.test(t)) ?? ''`)
   note('a CSS error shows its line and column and keeps the last valid CSS', cssStatus.includes('last valid CSS stays applied'), cssStatus.slice(0, 100))
-  await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Backspace', code: 'Backspace', windowsVirtualKeyCode: 8 }, S)
-  await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Backspace', code: 'Backspace', windowsVirtualKeyCode: 8 }, S)
+  await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Backspace', code: 'Backspace', windowsVirtualKeyCode: 8 }, E)
+  await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Backspace', code: 'Backspace', windowsVirtualKeyCode: 8 }, E)
   await sleep(1500)
-  note('valid CSS previews on the page', /outline:[^;]*3px/.test(await sheetsText()), '')
-  await shot('css-editor')
-  await click('button', 'Save and apply')
+  note('valid CSS previews on the FAP page', /outline:[^;]*3px/.test(await sheetsText()), '')
+  const shotE = await send('Page.captureScreenshot', { format: 'png' }, E)
+  writeFileSync(join(outDir, `${String(++shotN).padStart(2, '0')}-css-editor-window.png`), Buffer.from(shotE.data, 'base64'))
+  await evE(`[...document.querySelectorAll('button')].find((b) => b.textContent === 'Save and apply').click()`)
+  await sleep(1000)
+  note('Save and apply keeps the CSS for every page', /outline:[^;]*3px/.test(await sheetsText()) && (await shadowText()).includes('lines of custom CSS'), '')
+  await evE('window.close()').catch(() => {})
+  await sleep(500)
+  await click('button', 'Save')
   await sleep(800)
   await click('button', 'Use FAP default')
   await sleep(600)

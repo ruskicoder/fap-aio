@@ -11,7 +11,8 @@ import { sendPreview } from '../preview'
 import { parseTheme, toActiveStyle, type Theme } from '../themes/model'
 import { PRESETS, presetById } from '../themes/presets'
 import { addCustom, applyAuto, applyFapDefault, applyTheme, choiceOf, deleteCustom, duplicateTheme, MAX_CUSTOM } from '../themes/store'
-import { downloadTheme, importTheme, newTheme, type Imported } from '../themes/io'
+import { downloadTheme, newTheme } from '../themes/io'
+import { call } from '../../../shared/call'
 import { ThemeEditor } from '../editor/ThemeEditor'
 
 type Mode = 'single' | 'auto'
@@ -38,12 +39,10 @@ export function ThemeView() {
   const [previewing, setPreviewing] = useState<string | null>(null)
   const [note, setNote] = useState<{ tone: 'info' | 'error'; text: string } | null>(null)
   const [editing, setEditing] = useState<Theme | null>(null)
-  const [incoming, setIncoming] = useState<Imported | null>(null)
-  const fileRef = useRef<HTMLInputElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const all = [...PRESETS.map((p) => p.theme), ...custom]
   const byId = (id: string | null) => all.find((t) => t.id === id) ?? null
-  const nameOf = (id: string) => byId(id)?.name ?? (incoming?.theme.id === id ? incoming.theme.name : 'a theme that no longer exists')
+  const nameOf = (id: string) => byId(id)?.name ?? 'a theme that no longer exists'
 
   // The preview belongs to this view: it ends when the view closes.
   useEffect(() => () => sendPreview(null), [])
@@ -75,24 +74,11 @@ export function ThemeView() {
     if (err) setNote({ tone: 'error', text: err })
     else { preview(null); setNote(null); setEditing(t) }
   }
-  const readFile = async (f: File | undefined) => {
-    if (!f) return
+  // Import runs in the theme editor window, which holds the CSS parser (F-21).
+  const importFile = async () => {
     setNote(null)
-    const r = await importTheme(await f.text(), taken)
-    if ('error' in r) { setNote({ tone: 'error', text: r.error }); return }
-    setIncoming(r)
-  }
-  const saveIncoming = async () => {
-    if (!incoming) return
-    const err = await addCustom(incoming.theme)
-    if (previewing === incoming.theme.id) preview(null)
-    setIncoming(null)
-    setNote(err ? { tone: 'error', text: err } : { tone: 'info', text: `${incoming.theme.name} is in Your themes.` })
-  }
-  const previewIncoming = () => {
-    if (!incoming) return
-    if (previewing === incoming.theme.id) preview(null)
-    else { setPreviewing(incoming.theme.id); sendPreview({ kind: 'style', style: toActiveStyle(incoming.theme) }) }
+    const r = await call({ type: 'editor.open', mode: 'import' }).catch(() => null)
+    if (!r || !r.ok) setNote({ tone: 'error', text: 'The import window could not open. Reload this page and try again.' })
   }
 
   const current = choice.mode === 'fap-default' ? 'FAP default' : choice.mode === 'single' ? nameOf(choice.id) : `${nameOf(choice.light)} (light) and ${nameOf(choice.dark)} (dark)`
@@ -158,26 +144,8 @@ export function ThemeView() {
         </div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           <button type="button" className={button} disabled={custom.length >= MAX_CUSTOM} onClick={() => void create()}>New theme</button>
-          <button type="button" className={button} disabled={custom.length >= MAX_CUSTOM} onClick={() => fileRef.current?.click()}>Import a theme</button>
-          <input ref={fileRef} type="file" accept="application/json,.json" className="sr-only" aria-label="Theme file" onChange={(e) => { void readFile(e.target.files?.[0]); e.target.value = '' }} />
+          <button type="button" className={button} disabled={custom.length >= MAX_CUSTOM} onClick={() => void importFile()}>Import a theme</button>
         </div>
-        {incoming && (
-          <div role="region" aria-label="Import a theme" className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-            <p className="font-medium">Import {incoming.theme.name}?</p>
-            <p className="text-xs">This theme comes from outside FAP-AIO. Its CSS can change how every FAP page looks; preview it before you save.</p>
-            {incoming.removed.length > 0 && (
-              <>
-                <p className="mt-1 text-xs font-medium">Removed for safety:</p>
-                <ul className="list-disc pl-5 text-xs">{incoming.removed.map((r, i) => <li key={i} className="break-all">{r}</li>)}</ul>
-              </>
-            )}
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              <button type="button" className={small} aria-pressed={previewing === incoming.theme.id} onClick={previewIncoming}>{previewing === incoming.theme.id ? 'Stop preview' : 'Preview on this page'}</button>
-              <button type="button" className={small} onClick={() => void saveIncoming()}>Save to Your themes</button>
-              <button type="button" className={small} onClick={() => { if (previewing === incoming.theme.id) preview(null); setIncoming(null) }}>Cancel</button>
-            </div>
-          </div>
-        )}
       </div>
       {section('Light themes', PRESETS.filter((p) => p.theme.mode === 'light').map((p) => p.theme))}
       {section('Dark themes', PRESETS.filter((p) => p.theme.mode === 'dark').map((p) => p.theme))}

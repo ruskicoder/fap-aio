@@ -1,7 +1,8 @@
-// CSS editor (appearance R4.1 to R4.3, R4.6; design, "CSS editor"): CodeMirror 6 in the panel's shadow root
-// with syntax highlighting and line numbers, snippets for FAP's parts and the theme variables, error marks
-// with line and column, and a safe mode switch. Checked CSS goes to the theme 300 ms after typing stops, so
-// the page preview follows; CSS with an error is held back and the last valid CSS stays applied.
+// CSS editor (appearance R4.1 to R4.3; design, "CSS editor"): CodeMirror 6 with syntax highlighting and
+// line numbers, snippets for FAP's parts and the theme variables, and error marks with line and column.
+// It runs in the theme editor page only (fix F-21), never in a script on a FAP page. Checked CSS is passed on
+// 300 ms after typing stops, so the preview follows; CSS with an error is held back and the last valid CSS
+// stays applied.
 import { useEffect, useRef, useState } from 'react'
 import { EditorState } from '@codemirror/state'
 import { EditorView, drawSelection, highlightActiveLine, keymap, lineNumbers } from '@codemirror/view'
@@ -9,9 +10,6 @@ import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
 import { css } from '@codemirror/lang-css'
 import { lintGutter, setDiagnostics, type Diagnostic } from '@codemirror/lint'
-import { update } from '../../../shared/storage/catalog'
-import { useStore } from '../../../content/panel/use-store'
-import { parseActive } from '../state'
 import { CT_VARS } from '../themes/css-vars'
 import { select } from '../../scheduler/views/common'
 import { PART_SNIPPETS, checkCss, type CssProblem, type Validate } from './css-check'
@@ -22,22 +20,6 @@ const theme = EditorView.theme({
   '.cm-scroller': { fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace', minHeight: '12rem', maxHeight: '22rem' },
   '.cm-content': { padding: '6px 0' },
 })
-
-export function SafeModeSwitch() {
-  const active = parseActive(useStore('appearance.active').data)
-  const on = active.safeMode
-  return (
-    <label className="flex items-center gap-2 text-sm text-gray-800">
-      <button type="button" role="switch" aria-checked={on} aria-label="Safe mode"
-        onClick={() => void update('appearance.active', (a) => ({ ...parseActive(a), safeMode: !on }))}
-        className="inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
-        style={{ background: on ? '#ea580c' : '#d1d5db' }}>
-        <span aria-hidden="true" className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-5' : ''}`} />
-      </button>
-      <span>Safe mode: custom CSS off on every FAP page</span>
-    </label>
-  )
-}
 
 export function CssEditor({ value, onChange, validate }: { value: string; onChange: (css: string) => void; validate?: Validate }) {
   const host = useRef<HTMLDivElement>(null)

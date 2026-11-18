@@ -4,9 +4,10 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { installFakeChrome } from './helpers/fake-chrome'
-import { validateCss } from '../src/background/css-validate'
+import { validateCss } from '../src/features/appearance/editor/csstree'
 import { PART_SNIPPETS, checkCss } from '../src/features/appearance/editor/css-check'
-import { CssEditor, SafeModeSwitch } from '../src/features/appearance/editor/CssEditor'
+import { CssEditor } from '../src/features/appearance/editor/CssEditor'
+import { SafeModeSwitch } from '../src/features/appearance/editor/SafeModeSwitch'
 import { read, write } from '../src/shared/storage/catalog'
 import { userCss } from '../src/features/appearance/pipeline'
 import { toActiveStyle } from '../src/features/appearance/themes/model'
@@ -31,9 +32,11 @@ describe('validation', () => {
     expect(p[0]!.message).not.toBe('')
   })
 
-  it('passes worker problems through and survives a worker that does not answer', async () => {
+  it('passes validator problems through, survives one that does not answer, and validates locally by default', async () => {
     expect(await checkCss('.a{}', async () => [{ line: 2, column: 3, offset: 9, message: 'x' }])).toEqual([{ line: 2, column: 3, offset: 9, message: 'x' }])
     expect(await checkCss('.a{}', async () => null)).toEqual([])
+    expect(await checkCss('.a{}')).toEqual([])
+    expect((await checkCss('.a{ color: red; }}'))[0]!.line).toBe(1)
   })
 
   it('applies custom CSS after preset styles, and not in safe mode', () => {

@@ -41,7 +41,11 @@ export default defineConfig(({ mode }) => ({
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
-      input: { grant: resolve(__dirname, 'src/pages/grant/grant.html') },
+      input: {
+        grant: resolve(__dirname, 'src/pages/grant/grant.html'),
+        // The theme editor page carries CodeMirror and csstree, away from every FAP page (F-21).
+        'theme-editor': resolve(__dirname, 'src/pages/theme-editor/editor.html'),
+      },
       output: { chunkFileNames: 'assets/chunk-[hash].js' },
     },
   },

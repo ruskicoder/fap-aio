@@ -53,7 +53,7 @@ export function makeFakeChrome() {
   const tabMessages: { tabId: number; msg: unknown }[] = []
   const notifications: { id: string; opts: unknown }[] = []
   const tabsMap = new Map<number, { id: number; url: string; active?: boolean; windowId?: number }>()
-  const created: { id: number; url: string }[] = []
+  const created: { id: number; url: string; type?: string }[] = []
   const defaultSender: Partial<chrome.runtime.MessageSender> = { id: 'test-extension-id', url: 'https://fap.fpt.edu.vn/', frameId: 0, tab: { id: 1 } as chrome.tabs.Tab }
   const fake = {
     runtime: {
@@ -105,7 +105,7 @@ export function makeFakeChrome() {
     },
     windows: {
       _created: created,
-      async create(opts: { url: string }) { const w = { id: 500 + created.length, url: opts.url }; created.push(w); return w },
+      async create(opts: { url: string; type?: string }) { const w = { id: 500 + created.length, ...opts }; created.push(w); return w },
       async update() { return {} },
       async remove() {},
       onRemoved: new FakeEvent(),

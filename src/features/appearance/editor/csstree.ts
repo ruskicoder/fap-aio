@@ -1,9 +1,9 @@
-// CSS editor validation (appearance R4.3; design, "CSS editor"): csstree parses the user's CSS in the
-// service worker, so the parser stays out of FAP pages and off their main thread, and reports each syntax
-// error with its line and column. Browsers drop invalid rules silently, which is why this check exists.
+// csstree for the theme editor page only (appearance R4.3, R5.4; fix F-21): syntax errors with line and
+// column, and the import sanitizer. It is imported by src/pages/theme-editor and nothing else, so no script
+// that runs on every FAP page, and not the service worker, carries the parser.
+// Browsers drop invalid rules silently, which is why the check exists.
 import { parse, walk } from 'css-tree'
-import { ok, register } from './router'
-import { isDataUrl as isData, stillUnsafe } from '../shared/css-safety'
+import { isDataUrl as isData, stillUnsafe } from '../../../shared/css-safety'
 
 export interface CssProblem { line: number; column: number; offset: number; message: string }
 
@@ -23,10 +23,6 @@ export function validateCss(css: string): CssProblem[] {
   return out
 }
 
-export function installCssValidate(): void {
-  register('css.validate', async (m) => ok({ problems: validateCss(m.css) }))
-  register('css.sanitize', async (m) => ok(sanitizeCss(m.css)))
-}
 
 // ---- Import sanitizer (appearance R5.3, R5.4; platform R7.4) ----------------------------------------
 // Imported themes are untrusted: `@import` and every web address (`url()` that is not a `data:` URL, a
