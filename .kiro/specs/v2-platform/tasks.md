@@ -101,7 +101,7 @@ Compacted on 2026-10-22 from 33 to 21 subtasks with no requirement dropped; the 
   - _Requirements: 1.3, 1.4, 1.6, 1.7; panel-ux R6.5_
 
 - [ ] 9. [PLT-9] Live FLM read
-- [ ] 9.1 [PLT-9.1] Write the FLM cookie probe and port the FLM parser
+- [x] 9.1 [PLT-9.1] Write the FLM cookie probe and port the FLM parser
   - A development-only service worker command (`dev.flmProbe`, compiled out of production builds) that fetches the FLM syllabus search route and reports whether the response is signed in; the owner runs it in gate G-FLM-COOKIE, and the result (decision D-1) picks the path for 9.2.
   - TypeScript port of the detail parsing in `tools/flm-scraper/flm-scraper.js`, run on `flm.parse` in a FAP tab; results stored in `overrides` with `fetchedAt`; overrides overtaken by a newer channel or packaged syllabus are deleted during indexing; a remove action.
   - Parity test: the port and the reference tool give the same entry for a saved detail page under `ignore/flm/` (skips without it).

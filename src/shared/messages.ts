@@ -37,6 +37,10 @@ export const MsgSchema = z.discriminatedUnion('type', [
   msg('data.usePackaged', {}),
   msg('data.clearCaches', {}),
   msg('flm.refresh', { code: z.string() }),
+  // Drops a live FLM override so the channel or packaged syllabus applies again (platform R6.6).
+  msg('flm.remove', { code: z.string().max(20) }),
+  // Development builds only: reports whether a service worker fetch to FLM is signed in (gate G-FLM-COOKIE).
+  msg('dev.flmProbe', {}),
   msg('flm.parsed', {
     jobId: z.string(),
     result: z.union([z.record(z.unknown()), z.object({ error: z.string() }).strict()]),
@@ -61,7 +65,7 @@ export const MsgSchema = z.discriminatedUnion('type', [
     version: z.number().nullable(),
     skipped: z.string().optional(),
   }),
-  msg('flm.parse', { jobId: z.string(), html: z.string(), code: z.string() }),
+  msg('flm.parse', { jobId: z.string(), html: z.string().max(5_000_000), code: z.string(), sylId: z.number().int() }),
 ])
 
 export type Msg = z.infer<typeof MsgSchema>

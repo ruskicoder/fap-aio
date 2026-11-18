@@ -14,6 +14,8 @@ import {
 import { tokenize } from '../../shared/data/tokens'
 import { count } from '../diag'
 
+import { pruneOverrides } from './overrides'
+
 export const DB_NAME = 'fap-aio-data'
 export const DB_VERSION = 1
 export const PACKAGED_MANIFEST = 'data/manifest.json'
@@ -202,9 +204,12 @@ export async function preparePackaged(deps: DataDeps = {}, manifest?: DataManife
   return { files, ...index }
 }
 
-/** Replaces the files, subjects and search stores in one transaction; overrides are kept. */
+/**
+ * Replaces the files, subjects and search stores in one transaction; overrides are kept unless the new
+ * active entry overtakes them (platform R6.5).
+ */
 export async function writeIndex(db: IDBDatabase, data: PreparedData): Promise<void> {
-  const tx = db.transaction(['files', 'subjects', 'search'], 'readwrite')
+  const tx = db.transaction(['files', 'subjects', 'search', 'overrides'], 'readwrite')
   const finished = done(tx)
   const files = tx.objectStore('files')
   const subjects = tx.objectStore('subjects')
@@ -214,6 +219,7 @@ export async function writeIndex(db: IDBDatabase, data: PreparedData): Promise<v
   for (const r of data.files) files.put(r)
   for (const r of data.subjects) subjects.put(r)
   for (const r of data.search) search.put(r)
+  pruneOverrides(tx, data.subjects)
   await finished
 }
 

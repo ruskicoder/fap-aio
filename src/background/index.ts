@@ -12,6 +12,8 @@ import { installReminders } from './reminders'
 import { installKeepAlive } from './keepalive'
 import { installDataChannel } from './data-channel'
 import { installEditorWindow } from './editor-window'
+import { installOverrides } from './data/overrides'
+import { installFlmProbe } from './flm-probe'
 
 registerMigrationSteps()
 installRouter()
@@ -26,6 +28,8 @@ installReminders()
 installKeepAlive()
 installDataChannel()
 installEditorWindow()
+installOverrides()
+installFlmProbe()
 
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'update') void runMigrations()
