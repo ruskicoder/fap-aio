@@ -75,10 +75,13 @@ describe('reminder alarms', () => {
   })
 
   it('rebuild after the timetable, exams or settings change', async () => {
+    // The install path plans from the real clock, so its class is two days from today (fix F-22).
+    const day = new Date(Date.now() + 2 * 86_400_000 + 7 * 3_600_000).toISOString().slice(0, 10)
+    await write('timetable', { sessions: [session(day, '07:30')], weeks: {}, lastSync: 1 })
     c.permissions._granted.add('notifications')
     installReminders()
     await write('settings', { 'schedule.reminders.enabled': true, 'schedule.reminders.classOffset': 30 })
     await tick(700)
-    expect(await names()).toContain(`${PREFIX}class:PRF192|2026-11-18|07:30:30`)
+    expect(await names()).toContain(`${PREFIX}class:PRF192|${day}|07:30:30`)
   })
 })
