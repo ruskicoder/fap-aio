@@ -11,6 +11,8 @@ import { GpaView } from './views/GpaView'
 import { WhatIfView } from './views/WhatIfView'
 import { PlannerView } from './views/PlannerView'
 import { registerGradeToday } from './today'
+import { RecordView } from './views/RecordView'
+import { recordEngine } from './record'
 
 export const TRANSCRIPT_PATH = /^\/Report\/Transcript(\/|$)/i
 export const GRADE_PATH = /^\/Report\/Grade(\/|$)/i
@@ -22,8 +24,12 @@ export function registerGradeViews(): void {
   registerView({ tab: 'grades', sub: 'gpa', label: 'GPA', icon: 'chart', component: async () => GpaView, lastSync: [{ label: 'Transcript', key: 'cache:grades.transcript' }] })
   registerView({ tab: 'grades', sub: 'whatif', label: 'What-if', icon: 'chart', component: async () => WhatIfView, lastSync: [{ label: 'Transcript', key: 'cache:grades.transcript' }] })
   registerView({ tab: 'grades', sub: 'planner', label: 'Planner', icon: 'chart', component: async () => PlannerView, lastSync: [{ label: 'Transcript', key: 'cache:grades.transcript' }] })
+  registerView({ tab: 'grades', sub: 'record', label: 'Record', icon: 'chart', component: async () => RecordView, lastSync: [{ label: 'Record', key: 'grades.record' }] })
   registerGradeToday()
 }
+
+// A running record job gives up its lease so the next page load resumes at once (R14.4).
+addEventListener('pagehide', () => recordEngine.release())
 
 addModule({
   id: 'grades',

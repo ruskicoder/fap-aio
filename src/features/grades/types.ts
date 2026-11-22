@@ -30,6 +30,10 @@ export interface ReplacedRow {
 export interface Transcript {
   rows: TranscriptRow[]
   replaced: ReplacedRow[]
+  /** The curriculum code from the page title (`Grade report for transcript <code>`), when found (GRD-7.3). */
+  curriculum?: string
+  /** Name and roll number from FAP's top bar, when found (GRD-7.3). */
+  student?: { name: string; roll: string }
 }
 
 export interface Term {

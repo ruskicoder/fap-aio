@@ -70,7 +70,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - `engine/scale.ts` with the one letter-grade table and its source, `computeGpaOn(scale)` over `GpaEngine`; setting `grades.gpaScale` (default 10-point); the chips in the GPA view; letters next to final averages in Courses.
   - Tests: bands and their edges, the 4-point GPA counts the same rows, the switch persists and recomputes.
   - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6_
-- [ ] 7.2 [GRD-7.2] Full academic record
+- [x] 7.2 [GRD-7.2] Full academic record
   - `grades.record` and `grades.record.job` stores; the resumable plan (transcript, term list, term course lists, mark sheets) through the registry, one request at a time, with lease, Cancel, Resume and the stop-on-fatal rule; the Record view with terms newest first, expandable courses, progress and partial results, update, read everything again, per-term and per-course reads.
   - Tests: the plan on the fixture record, skip of unchanged terms, resume after a reload, cancel, fatal stop, partial results in the view.
   - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7, 14.8_

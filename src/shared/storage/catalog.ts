@@ -62,6 +62,9 @@ export const CATALOG = {
   },
   'grades.cache': { owner: 'grades', version: 1, size: 'about 2 KB per mark sheet', retention: 'terms older than the last 12 pruned' },
   'grades.settings': { owner: 'grades', version: 1, size: '< 20 KB', retention: 'permanent' },
+  // Full academic record (grades R14, GRD-7.2): every term's courses and mark sheets, kept past the registry's 30 days.
+  'grades.record': { owner: 'grades', version: 1, size: 'about 2 KB per mark sheet, a few hundred KB in all', retention: 'permanent; replaced entry by entry on each read' },
+  'grades.record.job': { owner: 'grades', version: 1, size: '< 20 KB', retention: 'deleted when the job ends' },
   'info.user': { owner: 'info', version: 1, size: '< 50 KB', retention: 'permanent' },
   'info.state': {
     owner: 'info', version: 1, size: '< 50 KB', retention: 'news seen 30 days',

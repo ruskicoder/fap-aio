@@ -64,5 +64,27 @@ export function parseTranscript(doc: Document): Transcript {
     if (!c[2]) continue
     replaced.push({ semester: c[1]!, code: c[2], name: c[3]!, credits: numberOr0(c[4]!), grade: markOf(c[5]!), status: statusOf(td[6]) })
   }
-  return { rows, replaced }
+  return { rows, replaced, ...transcriptMeta(doc) }
+}
+
+/**
+ * The curriculum code (last word of the page title, the same in vi and en) and the student's name and roll
+ * number from FAP's top bar (GRD-7.3). Absent fields are left out, so a page without them parses as before.
+ */
+export function transcriptMeta(doc: ParentNode): Pick<Transcript, 'curriculum' | 'student'> {
+  const out: Pick<Transcript, 'curriculum' | 'student'> = {}
+  const title = clean(doc.querySelector('.fap-page-title__crumb-current') ?? doc.querySelector('.fap-page-title h4, .fap-page-title h1'))
+  const code = title.split(' ').at(-1) ?? ''
+  if (/transcript/i.test(title) && /^[A-Za-z0-9][\w.-]{1,40}$/.test(code) && !/^transcript$/i.test(code)) out.curriculum = code
+  const student = studentOf(doc)
+  if (student) out.student = student
+  return out
+}
+
+/** Name and roll number from the top bar (`.fap-topbar-user h5`, `h6`), present on every signed-in FAP page. */
+export function studentOf(doc: ParentNode): { name: string; roll: string } | null {
+  const user = doc.querySelector('.fap-topbar-user')
+  const name = clean(user?.querySelector('h5') ?? doc.querySelector('.profile-dropdown .noti-title h6'))
+  const roll = clean(user?.querySelector('h6') ?? doc.querySelector('.profile-dropdown .noti-title small'))
+  return name && roll ? { name, roll } : null
 }
