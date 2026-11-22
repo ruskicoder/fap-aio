@@ -12,6 +12,7 @@ import { flmLink, loadCourses, recompute, useCourses, type CourseRow } from '../
 import { useGradeSettings } from '../settings'
 import { rubricInfo, rubricText, type RubricInfo } from '../rubric'
 import { FLAG_TEXT } from '../inline/GradeInline'
+import { letterOf } from '../engine/scale'
 
 const TIER_LABELS = { pass: 'Pass', fair: 'Fair', good: 'Good', excellent: 'Excellent' } as const
 
@@ -35,6 +36,9 @@ export function averageText(p: Prediction | null): string | null {
   }
   return c.gradedWeight > 0 ? (Math.round(Math.min(10, c.weightedSoFar / c.gradedWeight) * 10) / 10).toFixed(1) : null
 }
+
+/** True when every component is graded, so the average is the course grade and has a letter (R13.6). */
+export const isFinal = (p: Prediction | null) => !!p && p.status !== 'none' && p.status !== 'unscored' && p.current.remainingWeight === 0
 
 /** What the goal needs, in one line. */
 export function needsText(row: CourseRow): string | null {
@@ -99,7 +103,7 @@ function CourseCard({ row, open, toggle }: { row: CourseRow; open: boolean; togg
         <button type="button" aria-expanded={open} aria-label={`Details for ${row.ref.code ?? row.name}`} className="shrink-0 rounded px-1.5 text-xs text-gray-600 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500" onClick={toggle}>{open ? 'Hide' : 'Details'}</button>
       </div>
       <p className="mt-0.5 flex flex-wrap gap-x-3 break-words text-xs leading-relaxed text-gray-600">
-        {avg !== null && <span><b className="font-medium text-gray-900">Average:</b> {avg}</span>}
+        {avg !== null && <span><b className="font-medium text-gray-900">Average:</b> {avg}{isFinal(row.prediction) ? ` (${letterOf(Number(avg))})` : ''}</span>}
         {t && (
           <span>
             <b className="font-medium text-gray-900">Goal:</b>{' '}

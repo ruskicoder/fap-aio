@@ -1,8 +1,9 @@
 // Grades, GPA (grades R2.4, R2.5, R8.3, R1.2, R7.3, R7.5, R11): cumulative and per-semester GPA with
 // counted credits, the GPA goal and whether it is reachable, the replaced subjects as information only,
-// and the CSV and JSON export.
+// and the CSV and JSON export. The scale chips (R13, GRD-7.1) switch the figures between the 10-point and the
+// 4-point scale; the goal stays on the 10-point scale FAP grades on.
 import { useEffect, useRef, useState } from 'react'
-import { Empty, Message, button, primary } from '../../scheduler/views/common'
+import { Empty, Message, SubTabs, button, primary } from '../../scheduler/views/common'
 import { ago } from '../../../content/panel/StatusStrip'
 import { errorText } from '../../../content/panel/errors'
 import { panelRouter } from '../../../content/panel/host'
@@ -15,6 +16,8 @@ import { GRADES_TRANSCRIPT } from '../sources'
 import { useGradeSettings, type GradeSettings } from '../settings'
 import { useCourses, type CourseRow } from '../courses'
 import type { Transcript } from '../types'
+import { computeGpaOn, SCALE_LABELS, type GpaScale } from '../engine/scale'
+import { setGpaScale, useGpaScale } from '../scale-setting'
 
 /**
  * The courses that still count toward the goal: in-progress transcript rows that count once passed, with
@@ -35,7 +38,7 @@ export function goalResult(g: GpaResult, t: Transcript, s: GradeSettings, rows: 
   return gpaGoal({ goal: s.gpaGoal, done: { credits: g.credits, points: (g.cumulative ?? 0) * g.credits }, courses: goalCourses(t, s, rows) })
 }
 
-function GoalBlock({ g, t, s, rows }: { g: GpaResult; t: Transcript; s: GradeSettings; rows: CourseRow[] }) {
+function GoalBlock({ g, t, s, rows, scale }: { g: GpaResult; t: Transcript; s: GradeSettings; rows: CourseRow[]; scale: GpaScale }) {
   const r = goalResult(g, t, s, rows)
   if (!r) {
     return (
@@ -52,12 +55,14 @@ function GoalBlock({ g, t, s, rows }: { g: GpaResult; t: Transcript; s: GradeSet
       {r.reachable && r.neededAverage !== null && <p className="text-xs">It needs an average of {Math.max(0, r.neededAverage).toFixed(1)} over {credits} in-progress credits.</p>}
       {r.reachable && r.neededAverage === null && <p className="text-xs">No course in progress counts toward GPA now.</p>}
       {!r.reachable && r.highestGpa !== null && <p className="text-xs">The highest reachable GPA is {formatGpa(r.highestGpa)}.</p>}
+      {scale === '4' && <p className="text-xs">The goal is on the 10-point scale, the scale FAP grades on.</p>}
     </div>
   )
 }
 
 export function GpaView() {
   const settings = useGradeSettings()
+  const scale = useGpaScale() ?? '10'
   const courses = useCourses()
   const [t, setT] = useState<Transcript | null>(null)
   const [at, setAt] = useState<number | null>(null)
@@ -76,6 +81,7 @@ export function GpaView() {
   useEffect(() => registerRefresh('grades/gpa', () => void load(true)), [])
 
   const g = t && settings ? computeGpa({ rows: t.rows, nonGpa: settings.nonGpa }) : null
+  const shown = t && settings ? computeGpaOn(scale, { rows: t.rows, nonGpa: settings.nonGpa }) : null
   return (
     <div className="pb-3">
       <div className="flex items-center gap-2 px-3 pb-1 pt-2.5">
@@ -88,18 +94,20 @@ export function GpaView() {
           <button type="button" className={primary} onClick={() => void load(true)}>Read the transcript</button>
         </Empty>
       )}
-      {t && g && settings && (
+      {t && g && shown && settings && (
         <>
+          <SubTabs label="GPA scale" items={[['10', SCALE_LABELS['10']], ['4', SCALE_LABELS['4']]]} value={scale} onChange={(v) => void setGpaScale(v)} />
           <div className="flex flex-wrap items-baseline gap-x-4 px-3 pt-1">
-            <p><span className="text-2xl font-semibold text-gray-900">{formatGpa(g.cumulative) ?? 'No GPA yet'}</span> <span className="text-sm text-gray-600">cumulative GPA</span></p>
-            <p className="text-sm text-gray-600">{g.credits} credits counted</p>
+            <p><span className="text-2xl font-semibold text-gray-900">{formatGpa(shown.cumulative) ?? 'No GPA yet'}</span> <span className="text-sm text-gray-600">cumulative GPA{scale === '4' ? ' (4-point)' : ''}</span></p>
+            <p className="text-sm text-gray-600">{shown.credits} credits counted</p>
           </div>
-          <GoalBlock g={g} t={t} s={settings} rows={courses.rows} />
+          {scale === '4' && <p className="px-3 text-xs text-gray-600">Each course grade becomes a letter first (A 8.5 to 10 is 4, B 7.0 to 8.4 is 3, C 5.5 to 6.9 is 2, D 4.0 to 5.4 is 1, F below 4.0 is 0), then credits weight the points.</p>}
+          <GoalBlock g={g} t={t} s={settings} rows={courses.rows} scale={scale} />
           <table className="mx-3 w-[calc(100%-24px)] border-collapse text-left text-sm">
             <caption className="pb-1 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">GPA per semester</caption>
-            <thead><tr className="text-xs text-gray-500"><th className="py-1 font-medium">Semester</th><th className="py-1 font-medium">GPA</th><th className="py-1 font-medium">Credits counted</th></tr></thead>
+            <thead><tr className="text-xs text-gray-500"><th className="py-1 font-medium">Semester</th><th className="py-1 font-medium">{scale === '4' ? 'GPA (4-point)' : 'GPA'}</th><th className="py-1 font-medium">Credits counted</th></tr></thead>
             <tbody>
-              {g.semesters.map((s) => (
+              {shown.semesters.map((s) => (
                 <tr key={s.name} className="border-t border-gray-100"><td className="py-1">{s.name}</td><td className="py-1 font-medium text-gray-900">{formatGpa(s.gpa) ?? '-'}</td><td className="py-1">{s.credits}</td></tr>
               ))}
             </tbody>

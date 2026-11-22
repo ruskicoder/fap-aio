@@ -66,7 +66,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - _Requirements: 11.1, 11.2, 11.3, 12.1, 12.3; platform R5.4; platform amendment (no `downloads`)_
 
 - [ ] 7. [GRD-7] Scale switch, full record, printable list and attendance (owner request 2026-11-22; previous copy of this file in `.deprecated/2026-11-22-tasks.md`)
-- [ ] 7.1 [GRD-7.1] GPA scale switch
+- [x] 7.1 [GRD-7.1] GPA scale switch
   - `engine/scale.ts` with the one letter-grade table and its source, `computeGpaOn(scale)` over `GpaEngine`; setting `grades.gpaScale` (default 10-point); the chips in the GPA view; letters next to final averages in Courses.
   - Tests: bands and their edges, the 4-point GPA counts the same rows, the switch persists and recomputes.
   - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6_

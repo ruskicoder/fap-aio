@@ -9,6 +9,8 @@ import { DEFAULT_NON_GPA } from './engine/gpa'
 import { DEFAULT_TIER } from './engine/goals'
 import { TIERS, type TierId } from './engine/predict'
 import { MoocRow, NonGpaRow } from './settings-rows'
+import { DEFAULT_SCALE, SCALE_LABELS, type GpaScale } from './engine/scale'
+import { SCALE_KEY } from './scale-setting'
 
 export interface GradeStore {
   /** Per-course tier, by FAP course id (R7.2). */
@@ -56,6 +58,13 @@ export function registerGradeSettings(): void {
     label: 'Not counted in GPA',
     description: 'Subject codes that start with one of these, upper or lower case, are left out of GPA.',
     component: NonGpaRow,
+  })
+  registerSetting<GpaScale>({
+    key: SCALE_KEY, section: 'grades', type: 'select', default: DEFAULT_SCALE,
+    options: (['10', '4'] as const).map((v) => ({ value: v, label: SCALE_LABELS[v] })),
+    validate: (v) => (v === '10' || v === '4' ? null : 'Choose the 10-point or the 4-point scale.'),
+    label: 'GPA scale',
+    description: 'Show GPA on the 10-point scale FAP uses, or on the 4-point scale through letter grades.',
   })
   registerSetting<number | null>({
     key: KEYS.gpaGoal, section: 'grades', type: 'number', default: null, min: 0, max: 10, step: 0.01, validate: validateGpaGoal,
