@@ -153,7 +153,8 @@ export function SubjectsView() {
   if (open) return <Detail code={open} curriculum={curriculum} back={() => setOpen(null)} open={setOpen} />
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="px-3 pb-2 pt-2.5">
+      {/* The search stays in reach when the panel is short (panel-ux R11.4; fix F-23). */}
+      <div className="sticky top-0 z-10 bg-white px-3 pb-2 pt-2.5">
         <input type="search" aria-label="Search subjects by code or name" placeholder="Search by code or name" className={input} value={q} onChange={(e) => setQ(e.target.value)} />
         <p className="mt-1 text-[11px] text-gray-500">{q.trim() ? `${list.length} subjects` : `Your curriculum, ${curriculum.length} subjects. Search to find any FLM subject.`}</p>
       </div>

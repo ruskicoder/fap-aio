@@ -117,19 +117,22 @@ export function ThemeView() {
 
   return (
     // Controls scrolled into view (focus, find) stop below the sticky preview bar (WCAG 2.4.11).
-    <div ref={rootRef} className="pb-4 [&_button]:scroll-mt-28 [&_input]:scroll-mt-28 [&_select]:scroll-mt-28">
-      {previewing && (
-        <div role="status" className="sticky top-0 z-10 mx-3 mt-2 flex flex-wrap items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm text-gray-900 shadow-sm">
-          <span className="flex-1">Previewing {previewing === 'fap-default' ? 'FAP default' : nameOf(previewing)} on this page. Nothing changes until you apply.</span>
-          <button type="button" className={button} onClick={() => preview(null)}>Stop preview</button>
-        </div>
-      )}
-      <div className="px-3 pt-2.5">
+    <div ref={rootRef} className="pb-4 [&_button]:scroll-mt-40 [&_input]:scroll-mt-40 [&_select]:scroll-mt-40">
+      {/* In use, the mode chips and the preview bar stay in reach while the gallery scrolls (panel-ux R11.4; F-23). */}
+      <div className="sticky top-0 z-10 border-b border-gray-200 bg-white px-3 pb-2 pt-2.5">
         <p className="text-sm text-gray-700">In use: <b className="font-semibold text-gray-900">{current}</b></p>
         <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label="How themes apply">
           <Chip on={mode === 'single'} onClick={() => setMode('single')}>One theme</Chip>
           <Chip on={mode === 'auto'} onClick={() => setMode('auto')}>Light and dark</Chip>
         </div>
+        {previewing && (
+          <div role="status" className="mt-2 flex flex-wrap items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm text-gray-900 shadow-sm">
+            <span className="flex-1">Previewing {previewing === 'fap-default' ? 'FAP default' : nameOf(previewing)} on this page. Nothing changes until you apply.</span>
+            <button type="button" className={button} onClick={() => preview(null)}>Stop preview</button>
+          </div>
+        )}
+      </div>
+      <div className="px-3">
         {mode === 'auto' && (
           <div className="mt-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700">
             <p>Light: <b className="font-medium text-gray-900">{pair.light ? nameOf(pair.light) : 'choose below'}</b> · Dark: <b className="font-medium text-gray-900">{pair.dark ? nameOf(pair.dark) : 'choose below'}</b></p>

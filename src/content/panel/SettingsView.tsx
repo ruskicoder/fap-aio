@@ -3,10 +3,9 @@
 // a "modified" marker. Changes save at once. A section index appears when there are two or more sections:
 // a sticky list on the left while docked, a select on top while floating. The foot of the view exports,
 // imports (with a list of changes to confirm) and resets settings (R8.4, R8.5).
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { SECTION_LABELS, activeSections, isModified, searchSettings, settingDefs, settingDef, useSetting, writeSetting, type SectionId, type SettingDef } from './settings/registry'
 import { applyChanges, downloadJson, exportSettings, planImport, resetSettings, type ImportPlan } from './settings/transfer'
-import { useStore } from './use-store'
 
 const quiet = 'inline-flex h-control items-center rounded border border-gray-300 px-3 text-sm font-medium text-gray-800 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500'
 const strong = 'inline-flex h-control items-center rounded bg-orange-600 px-3 text-sm font-medium text-white hover:bg-orange-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1'
@@ -150,17 +149,59 @@ export function SettingsView({ section }: { section?: string }) {
     else { setNote(null); setPending({ kind: 'import', plan }) }
   }
   const done = (msg: string | null) => { setPending(null); if (msg) setNote({ tone: 'info', text: msg }) }
-  const docked = useStore('panel.state').data?.mode === 'docked'
   const sections = activeSections()
   const all = useMemo(() => settingDefs(), [])
   const shown = q.trim() ? searchSettings(q) : all
   const refs = useRef(new Map<SectionId, HTMLElement>())
-  const go = (s: SectionId) => refs.current.get(s)?.scrollIntoView?.({ block: 'start' })
+  const header = useRef<HTMLDivElement>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const [active, setActive] = useState<SectionId | null>(null)
+  const [headerH, setHeaderH] = useState(0)
+  const visible = sections.filter((s) => shown.some((d) => d.section === s))
+  // The outlet's scroll box holds the whole page; the header sticks to its top (fix F-23).
+  const scroller = () => { let e = rootRef.current?.parentElement ?? null; while (e && !/(auto|scroll)/.test(getComputedStyle(e).overflowY)) e = e.parentElement; return e }
+  const go = (s: SectionId) => {
+    setActive(s)
+    const el = refs.current.get(s)
+    const box = scroller()
+    if (!el) return
+    if (!box) { el.scrollIntoView?.({ block: 'start' }); return }
+    const top = box.scrollTop + el.getBoundingClientRect().top - box.getBoundingClientRect().top - (header.current?.offsetHeight ?? 0)
+    box.scrollTo?.({ top: Math.max(0, top), behavior: 'auto' })
+  }
   useEffect(() => { if (section) go(section as SectionId) }, [section])
-  const withIndex = sections.length > 1 && !q.trim()
+  // The active tab follows the scroll position: the last section whose heading has passed under the header.
+  useEffect(() => {
+    const box = scroller()
+    if (!box) return
+    let frame = 0
+    const onScroll = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        const limit = box.getBoundingClientRect().top + (header.current?.offsetHeight ?? 0) + 8
+        let cur: SectionId | null = null
+        for (const s of visible) { const el = refs.current.get(s); if (el && el.getBoundingClientRect().top <= limit) cur = s }
+        // At the end of the page the last sections cannot reach the header line; the last one is then active.
+        if (box.scrollHeight - box.scrollTop - box.clientHeight <= 2 && box.scrollTop > 0) cur = visible[visible.length - 1] ?? cur
+        setActive(cur ?? visible[0] ?? null)
+      })
+    }
+    box.addEventListener('scroll', onScroll, { passive: true })
+    return () => { box.removeEventListener('scroll', onScroll); cancelAnimationFrame(frame) }
+  }, [visible.join(',')])
+  useEffect(() => {
+    const h = header.current
+    if (!h) return
+    const measure = () => setHeaderH(h.offsetHeight)
+    measure()
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : null
+    ro?.observe(h)
+    return () => ro?.disconnect()
+  }, [])
+  const current = active && visible.includes(active) ? active : visible[0] ?? null
 
   const body = (
-    <div className="min-w-0 flex-1">
+    <div className="min-w-0">
       {sections.map((s) => {
         const rows = shown.filter((d) => d.section === s)
         if (!rows.length) return null
@@ -186,26 +227,23 @@ export function SettingsView({ section }: { section?: string }) {
     </div>
   )
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex flex-wrap gap-2 border-b border-gray-200 px-3 py-2">
-        <input type="search" aria-label="Search settings" placeholder="Search settings" className={`${field} min-w-0 flex-1`} value={q} onChange={(e) => setQ(e.target.value)} />
-        {withIndex && !docked && (
-          <select aria-label="Go to section" className={field} value="" onChange={(e) => go(e.target.value as SectionId)}>
-            <option value="" disabled>Go to section</option>
-            {sections.map((s) => <option key={s} value={s}>{SECTION_LABELS[s]}</option>)}
-          </select>
-        )}
-      </div>
-      <div className="flex min-h-0 flex-1 overflow-y-auto">
-        {withIndex && docked && (
-          <nav aria-label="Settings sections" className="sticky top-0 w-32 shrink-0 self-start border-r border-gray-100 py-2">
-            {sections.map((s) => (
-              <button key={s} type="button" className="block w-full px-3 py-1.5 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500" onClick={() => go(s)}>{SECTION_LABELS[s]}</button>
+    // Controls scrolled into view stop below the sticky header (WCAG 2.4.11; fix F-23).
+    <div ref={rootRef} style={{ '--aio-sticky-h': `${headerH + 8}px` } as CSSProperties}
+      className="[&_:is(button,input,select,textarea,a)]:scroll-mt-[var(--aio-sticky-h)]">
+      <div ref={header} className="sticky top-0 z-10 border-b border-gray-200 bg-white px-3 pb-2 pt-2">
+        <input type="search" aria-label="Search settings" placeholder="Search settings" className={`${field} w-full min-w-0`} value={q} onChange={(e) => setQ(e.target.value)} />
+        {visible.length > 1 && (
+          <nav aria-label="Settings sections" className="mt-2 flex flex-wrap gap-1.5">
+            {visible.map((s) => (
+              <button key={s} type="button" aria-current={s === current ? 'true' : undefined} onClick={() => go(s)}
+                className={`inline-flex h-7 items-center whitespace-nowrap rounded-full border px-2.5 text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${s === current ? 'border-orange-600 bg-orange-50 font-semibold text-orange-900' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}>
+                {SECTION_LABELS[s]}
+              </button>
             ))}
           </nav>
         )}
-        {body}
       </div>
+      {body}
     </div>
   )
 }

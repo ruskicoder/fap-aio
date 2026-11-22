@@ -76,8 +76,8 @@ Compacted on 2026-10-22 from 26 to 16 subtasks with no requirement dropped; the 
   - `panel.prefs.firstRun`; opens docked at comfortable density; three skippable steps (tabs tour, "Sync this week" button with live progress, optional features all off); Help reopens it.
   - _Requirements: 9.1, 9.2, 9.3_
 
-- [ ] 10. [PNL-10] Sticky view headers
-- [ ] 10.1 [PNL-10.1] Sticky Settings search and section tabs, and sticky headers in long views (fix F-23)
+- [x] 10. [PNL-10] Sticky view headers
+- [x] 10.1 [PNL-10.1] Sticky Settings search and section tabs, and sticky headers in long views (fix F-23)
   - Settings: sticky search and wrapping section tabs, scroll to a section, the active tab follows the scroll position, nothing clipped at 320 px; the Theme view and Info Subjects get sticky headers.
   - Tests and an m4-check step for the sticky tabs at 320 px.
   - _Requirements: 11.1, 11.2, 11.3, 11.4; 8.1_

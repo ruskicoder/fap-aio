@@ -388,6 +388,47 @@ async function main() {
   await sleep(600)
   note('Classic off restores the page without reload', !(await ev(`!!document.querySelector('[data-fap-aio-classic]')`)), '')
 
+  // ---- F-23: the Settings search and section buttons stay at the top, also at 320 px. ----
+  await click('button', 'Settings')
+  await sleep(800)
+  const stick = (label) => ev(`(() => {
+    const r = ${root$}
+    const head = r.querySelector('input[aria-label="Search settings"]').closest('.sticky')
+    let box = head.parentElement; while (box && !/(auto|scroll)/.test(getComputedStyle(box).overflowY)) box = box.parentElement
+    const nav = head.querySelector('nav[aria-label="Settings sections"]')
+    const nb = nav.getBoundingClientRect()
+    const btns = [...nav.querySelectorAll('button')]
+    const clipped = btns.filter((b) => { const x = b.getBoundingClientRect(); return x.left < nb.left - 0.5 || x.right > nb.right + 0.5 || b.scrollWidth > b.clientWidth + 1 }).map((b) => b.textContent)
+    return { label: ${JSON.stringify(label)}, headTop: Math.round(head.getBoundingClientRect().top - box.getBoundingClientRect().top), scrolled: Math.round(box.scrollTop), tabs: btns.map((b) => b.textContent), current: btns.find((b) => b.getAttribute('aria-current') === 'true')?.textContent ?? null, clipped, navScroll: nav.scrollWidth > nav.clientWidth + 1, width: Math.round(r.querySelector('[aria-label="FAP-AIO"]').getBoundingClientRect().width) }
+  })()`)
+  await ev(`(() => { const r = ${root$}; let box = r.querySelector('input[aria-label="Search settings"]').closest('.sticky').parentElement; while (box && !/(auto|scroll)/.test(getComputedStyle(box).overflowY)) box = box.parentElement; box.scrollTop = box.scrollHeight })()`)
+  await sleep(500)
+  const atEnd = await stick('end')
+  note('Settings search and section buttons stay at the top while the page scrolls (F-23)', atEnd.scrolled > 200 && Math.abs(atEnd.headTop) <= 1 && atEnd.tabs.length >= 6, `scrolled ${atEnd.scrolled}px, header at ${atEnd.headTop}px, ${atEnd.tabs.length} buttons, active ${atEnd.current}`)
+  await shot('settings-sticky-end')
+  await click('button', 'General')
+  await sleep(400)
+  await click('button', 'About')
+  await sleep(600)
+  const atAbout = await stick('about')
+  // The last section may not reach the header line at the end of the page; it must be in view below the header.
+  const about = await ev(`(() => { const r = ${root$}; const h = r.getElementById('aio-set-about').getBoundingClientRect(); const head = r.querySelector('input[aria-label="Search settings"]').closest('.sticky'); let box = head.parentElement; while (box && !/(auto|scroll)/.test(getComputedStyle(box).overflowY)) box = box.parentElement; return { below: Math.round(h.top - head.getBoundingClientRect().bottom), inView: h.bottom <= box.getBoundingClientRect().bottom } })()`)
+  note('a section button scrolls to its section and becomes the active one', atAbout.current === 'About' && about.below >= 0 && about.inView, `About heading ${about.below}px below the header, in view ${about.inView}, active ${atAbout.current}`)
+  await click('button', 'Schedule')
+  await sleep(600)
+  const sched = await stick('schedule')
+  const schedBelow = await ev(`Math.round(${root$}.getElementById('aio-set-schedule').getBoundingClientRect().top - ${root$}.querySelector('input[aria-label="Search settings"]').closest('.sticky').getBoundingClientRect().bottom)`)
+  note('a middle section lands just below the header', sched.current === 'Schedule' && schedBelow >= 0 && schedBelow <= 12, `Schedule heading ${schedBelow}px below the header, active ${sched.current}`)
+  // 320 px: the narrowest panel. The row wraps, so every button stays whole.
+  await ev(`(() => { const p = ${root$}.querySelector('[aria-label="FAP-AIO"]'); p.style.width = '320px'; p.style.minWidth = '320px'; p.style.maxWidth = '320px' })()`)
+  await sleep(500)
+  const narrow = await stick('320')
+  note('at 320 px no section button is clipped and the row does not scroll sideways', narrow.width <= 322 && narrow.clipped.length === 0 && !narrow.navScroll && narrow.tabs.length === atEnd.tabs.length, `panel ${narrow.width}px, ${narrow.tabs.length} buttons, clipped ${narrow.clipped.join(', ') || 'none'}`)
+  await shot('settings-sticky-320')
+  await ev(`(() => { const p = ${root$}.querySelector('[aria-label="FAP-AIO"]'); p.style.width = ''; p.style.minWidth = ''; p.style.maxWidth = '' })()`)
+  await click('button', 'Back').catch(() => {})
+  await sleep(400)
+
   // ---- F-24: dark presets. Every visible text in the panel is measured against the background it sits on. ----
   const measure = () => ev(`(() => {
     const root = document.getElementById('fap-aio-root').shadowRoot
