@@ -51,10 +51,11 @@ export function GradeListDoc({ list, scale, components, attendance = false, now 
                 ...(components ? c.components.map((x, j) => (
                   <tr key={`c${i}x${j}`} className="component">
                     <td />
-                    <td>{x.category}{x.total ? ' total' : `: ${x.item}`}</td>
-                    <td className="num">{x.weight || '-'}</td>
-                    <td className="num">{x.value || '-'}</td>
-                    <td colSpan={2} />
+                    <td colSpan={5}>
+                      <span className={`inline-block min-w-[18rem] pr-3 ${x.total ? 'font-medium' : ''}`}>{x.category}{x.total ? ' total' : `: ${x.item}`}</span>
+                      <span className="inline-block min-w-[7rem] pr-3">Weight {x.weight || '-'}</span>
+                      <span className="inline-block">Value {x.value || '-'}</span>
+                    </td>
                   </tr>
                 )) : []),
               ])}

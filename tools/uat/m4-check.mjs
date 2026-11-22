@@ -3,7 +3,10 @@
 // M4 screens: the Theme view (preview, apply, FAP default), the theme editor and the CSS editor window, the
 // compact, wide and sticky switches, and the Classic layout on the home and grade pages. The Classic top
 // navigation (APP-7.4) waits on G-SELECTORS and is not checked; the timetable cards need FAP's own partial
-// loader, which the fixture server does not run, so the unit tests cover them.
+// loader, which the fixture server does not run, so the unit tests cover them. GRD-7 (2026-11-22) adds the
+// GPA scale switch, the Record view with its paced read job (progress, partial results, Cancel and Resume),
+// the printable grade list window (content, options, print media, an A4 PDF), the Attendance view and the
+// absence chip on the Courses cards.
 // A headless Chrome loads dist/ through
 // CDP Extensions.loadUnpacked and every request to https://fap.fpt.edu.vn is answered from the
 // anonymized fixtures in test/fixtures/en (week partials and exams shifted to the current dates).
@@ -38,6 +41,14 @@ function shiftDates(text, days, year) {
   })
 }
 const file = (n) => readFileSync(join(fx, n), 'utf8')
+// Grade pages per term (GRD-7.2): the four saved term pages, an empty course list for the other terms.
+const selectedIn = (html, id) => html.slice(html.indexOf(`id="${id}"`)).match(/<option value="([^"]+)"[^>]*selected/)?.[1]
+const GRADE_TERMS = Object.fromEntries(['grade-term-fa24.html', 'grade-term-sp26.html', 'grade-term-su24.html', 'grade-term-su25.html'].map((f) => [selectedIn(file(f), 'grade-report-term'), f]))
+const emptyTerm = (id) => `<div class="content-page"><select id="grade-report-term"><option value="${id}" selected>Term</option></select><select id="grade-report-course"></select></div>`
+// Attendance (GRD-7.4): one course of the current term has three absences of 15 sessions (last chance).
+const LMO352 = file('attendance.html').match(/<option value="([^"]+)"[^>]*>\s*LMO Vidvpdnr/)?.[1]
+let absences = 0
+const withAbsences = file('attendance-set490.partial.html').replace(/attendance-status--present/g, (m) => (++absences <= 3 ? 'attendance-status--absent' : m))
 function route(url) {
   const u = new URL(url)
   const p = u.pathname.replace(/\/$/, '') || '/'
@@ -55,7 +66,17 @@ function route(url) {
   if (p === '/Application/GetFormSchema') return [200, 'application/json', file('application-form-schema.json')]
   if (p === '/Curriculum') return [200, 'text/html', file('curriculum.html')]
   // A course in the query is the mark sheet partial; without one, the grade page with its selectors.
-  if (p === '/Report/Grade') return [200, 'text/html', u.searchParams.get('courseId') ? file('grade-default.partial.html') : file('grade.html')]
+  if (p === '/Report/Grade') {
+    const termId = u.searchParams.get('termId')
+    if (u.searchParams.get('courseId')) return [200, 'text/html', file('grade-default.partial.html')]
+    if (!termId) return [200, 'text/html', file('grade.html')]
+    return [200, 'text/html', GRADE_TERMS[termId] ? file(GRADE_TERMS[termId]) : emptyTerm(termId)]
+  }
+  if (p === '/Report/Attendance') {
+    const courseId = u.searchParams.get('courseId')
+    if (courseId) return [200, 'text/html', courseId === LMO352 ? withAbsences : file('attendance-set490.partial.html')]
+    return [200, 'text/html', u.searchParams.get('termId') ? file('attendance-term-su26.html') : file('attendance.html')]
+  }
   return [404, 'text/html', file('not-found.html')]
 }
 
@@ -192,7 +213,7 @@ async function main() {
     subRows[sec] = (await rows())[1]?.[1] ?? []
     clips.push(...(await clipped()).map((c) => `${sec}: ${c}`))
   }
-  note('each section shows its views in the sub-view bar', JSON.stringify(subRows) === JSON.stringify({ Today: [], Schedule: ['Classes', 'Exams', 'Export'], Grades: ['Courses', 'GPA', 'What-if', 'Planner'], Info: [] }), JSON.stringify(subRows))
+  note('each section shows its views in the sub-view bar', JSON.stringify(subRows) === JSON.stringify({ Today: [], Schedule: ['Classes', 'Exams', 'Export'], Grades: ['Courses', 'GPA', 'What-if', 'Planner', 'Record', 'Attendance'], Info: [] }), JSON.stringify(subRows))
   note('no tab row or tab clips or scrolls sideways', clips.length === 0, clips.join(', ') || 'none')
   await click('[role="tab"]', 'Today')
   await sleep(800)
@@ -231,6 +252,24 @@ async function main() {
   const csv = readdirSync(dlDir).filter((f) => f.endsWith('.csv'))
   note('Export CSV downloads a file with a byte-order mark', csv.length === 1 && readFileSync(join(dlDir, csv[0])).subarray(0, 3).toString('hex') === 'efbbbf', csv.join(', '))
 
+  // ---- GRD-7.1: the GPA scale switch ----
+  const bigGpa = () => ev(`${root$}.querySelector('.text-2xl')?.textContent ?? ''`)
+  const ten = await bigGpa()
+  await click('button[aria-pressed]', '4-point (global)')
+  await sleep(600)
+  const four = await bigGpa()
+  const gpaText4 = await shadowText()
+  note('the 4-point scale converts the GPA (GRD-7.1)', /^\d\.\d\d$/.test(four) && Number(four) <= 4 && four !== ten && gpaText4.includes('cumulative GPA (4-point)') && gpaText4.includes('A 8.5 to 10 is 4'), `${ten} on 10, ${four} on 4`)
+  await shot('grades-gpa-4-point')
+  await click('[role="tab"]', 'Courses')
+  await sleep(800)
+  await click('[role="tab"]', 'GPA')
+  await sleep(1500)
+  note('the scale choice persists', (await bigGpa()) === four && (await ev(`${root$}.querySelector('[role="group"][aria-label="GPA scale"] button[aria-pressed="true"]')?.textContent ?? ''`)) === '4-point (global)', '')
+  await click('button[aria-pressed]', '10-point (Vietnam)')
+  await sleep(600)
+  note('the 10-point scale is back', (await bigGpa()) === ten, ten)
+
   // M3: What-if, Planner, Subjects.
   const typeInto = (sel, value) => ev(`(() => { const i = ${root$}.querySelector(${JSON.stringify(sel)}); if (!i) return false; Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(i, ${JSON.stringify(value)}); i.dispatchEvent(new Event('input', { bubbles: true })); return true })()`)
   await click('[role="tab"]', 'What-if')
@@ -254,6 +293,120 @@ async function main() {
   const plan1 = await shadowText()
   note('Planner reports an out-of-reach target with the highest GPA', /not reachable[\s\S]*highest reachable GPA is \d\.\d\d|You need an average of/.test(plan1), plan1.match(/(\d\.\d\d is not reachable[^.]*|You need an average[^.]*)/)?.[0] ?? '')
   await shot('grades-planner')
+
+  // ---- GRD-7.2: the Record view and its paced, resumable read ----
+  // The bell's count badge overflows its button on purpose; the Theme view check leaves it out too.
+  const clippedNow = () => ev(`[...${root$}.querySelectorAll('button, p, li, h3, td')].filter((e) => e.scrollWidth > e.clientWidth + 1 && !e.matches('[aria-label^="Alerts"]')).map((e) => e.getAttribute('aria-label') || e.textContent.trim().slice(0, 30))`)
+  // Term sections of the Record view (the panel itself is a section named FAP-AIO).
+  const sectionsNow = () => ev(`[...${root$}.querySelectorAll('section[aria-label]')].filter((s) => s.querySelector(':scope > div > h3')).map((s) => s.getAttribute('aria-label'))`)
+  await click('[role="tab"]', 'Record')
+  await sleep(1500)
+  note('Record offers to read the record (GRD-7.2)', (await shadowText()).includes('No record read yet'), '')
+  await click('button', 'Read my record')
+  await sleep(2500)
+  const prog = await ev(`${root$}.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow') ?? null`)
+  const progText = await ev(`${root$}.querySelector('[role="progressbar"]')?.parentElement?.textContent ?? ''`)
+  note('Record shows progress while reading', prog !== null && /Reading \d+ of \d+/.test(progText), progText.slice(0, 90))
+  note('Record shows partial results while it reads', (await sectionsNow()).length > 0, JSON.stringify(await sectionsNow()))
+  await shot('record-reading')
+  await click('button', 'Cancel')
+  let stopped = ''
+  for (let i = 0; i < 40 && !stopped.includes('Reading stopped at'); i++) { await sleep(500); stopped = await shadowText() }
+  note('Cancel stops the read and offers Resume', stopped.includes('Reading stopped at') && !!(await box('button', 'Resume')), stopped.match(/Reading stopped at[^.]*/)?.[0] ?? '')
+  await click('button', 'Resume')
+  const t0 = Date.now()
+  let finished = false
+  while (!finished && Date.now() - t0 < 9 * 60_000) {
+    await sleep(5000)
+    finished = !(await ev(`!!${root$}.querySelector('[role="progressbar"]')`)) && (await shadowText()).includes('Record updated')
+  }
+  note('Resume finishes the read within the request budget', finished, `${Math.round((Date.now() - t0) / 1000)} s after Resume`)
+  const recSections = await sectionsNow()
+  note('Record lists every term newest first', recSections[0] === 'Fall2026' && recSections.at(-1) === 'Fall2023' && recSections.length === 10, JSON.stringify(recSections))
+  await click('button', 'Details for LMO352')
+  await sleep(400)
+  note('a course expands to its mark sheet components', (await ev(`[...${root$}.querySelectorAll('caption')].some((c) => c.textContent === 'Mark sheet of LMO352')`)), '')
+  const recText = await shadowText()
+  note('Record shows grades with letters and the absence chip', /Grade: \d+\.\d \([A-F]\)/.test(recText) && /Absent \d+(\.\d)?%/.test(recText), recText.match(/Absent \d+(\.\d)?%/)?.[0] ?? '')
+  const recClip = await clippedNow()
+  note('nothing clipped in Record', recClip.length === 0, recClip.join(' | ') || 'none')
+  note('no truncated text in Record', (await ev(`${root$}.querySelectorAll('.truncate').length`)) === 0, '')
+  await shot('record')
+  await click('button', 'Export CSV')
+  await sleep(2000)
+  const recCsv = readdirSync(dlDir).filter((f) => /^fap-aio-record-.*\.csv$/.test(f))
+  note('Record exports CSV with a byte-order mark', recCsv.length === 1 && readFileSync(join(dlDir, recCsv[0])).subarray(0, 3).toString('hex') === 'efbbbf', recCsv.join(', '))
+  await click('button', 'Export JSON')
+  await sleep(2000)
+  const recJson = readdirSync(dlDir).filter((f) => /^fap-aio-record-.*\.json$/.test(f))
+  note('Record exports JSON', recJson.length === 1 && JSON.parse(readFileSync(join(dlDir, recJson[0]), 'utf8')).formatVersion === 1, recJson.join(', '))
+
+  // ---- GRD-7.3: the printable grade list ----
+  await click('button', 'Print or save as PDF')
+  let prTarget = null
+  for (let i = 0; i < 20 && !prTarget; i++) {
+    await sleep(250)
+    prTarget = (await send('Target.getTargets')).targetInfos.find((t) => t.url.includes('/src/pages/print/print.html'))
+  }
+  note('Print or save as PDF opens the print window (GRD-7.3)', !!prTarget, prTarget?.url.replace(/^chrome-extension:\/\/[a-z]+/, '') ?? '')
+  const { sessionId: P } = await send('Target.attachToTarget', { targetId: prTarget.targetId, flatten: true })
+  const evP = async (expr) => (await send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true }, P)).result.value
+  await send('Page.enable', {}, P)
+  await sleep(1500)
+  const pText = await evP(`document.querySelector('main')?.textContent ?? ''`)
+  note('the grade list shows student, roll number, curriculum and the not-official note', ['Academic grade list', 'So Sriv Aamk', 'IR821902', 'OUV_BV_GN_21A', 'Generated by FAP-AIO from FAP data; not an official transcript'].every((x) => pText.includes(x)), '')
+  const pSections = await evP(`[...document.querySelectorAll('main section[aria-label]')].map((s) => s.getAttribute('aria-label'))`)
+  note('the grade list has the terms oldest first, then attendance', pSections[0] === 'Fall2023' && pSections.at(-1) === 'Attendance', JSON.stringify(pSections))
+  note('the grade list shows term and cumulative GPAs', /Term GPA: \d\.\d\d[\s\S]*Cumulative GPA: \d\.\d\d/.test(pText), '')
+  const comps = () => evP(`document.querySelectorAll('tr.component').length`)
+  const c1 = await comps()
+  await evP(`[...document.querySelectorAll('label')].find((l) => l.textContent.includes('Include components')).querySelector('input').click()`)
+  await sleep(300)
+  const c2 = await comps()
+  note('Include components switches the component rows', c1 > 0 && c2 === 0, `${c1} then ${c2}`)
+  await evP(`[...document.querySelectorAll('label')].find((l) => l.textContent.includes('Include components')).querySelector('input').click()`)
+  await evP(`(() => { const s = document.querySelector('select'); s.value = '4'; s.dispatchEvent(new Event('change', { bubbles: true })) })()`)
+  await sleep(300)
+  note('the print scale switch shows the 4-point GPA', (await evP(`document.querySelector('main').textContent`)).includes('4-point (global)'), '')
+  const pClip = await evP(`[...document.querySelectorAll('main td, main th, main p, main h2')].filter((e) => e.scrollWidth > e.clientWidth + 1).length`)
+  note('nothing clipped on the grade list', pClip === 0, `${pClip} clipped cells`)
+  const shotP = await send('Page.captureScreenshot', { format: 'png' }, P)
+  writeFileSync(join(outDir, `${String(++shotN).padStart(2, '0')}-print-window.png`), Buffer.from(shotP.data, 'base64'))
+  await send('Emulation.setEmulatedMedia', { media: 'print' }, P)
+  note('print media hides the controls', (await evP(`getComputedStyle(document.querySelector('[role="toolbar"]')).display`)) === 'none', '')
+  await send('Emulation.setEmulatedMedia', { media: '' }, P)
+  const pdf = await send('Page.printToPDF', { preferCSSPageSize: true, printBackground: true }, P)
+  const pdfBytes = Buffer.from(pdf.data, 'base64')
+  writeFileSync(join(outDir, 'grade-list.pdf'), pdfBytes)
+  const box0 = pdfBytes.toString('latin1').match(/\/MediaBox\s*\[\s*0 0 ([\d.]+) ([\d.]+)/)
+  const pages = (pdfBytes.toString('latin1').match(/\/Type\s*\/Page[^s]/g) ?? []).length
+  note('saving as PDF gives A4 pages', !!box0 && Math.abs(Number(box0[1]) - 595.3) < 2 && Math.abs(Number(box0[2]) - 841.9) < 2 && pages > 0, `${box0 ? `${box0[1]} x ${box0[2]} pt` : 'no MediaBox'}, ${pages} pages, grade-list.pdf`)
+  await evP('window.close()').catch(() => {})
+  await sleep(500)
+
+  // ---- GRD-7.4: attendance ----
+  await click('[role="tab"]', 'Attendance')
+  let attCards = 0
+  for (let i = 0; i < 30 && attCards < 4; i++) { await sleep(500); attCards = await ev(`${root$}.querySelectorAll('[data-attendance]').length`) }
+  const attText = await shadowText()
+  note('Attendance lists the current term\'s courses (GRD-7.4)', attCards === 4 && attText.includes('Attended:') && attText.includes('Exempt:'), `${attCards} courses`)
+  note('a course at the limit is marked Last chance', attText.includes('Last chance') && attText.includes('Absent 20% of 20% allowed'), '')
+  await shot('attendance')
+  await ev(`(() => { const s = ${root$}.querySelector('select'); s.value = s.options[1].value; s.dispatchEvent(new Event('change', { bubbles: true })) })()`)
+  let attCards2 = 0
+  for (let i = 0; i < 30 && attCards2 !== 5; i++) { await sleep(500); attCards2 = await ev(`${root$}.querySelectorAll('[data-attendance]').length`) }
+  note('a past term is selectable', attCards2 === 5 && (await ev(`${root$}.querySelector('select').selectedOptions[0].textContent`)) === 'Summer2026', `${attCards2} courses`)
+  const attClip = await clippedNow()
+  note('nothing clipped in Attendance', attClip.length === 0, attClip.join(' | ') || 'none')
+  await click('button', 'Export CSV')
+  await sleep(2000)
+  const attCsv = readdirSync(dlDir).filter((f) => /^fap-aio-attendance-.*\.csv$/.test(f))
+  note('Attendance exports CSV with a byte-order mark', attCsv.length === 1 && readFileSync(join(dlDir, attCsv[0])).subarray(0, 3).toString('hex') === 'efbbbf', attCsv.join(', '))
+  await click('[role="tab"]', 'Courses')
+  await sleep(2500)
+  const chip = await ev(`[...${root$}.querySelectorAll('[data-course]')].map((c) => c.textContent.match(/Absent \\d+(\\.\\d)?%/)?.[0]).filter(Boolean)`)
+  note('Courses cards show the absence chip', chip.length > 0 && chip.includes('Absent 20%'), JSON.stringify(chip))
+  await shot('courses-attendance')
   await click('[role="tab"]', 'Info')
   await sleep(3000)
   const subj = await ev(`${root$}.querySelectorAll('[data-subject], [role="listitem"], li button').length`)

@@ -134,7 +134,9 @@ describe('sections and sub-views (F-18)', () => {
     expect(names('Grades views')).toEqual(['Courses', 'GPA', 'What-if', 'Planner'])
     expect(list('Grades views')[1]!.getAttribute('aria-selected')).toBe('true')
     expect(el.querySelectorAll('[role="tablist"]')).toHaveLength(2)
-    expect(el.innerHTML).not.toMatch(/overflow-x|min-w-max/)
+    // Never a sideways-scrolling bar (F-18); a sub-view bar that does not fit wraps instead (GRD-7).
+    expect(el.innerHTML).not.toMatch(/overflow-x/)
+    expect(el.querySelector('[role="tablist"][aria-label="Grades views"]')!.className).toContain('flex-wrap')
     act(() => list('Sections')[1]!.click())
     expect(router.current()).toEqual({ tab: 'schedule', sub: 'week' })
     expect(names('Schedule views')).toEqual(['Classes', 'Exams', 'Export'])

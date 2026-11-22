@@ -45,7 +45,11 @@ export function fallbackRoute(r: Route): Route | null {
 
 interface Item { id: string; label: string; icon?: IconName }
 
-/** A tablist with roving focus and manual activation; items share the width and never scroll. */
+/**
+ * A tablist with roving focus and manual activation; items share the width and never scroll. A sub-view bar
+ * whose labels do not fit wraps onto a second row instead of clipping (GRD-7: six Grades views); its tabs keep
+ * their label width (`min-w-max`), which the panel's 24 px minimum-target rule would otherwise replace.
+ */
 export function Tablist({ label, items, active, onActivate, primary = false }: { label: string; items: Item[]; active: string | null; onActivate: (id: string) => void; primary?: boolean }) {
   const refs = useRef<(HTMLButtonElement | null)[]>([])
   // As in the APG manual-activation example, the selected tab is the tab stop; arrows move focus only.
@@ -62,13 +66,13 @@ export function Tablist({ label, items, active, onActivate, primary = false }: {
     e.preventDefault()
   }
   return (
-    <div role="tablist" aria-label={label} className={`flex shrink-0 border-b border-gray-200 ${primary ? 'bg-gray-50' : ''}`}>
+    <div role="tablist" aria-label={label} className={`flex shrink-0 border-b border-gray-200 ${primary ? 'bg-gray-50' : 'flex-wrap'}`}>
       {items.map((it, i) => {
         const on = it.id === active
         return (
           <button key={it.id} ref={(el) => { refs.current[i] = el }} type="button" role="tab" aria-selected={on}
             tabIndex={i === tabStop ? 0 : -1} onClick={() => onActivate(it.id)} onKeyDown={(e) => onKey(e, i)}
-            className={`inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 ${primary ? 'h-11' : 'h-10'} ${on ? 'border-orange-600 font-semibold text-gray-900' : 'border-transparent text-gray-600 hover:text-gray-900'}`}>
+            className={`inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 ${primary ? 'h-11' : 'h-10 min-w-max'} ${on ? 'border-orange-600 font-semibold text-gray-900' : 'border-transparent text-gray-600 hover:text-gray-900'}`}>
             {it.icon && <Icon name={it.icon} size={18} />}
             <span>{it.label}</span>
           </button>
