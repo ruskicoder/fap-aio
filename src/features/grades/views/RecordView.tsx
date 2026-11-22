@@ -13,6 +13,9 @@ import { useGradeSettings } from '../settings'
 import { useGpaScale } from '../scale-setting'
 import { buildRecordExport, downloadText, recordCsv, recordFileName, recordJson } from '../record-export'
 import { call } from '../../../shared/call'
+import { dataClient } from '../../../content/data-client'
+import { absenceInfo } from '../attendance'
+import { AbsenceChip } from './AttendanceView'
 
 export function useRecord(): { store: RecordStore | null; job: RecordJob | null; loaded: boolean } {
   const [s, setS] = useState<{ store: RecordStore | null; job: RecordJob | null; loaded: boolean }>({ store: null, job: null, loaded: false })
@@ -21,6 +24,25 @@ export function useRecord(): { store: RecordStore | null; job: RecordJob | null;
   const [, tick] = useState(0)
   useEffect(() => recordEngine.subscribe(() => tick((n) => n + 1)), [])
   return s
+}
+
+/** The FLM attendance requirement of the courses with stored attendance, by code (80% when unknown). */
+function useAttendanceRules(store: RecordStore | null): Record<string, number | null> {
+  const codes = store ? [...new Set(Object.values(store.attendance ?? {}).flatMap((a) => {
+    const code = store.terms[a.termId]?.courses.find((c) => c.id === a.courseId)?.code
+    return code ? [code] : []
+  }))].sort() : []
+  const key = codes.join(',')
+  const [rules, setRules] = useState<Record<string, number | null>>({})
+  useEffect(() => {
+    if (!codes.length) return
+    let live = true
+    void dataClient().rules(codes).then((r) => {
+      if (live && r.ok) setRules(Object.fromEntries(Object.entries(r.value.subjects).map(([k, v]) => [k, v?.attendance.minPercent ?? null])))
+    }).catch(() => undefined)
+    return () => { live = false }
+  }, [key])
+  return rules
 }
 
 /** A job that runs here, or in another tab whose heartbeat is fresh. */
@@ -78,7 +100,7 @@ function Failed({ job, busy }: { job: RecordJob; busy: boolean }) {
   )
 }
 
-function CourseDetail({ c, busy }: { c: RecordCourse; busy: boolean }) {
+function CourseDetail({ c, busy, withAttendance }: { c: RecordCourse; busy: boolean; withAttendance: boolean }) {
   const rows = components(c.sheet?.sheet)
   const sum = c.sheet?.sheet.summary
   return (
@@ -109,13 +131,13 @@ function CourseDetail({ c, busy }: { c: RecordCourse; busy: boolean }) {
       )}
       {c.sheet && <p className="mt-1 text-gray-500">Mark sheet read {ago(c.sheet.fetchedAt)}.</p>}
       {c.ref && c.termId && (
-        <button type="button" className={`${button} mt-1.5`} disabled={busy} onClick={() => void recordEngine.start('course', { termId: c.termId!, courseId: c.ref!.id, label: c.code ?? c.name })}>Read this course again</button>
+        <button type="button" className={`${button} mt-1.5`} disabled={busy} onClick={() => void recordEngine.start('course', { termId: c.termId!, courseId: c.ref!.id, label: c.code ?? c.name, attendance: withAttendance })}>Read this course again</button>
       )}
     </div>
   )
 }
 
-export function RecordCourseCard({ c, open, toggle, busy, extra }: { c: RecordCourse; open: boolean; toggle: () => void; busy: boolean; extra?: ReactNode }) {
+export function RecordCourseCard({ c, open, toggle, busy, extra, withAttendance = false }: { c: RecordCourse; open: boolean; toggle: () => void; busy: boolean; extra?: ReactNode; withAttendance?: boolean }) {
   const g = gradeText(c.grade)
   return (
     <li className="mx-3 my-1.5 rounded-lg border border-gray-200 bg-white px-2.5 py-2" data-record-course={c.key}>
@@ -128,14 +150,14 @@ export function RecordCourseCard({ c, open, toggle, busy, extra }: { c: RecordCo
         <span><b className="font-medium text-gray-900">Grade:</b> {g ?? '-'}</span>
         {extra}
       </p>
-      {open && <CourseDetail c={c} busy={busy} />}
+      {open && <CourseDetail c={c} busy={busy} withAttendance={withAttendance} />}
     </li>
   )
 }
 
-function TermSection({ t, gpa, scale, busy, open, setOpen, extra }: {
+function TermSection({ t, gpa, scale, busy, open, setOpen, extra, withAttendance }: {
   t: RecordTermView; gpa: { gpa: number | null; credits: number } | undefined; scale: string; busy: boolean
-  open: string | null; setOpen: (k: string | null) => void; extra?: (c: RecordCourse) => ReactNode
+  open: string | null; setOpen: (k: string | null) => void; extra?: (c: RecordCourse) => ReactNode; withAttendance: boolean
 }) {
   return (
     <section aria-label={t.name} className="pt-2">
@@ -148,7 +170,7 @@ function TermSection({ t, gpa, scale, busy, open, setOpen, extra }: {
         {t.id && <button type="button" className={button} disabled={busy} aria-label={`Read ${t.name} again`} onClick={() => void recordEngine.start('term', { termId: t.id!, name: t.name })}>Read again</button>}
       </div>
       <ul aria-label={`Courses of ${t.name}`} className="m-0 list-none p-0">
-        {t.courses.map((c) => <RecordCourseCard key={c.key} c={c} busy={busy} open={open === c.key} toggle={() => setOpen(open === c.key ? null : c.key)} extra={extra?.(c)} />)}
+        {t.courses.map((c) => <RecordCourseCard key={c.key} c={c} busy={busy} open={open === c.key} toggle={() => setOpen(open === c.key ? null : c.key)} extra={extra?.(c)} withAttendance={withAttendance} />)}
       </ul>
       {t.courses.length === 0 && <p className="px-3 py-1 text-xs text-gray-600">Not read yet.</p>}
     </section>
@@ -170,6 +192,13 @@ export function RecordView() {
   const running = jobRunning(job)
   const busy = running
   const terms = store ? recordTerms(store) : []
+  const rules = useAttendanceRules(store)
+  // The same absence percentage as the Attendance view, with the syllabus requirement when known (R16.6).
+  const chip = (c: RecordCourse) => {
+    const a = c.ref ? store?.attendance?.[c.ref.id] : undefined
+    const info = a ? absenceInfo(a.sheet.counts, c.code ? rules[c.code] ?? null : null) : null
+    return info ? <AbsenceChip info={info} /> : null
+  }
   const g = store?.transcript && settings ? computeGpaOn(scale, { rows: store.transcript.rows, nonGpa: settings.nonGpa }) : null
   const byName = new Map(g?.semesters.map((s) => [s.name.replace(/\s+/g, '').toLowerCase(), s]) ?? [])
   const unfinished = job && job.next < job.steps.length
@@ -191,14 +220,14 @@ export function RecordView() {
       )}
       {store && !store.transcript && !running && <div className="px-3"><Message tone="info">The transcript is not read yet. Update the record to list your courses.</Message></div>}
       {terms.map((t) => (
-        <TermSection key={t.id ?? t.name} t={t} gpa={byName.get(t.name.replace(/\s+/g, '').toLowerCase())} scale={scale} busy={busy} open={open} setOpen={setOpen} />
+        <TermSection key={t.id ?? t.name} t={t} gpa={byName.get(t.name.replace(/\s+/g, '').toLowerCase())} scale={scale} busy={busy} open={open} setOpen={setOpen} extra={chip} withAttendance={!!t.id && !!store?.attendanceTerms?.includes(t.id)} />
       ))}
       {store?.transcript && settings && (
         <div ref={foot} className="px-3 pt-3">
           <div className="flex flex-wrap gap-2">
             <button type="button" className={primary} onClick={() => {
               setPrintError(null)
-              void call({ type: 'print.open', components: true, attendance: false }).then((r) => { if (!r.ok) setPrintError('The print window could not be opened. Reload the page and try again.') })
+              void call({ type: 'print.open', components: true, attendance: Object.keys(store.attendance ?? {}).length > 0 }).then((r) => { if (!r.ok) setPrintError('The print window could not be opened. Reload the page and try again.') })
             }}>Print or save as PDF</button>
             <button type="button" className={button} onClick={() => downloadText(foot.current ?? document.body, recordFileName('csv'), recordCsv(buildRecordExport(store, settings.nonGpa)), 'text/csv;charset=utf-8')}>Export CSV</button>
             <button type="button" className={button} onClick={() => downloadText(foot.current ?? document.body, recordFileName('json'), recordJson(buildRecordExport(store, settings.nonGpa)), 'application/json')}>Export JSON</button>

@@ -126,7 +126,7 @@ describe('the record export', () => {
     expect(csv.startsWith('﻿FAP-AIO academic record\r\n')).toBe(true)
     expect(csv).toContain(`${NOT_OFFICIAL}\r\n`)
     expect(csv).toContain('Student,So Sriv Aamk,Roll number,IR821902')
-    expect(csv).toContain('Fall2023,YLI867,Nrigrthmgig tvs Patpfkb Blbvivvd Dmvasoy,0,9.3,A,4,Passed,No,,')
+    expect(csv).toContain('Fall2023,YLI867,Nrigrthmgig tvs Patpfkb Blbvivvd Dmvasoy,0,9.3,A,4,Passed,No,,,,,,,\r\n') // no sheet, no attendance
     expect(csv).toMatch(/\r\nFall2026,LMO352,[^\r\n]+\r\n/)
     const j = JSON.parse(recordJson(e))
     expect(j.formatVersion).toBe(1)

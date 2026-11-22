@@ -8,11 +8,20 @@ import { panelRouter } from '../../../content/panel/host'
 import { registerRefresh } from '../../../content/panel/keys'
 import { TIERS, type Prediction } from '../engine/predict'
 import { weakGroups } from '../engine/course-model'
-import { flmLink, loadCourses, recompute, useCourses, type CourseRow } from '../courses'
+import { coursesState, flmLink, loadCourses, recompute, useCourses, type CourseRow } from '../courses'
 import { useGradeSettings } from '../settings'
 import { rubricInfo, rubricText, type RubricInfo } from '../rubric'
 import { FLAG_TEXT } from '../inline/GradeInline'
 import { letterOf } from '../engine/scale'
+import { absenceInfo, readAttendance, useAttendanceEntries, type AttendanceEntry } from '../attendance'
+import { AbsenceChip } from './AttendanceView'
+
+/** Courses, then the current term's attendance, one page at a time and cache first (R16.6). */
+export async function loadCoursesAndAttendance(force = false): Promise<void> {
+  await loadCourses({ force })
+  const st = coursesState()
+  if (!st.error && st.rows.length) await readAttendance(st.rows.map((r) => r.ref), { force })
+}
 
 const TIER_LABELS = { pass: 'Pass', fair: 'Fair', good: 'Good', excellent: 'Excellent' } as const
 
@@ -91,7 +100,7 @@ function Detail({ row }: { row: CourseRow }) {
   )
 }
 
-function CourseCard({ row, open, toggle }: { row: CourseRow; open: boolean; toggle: () => void }) {
+function CourseCard({ row, open, toggle, att }: { row: CourseRow; open: boolean; toggle: () => void; att?: AttendanceEntry }) {
   const st = statusTag(row.prediction)
   const avg = averageText(row.prediction)
   const needs = needsText(row)
@@ -112,6 +121,7 @@ function CourseCard({ row, open, toggle }: { row: CourseRow; open: boolean; togg
           </span>
         )}
         {needs && <span><b className="font-medium text-gray-900">Needs:</b> {needs}</span>}
+        {(() => { const info = absenceInfo(att?.sheet?.counts, row.rule?.attendance.minPercent ?? null); return info ? <AbsenceChip info={info} /> : null })()}
         {row.error && !row.sheet && <span className="text-red-700">Not read: {row.error}</span>}
       </p>
       {open && <Detail row={row} />}
@@ -122,14 +132,15 @@ function CourseCard({ row, open, toggle }: { row: CourseRow; open: boolean; togg
 export function CoursesView() {
   const st = useCourses()
   const settings = useGradeSettings()
+  const att = useAttendanceEntries()
   const [open, setOpen] = useState<string | null>(() => {
     const r = panelRouter?.current()
     return r && 'tab' in r && r.tab === 'grades' && 'params' in r ? r.params?.courseId ?? null : null
   })
   const [rubric, setRubric] = useState<RubricInfo | null>(null)
-  useEffect(() => { void loadCourses() }, [])
+  useEffect(() => { void loadCoursesAndAttendance() }, [])
   // Alt+R (panel-ux R7.1).
-  useEffect(() => registerRefresh('grades/courses', () => void loadCourses({ force: true })), [])
+  useEffect(() => registerRefresh('grades/courses', () => void loadCoursesAndAttendance(true)), [])
   // Settings changed: recompute what is loaded, without new requests (R2.3).
   useEffect(() => { if (settings) void recompute() }, [settings])
   useEffect(() => { void rubricInfo().then(setRubric) }, [])
@@ -138,17 +149,17 @@ export function CoursesView() {
     <div className="pb-3">
       <div className="flex items-center gap-2 px-3 pb-1 pt-2.5">
         <p className="min-w-0 flex-1 text-xs text-gray-600">{[st.term, st.fetchedAt ? `read ${ago(st.fetchedAt)}` : null].filter(Boolean).join(' · ') || 'Current term'}</p>
-        <button type="button" className={button} disabled={st.loading} aria-busy={st.loading} onClick={() => void loadCourses({ force: true })}>{st.loading ? 'Reading' : 'Refresh'}</button>
+        <button type="button" className={button} disabled={st.loading} aria-busy={st.loading} onClick={() => void loadCoursesAndAttendance(true)}>{st.loading ? 'Reading' : 'Refresh'}</button>
       </div>
       {st.error && <div className="px-3"><Message tone="error">{st.error}</Message></div>}
       {!st.loading && !st.error && st.rows.length === 0 && (
         <Empty title="No courses this term yet">
           <p className="text-xs text-gray-600">FAP lists the courses of a term on its grade page.</p>
-          <button type="button" className={button} onClick={() => void loadCourses({ force: true })}>Read courses from FAP</button>
+          <button type="button" className={button} onClick={() => void loadCoursesAndAttendance(true)}>Read courses from FAP</button>
         </Empty>
       )}
       <ul aria-label="Courses this term" className="m-0 list-none p-0">
-        {st.rows.map((r) => <CourseCard key={r.ref.id} row={r} open={open === r.ref.id} toggle={() => setOpen(open === r.ref.id ? null : r.ref.id)} />)}
+        {st.rows.map((r) => <CourseCard key={r.ref.id} row={r} att={att.get(r.ref.id)} open={open === r.ref.id} toggle={() => setOpen(open === r.ref.id ? null : r.ref.id)} />)}
       </ul>
       {rubric && <p className="px-3 pt-2 text-[11px] text-gray-500">{rubricText(rubric)}</p>}
     </div>

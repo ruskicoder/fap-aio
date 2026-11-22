@@ -31,6 +31,7 @@ const sheetHtml = fx('grade-default.partial.html')
 function page(route: string): string | null {
   const u = new URL(`https://fap.fpt.edu.vn${route}`)
   if (u.pathname === '/Report/Transcript') return transcriptHtml
+  if (u.pathname === '/Report/Attendance') return u.searchParams.get('courseId') ? fx('attendance-set490.partial.html') : u.searchParams.get('termId') ? fx('attendance-term-su26.html') : fx('attendance.html')
   if (u.pathname !== '/Report/Grade') return null
   if (u.searchParams.get('courseId')) return sheetHtml
   const termId = u.searchParams.get('termId')
@@ -49,8 +50,9 @@ import type { RecordStore } from '../src/features/grades/record'
 
 ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
 const wait = (ms = 0) => act(async () => { await new Promise((r) => setTimeout(r, ms)) })
-const termReads = () => requests.filter((r) => /termId=[^&]+$/.test(r))
-const sheetReads = () => requests.filter((r) => r.includes('courseId='))
+const termReads = () => requests.filter((r) => /^\/Report\/Grade\?termId=[^&]+$/.test(r))
+const sheetReads = () => requests.filter((r) => r.startsWith('/Report/Grade?') && r.includes('courseId='))
+const attendanceReads = () => requests.filter((r) => r.startsWith('/Report/Attendance?') && r.includes('courseId='))
 
 beforeEach(() => {
   installFakeChrome()
@@ -67,7 +69,7 @@ describe('the record job', () => {
     const r = await new RecordEngine('a').start('update')
     off()
     expect(r.ok).toBe(true)
-    expect(requests.slice(0, 2)).toEqual(['/Report/Transcript', '/Report/Grade'])
+    expect(requests.slice(0, 3)).toEqual(['/Report/Transcript', '/Report/Grade', '/Report/Attendance'])
     // The current term's courses come with the page without a term: 9 other terms are read once each.
     expect(termReads()).toHaveLength(TERMS.length - 1)
     const s = (await read('grades.record'))!
@@ -79,6 +81,12 @@ describe('the record job', () => {
     expect(s.student).toEqual({ name: 'So Sriv Aamk', roll: 'IR821902' })
     expect(s.curriculum).toBe('OUV_BV_GN_21A')
     expect(await read('grades.record.job')).toBeNull()
+    // Attendance (R16.6): only the terms the attendance page lists (Fall2026, Summer2026, Spring2026).
+    expect(s.attendanceTerms).toHaveLength(3)
+    const attCourses = s.attendanceTerms!.flatMap((id) => s.terms[id]?.courses ?? [])
+    expect(attendanceReads()).toHaveLength(attCourses.length)
+    expect(Object.keys(s.attendance).sort()).toEqual(attCourses.map((c) => c.id).sort())
+    expect(s.attendance[attCourses[0]!.id]!.sheet.counts).toEqual({ attended: 4, absent: 0, notYet: 11, exempt: 0, unknown: 0, total: 15 })
   })
 
   it('lists every term newest first with transcript rows, sheets and FAP-only courses', async () => {

@@ -65,7 +65,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - Reject a `subject-rules` file whose schema major is not 1 unless a migration exists; show the rubric scrape date and the active data version.
   - _Requirements: 11.1, 11.2, 11.3, 12.1, 12.3; platform R5.4; platform amendment (no `downloads`)_
 
-- [ ] 7. [GRD-7] Scale switch, full record, printable list and attendance (owner request 2026-11-22; previous copy of this file in `.deprecated/2026-11-22-tasks.md`)
+- [x] 7. [GRD-7] Scale switch, full record, printable list and attendance (owner request 2026-11-22; previous copy of this file in `.deprecated/2026-11-22-tasks.md`)
 - [x] 7.1 [GRD-7.1] GPA scale switch
   - `engine/scale.ts` with the one letter-grade table and its source, `computeGpaOn(scale)` over `GpaEngine`; setting `grades.gpaScale` (default 10-point); the chips in the GPA view; letters next to final averages in Courses.
   - Tests: bands and their edges, the 4-point GPA counts the same rows, the switch persists and recomputes.
@@ -78,7 +78,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - `src/pages/print/` Vite input opened by the service worker (`print.open`, `chrome.windows.create`); the A4 print stylesheet; Record CSV (with BOM) and JSON through a blob link.
   - Tests: the message and window, the page content (identity, terms, GPAs, note, options), the CSV and JSON.
   - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 13.6_
-- [ ] 7.4 [GRD-7.4] Attendance in Grades
+- [x] 7.4 [GRD-7.4] Attendance in Grades
   - `parse/attendance.ts` by the documented classes with the raw fallback; sources `grades.attendanceTerm` and `grades.attendance`; the Attendance view with the term select, counts, percentage and risk colour (INF-2.1); the percentage on Courses and Record cards; attendance steps in the record job; attendance CSV; the optional print section.
   - Tests: the fixtures (exempt, present and not yet), a synthetic sheet with absences and an unknown status, the summary fallback, the view and the export.
   - _Requirements: 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 16.7; live selectors after G-SELECTORS (vet list)_

@@ -11,7 +11,8 @@ import { read, remove, subscribe, update, write } from '../../shared/storage/cat
 import { statusText } from './export'
 import { semesterOrder } from './engine/gpa'
 import { studentOf } from './parse/transcript'
-import { GRADES_MARK_SHEET, GRADES_TERM_COURSES, GRADES_TRANSCRIPT } from './sources'
+import { GRADES_ATTENDANCE, GRADES_ATTENDANCE_TERM, GRADES_MARK_SHEET, GRADES_TERM_COURSES, GRADES_TRANSCRIPT } from './sources'
+import type { AttendancePage, AttendanceSheet } from './parse/attendance'
 import type { CourseRef, MarkSheet, TermCourses, Transcript, TranscriptRow } from './types'
 
 export interface RecordTerm {
@@ -33,6 +34,9 @@ export interface RecordSheet {
   rowKey: string | null
 }
 
+/** A course's attendance (grades R16.6, GRD-7.4). */
+export interface RecordAttendance { termId: string; courseId: string; sheet: AttendanceSheet; fetchedAt: number }
+
 export interface RecordStore {
   transcript: Transcript | null
   transcriptAt: number | null
@@ -43,6 +47,12 @@ export interface RecordStore {
   sheets: Record<string, RecordSheet>
   student: { name: string; roll: string } | null
   curriculum: string | null
+  /** By FAP course id; attendance and grade pages share term and course ids (GRD-7.4). */
+  attendance: Record<string, RecordAttendance>
+  /** The terms `/Report/Attendance` lists (fewer than the grade page); null until read. */
+  attendanceTerms: string[] | null
+  /** FAP's current term, from the grade page without a term. */
+  currentTermId: string | null
   /** The last finished step, for the status strip. */
   lastSync: number | null
 }
@@ -52,6 +62,8 @@ export type RecordStep =
   | { kind: 'terms'; force: boolean }
   | { kind: 'term'; termId: string; name: string; force: boolean }
   | { kind: 'sheet'; termId: string; courseId: string; label: string; force: boolean }
+  | { kind: 'attTerms'; force: boolean }
+  | { kind: 'attendance'; termId: string; courseId: string; label: string; force: boolean }
 
 /** update: what changed; all: everything again; term or course: that one again (R14.6). */
 export type RecordMode = 'update' | 'all' | 'term' | 'course'
@@ -75,7 +87,7 @@ declare module '../../shared/storage/catalog' {
   }
 }
 
-export const EMPTY_RECORD: RecordStore = { transcript: null, transcriptAt: null, termOrder: [], terms: {}, sheets: {}, student: null, curriculum: null, lastSync: null }
+export const EMPTY_RECORD: RecordStore = { transcript: null, transcriptAt: null, termOrder: [], terms: {}, sheets: {}, student: null, curriculum: null, attendance: {}, attendanceTerms: null, currentTermId: null, lastSync: null }
 
 /** Errors that stop the whole job; it stays stored and resumable (R14.7). Others fail only the step. */
 export const FATAL: ReadonlySet<FapError['kind']> = new Set(['challenge', 'session-expired', 'feedback-required', 'forbidden'])
@@ -124,11 +136,27 @@ export function sheetSteps(store: RecordStore, term: { id: string; name: string 
   })
 }
 
-export function initialSteps(mode: RecordMode, scope?: { termId: string; name: string } | { termId: string; courseId: string; label: string }): RecordStep[] {
+/**
+ * A course's attendance is read when its term is on the attendance page and it has none stored, its term is
+ * FAP's current term, its transcript row is not settled, or on force (R16.6).
+ */
+export function attendanceSteps(store: RecordStore, term: { id: string; name: string }, courses: CourseRef[], force: boolean): RecordStep[] {
+  if (!store.attendanceTerms?.includes(term.id)) return []
+  return courses.flatMap((c) => {
+    const row = rowOf(store.transcript, c.code, term.name)
+    const read = force || !store.attendance[c.id] || term.id === store.currentTermId || (row ? !settled(row) : false)
+    return read ? [{ kind: 'attendance' as const, termId: term.id, courseId: c.id, label: c.code ?? c.label, force }] : []
+  })
+}
+
+export function initialSteps(mode: RecordMode, scope?: { termId: string; name: string } | { termId: string; courseId: string; label: string; attendance?: boolean }): RecordStep[] {
   if (mode === 'term' && scope && 'name' in scope) return [{ kind: 'term', termId: scope.termId, name: scope.name, force: true }]
-  if (mode === 'course' && scope && 'courseId' in scope) return [{ kind: 'sheet', termId: scope.termId, courseId: scope.courseId, label: scope.label, force: true }]
+  if (mode === 'course' && scope && 'courseId' in scope) {
+    const one = { termId: scope.termId, courseId: scope.courseId, label: scope.label, force: true }
+    return [{ kind: 'sheet', ...one }, ...(scope.attendance ? [{ kind: 'attendance' as const, ...one }] : [])]
+  }
   // The transcript is read again on every update: it is one request and tells what changed.
-  return [{ kind: 'transcript', force: true }, { kind: 'terms', force: mode === 'all' }]
+  return [{ kind: 'transcript', force: true }, { kind: 'terms', force: mode === 'all' }, { kind: 'attTerms', force: mode === 'all' }]
 }
 
 export function stepText(s: RecordStep): string {
@@ -137,6 +165,8 @@ export function stepText(s: RecordStep): string {
     case 'terms': return 'the term list'
     case 'term': return `the courses of ${s.name}`
     case 'sheet': return `the mark sheet of ${s.label}`
+    case 'attTerms': return 'the attendance term list'
+    case 'attendance': return `the attendance of ${s.label}`
   }
 }
 
@@ -152,13 +182,13 @@ async function storeTerm(id: string, name: string, courses: CourseRef[], at: num
   let steps: RecordStep[] = []
   await merge((r) => {
     const own = courses.filter((c) => !c.termId || c.termId === id)
-    steps = sheetSteps(r, { id, name }, own, force)
+    steps = [...sheetSteps(r, { id, name }, own, force), ...attendanceSteps(r, { id, name }, own, force)]
     return { ...r, terms: { ...r.terms, [id]: { id, name, readAt: at, courses: own, fingerprint: fingerprint(r.transcript, name) } } }
   })
   return steps
 }
 
-async function runStep(step: RecordStep, mode: RecordMode, doc: () => Document | null): Promise<Outcome> {
+async function runStep(step: RecordStep, mode: RecordMode, doc: () => Document | null, planned: readonly RecordStep[] = []): Promise<Outcome> {
   const force = mode === 'all' || mode === 'term'
   switch (step.kind) {
     case 'transcript': {
@@ -177,7 +207,7 @@ async function runStep(step: RecordStep, mode: RecordMode, doc: () => Document |
       await merge((s) => {
         const terms = { ...s.terms }
         for (const t of tc.terms) terms[t.id] = terms[t.id] ? { ...terms[t.id]!, name: t.name } : { id: t.id, name: t.name, readAt: null, courses: [], fingerprint: null }
-        const next = { ...s, termOrder: tc.terms.map((t) => t.id), terms }
+        const next = { ...s, termOrder: tc.terms.map((t) => t.id), terms, currentTermId: tc.selectedTermId }
         added = tc.terms
           .filter((t) => t.id !== tc.selectedTermId && termNeedsRead(next, t.id, t.name, tc.selectedTermId, force))
           .map((t) => ({ kind: 'term' as const, termId: t.id, name: t.name, force }))
@@ -202,6 +232,29 @@ async function runStep(step: RecordStep, mode: RecordMode, doc: () => Document |
         const row = rowOf(s.transcript, ref?.code ?? r.value.header?.code ?? null, term?.name ?? '')
         return { ...s, sheets: { ...s.sheets, [step.courseId]: { termId: step.termId, courseId: step.courseId, sheet: r.value, fetchedAt: r.fetchedAt, rowKey: row ? rowKey(row) : null } } }
       })
+      return { added: [] }
+    }
+    case 'attTerms': {
+      const r = await readSource<AttendancePage>(GRADES_ATTENDANCE_TERM, {}, opts(step.force))
+      if (!r.ok) return FATAL.has(r.error.kind) ? { fatal: r.error } : { error: errorText(r.error) }
+      let added: RecordStep[] = []
+      await merge((s) => {
+        const next = { ...s, attendanceTerms: r.value.terms.map((t) => t.id) }
+        // Terms this job reads again plan their own attendance; the others are planned here.
+        const reread = new Set(planned.flatMap((p) => (p.kind === 'term' ? [p.termId] : [])))
+        const already = new Set(planned.flatMap((p) => (p.kind === 'attendance' ? [p.courseId] : [])))
+        added = next.attendanceTerms.flatMap((id) => {
+          const t = next.terms[id]
+          return t?.readAt && !reread.has(id) ? attendanceSteps(next, t, t.courses, force) : []
+        }).filter((p) => p.kind === 'attendance' && !already.has(p.courseId))
+        return next
+      })
+      return { added }
+    }
+    case 'attendance': {
+      const r = await readSource<AttendanceSheet>(GRADES_ATTENDANCE, { termId: step.termId, courseId: step.courseId }, opts(step.force))
+      if (!r.ok) return FATAL.has(r.error.kind) ? { fatal: r.error } : { error: errorText(r.error) }
+      await merge((s) => ({ ...s, attendance: { ...s.attendance, [step.courseId]: { termId: step.termId, courseId: step.courseId, sheet: r.value, fetchedAt: r.fetchedAt } } }))
       return { added: [] }
     }
   }
@@ -293,7 +346,7 @@ export class RecordEngine {
       while (job.next < job.steps.length) {
         let r: Outcome
         try {
-          r = await runStep(job.steps[job.next]!, job.mode, this.doc)
+          r = await runStep(job.steps[job.next]!, job.mode, this.doc, job.steps.slice(job.next + 1))
         } catch (e) {
           r = { error: e instanceof Error ? e.message : String(e) }
         }

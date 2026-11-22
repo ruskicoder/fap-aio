@@ -12,6 +12,7 @@ import { WhatIfView } from './views/WhatIfView'
 import { PlannerView } from './views/PlannerView'
 import { registerGradeToday } from './today'
 import { RecordView } from './views/RecordView'
+import { AttendanceView } from './views/AttendanceView'
 import { recordEngine } from './record'
 
 export const TRANSCRIPT_PATH = /^\/Report\/Transcript(\/|$)/i
@@ -25,6 +26,7 @@ export function registerGradeViews(): void {
   registerView({ tab: 'grades', sub: 'whatif', label: 'What-if', icon: 'chart', component: async () => WhatIfView, lastSync: [{ label: 'Transcript', key: 'cache:grades.transcript' }] })
   registerView({ tab: 'grades', sub: 'planner', label: 'Planner', icon: 'chart', component: async () => PlannerView, lastSync: [{ label: 'Transcript', key: 'cache:grades.transcript' }] })
   registerView({ tab: 'grades', sub: 'record', label: 'Record', icon: 'chart', component: async () => RecordView, lastSync: [{ label: 'Record', key: 'grades.record' }] })
+  registerView({ tab: 'grades', sub: 'attendance', label: 'Attendance', icon: 'chart', component: async () => AttendanceView, lastSync: [{ label: 'Attendance', key: 'cache:grades.attendance' }] })
   registerGradeToday()
 }
 
