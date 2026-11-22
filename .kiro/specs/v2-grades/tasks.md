@@ -74,7 +74,7 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - `grades.record` and `grades.record.job` stores; the resumable plan (transcript, term list, term course lists, mark sheets) through the registry, one request at a time, with lease, Cancel, Resume and the stop-on-fatal rule; the Record view with terms newest first, expandable courses, progress and partial results, update, read everything again, per-term and per-course reads.
   - Tests: the plan on the fixture record, skip of unchanged terms, resume after a reload, cancel, fatal stop, partial results in the view.
   - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7, 14.8_
-- [ ] 7.3 [GRD-7.3] Printable grade list and record export
+- [x] 7.3 [GRD-7.3] Printable grade list and record export
   - `src/pages/print/` Vite input opened by the service worker (`print.open`, `chrome.windows.create`); the A4 print stylesheet; Record CSV (with BOM) and JSON through a blob link.
   - Tests: the message and window, the page content (identity, terms, GPAs, note, options), the CSV and JSON.
   - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 13.6_

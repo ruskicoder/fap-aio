@@ -49,6 +49,8 @@ export const MsgSchema = z.discriminatedUnion('type', [
   }),
   // Opens the theme editor page (CSS editor or theme import) beside the FAP tab (appearance R4, R5; F-21).
   msg('editor.open', { mode: z.enum(['css', 'import']), themeId: z.string().max(80).optional() }),
+  // Opens the printable grade list beside the FAP tab (grades R15.1, GRD-7.3).
+  msg('print.open', { components: z.boolean(), attendance: z.boolean() }),
   msg('commands.list', {}),
   // Opens chrome://extensions/shortcuts, which a content script cannot open (panel-ux R7.4).
   msg('shortcuts.open', {}),

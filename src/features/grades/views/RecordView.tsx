@@ -1,7 +1,7 @@
 // Grades, Record (grades R14, GRD-7.2): every term, newest first, and every course in it; each course
 // expands to its mark sheet components, average and status. The view follows the stored record, so it
 // shows what a running job has read so far (R14.5), with progress, Cancel and Resume.
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Empty, Message, Tag, button, primary, type Tint } from '../../scheduler/views/common'
 import { ago } from '../../../content/panel/StatusStrip'
 import { registerRefresh } from '../../../content/panel/keys'
@@ -11,6 +11,8 @@ import { computeGpaOn, letterOf } from '../engine/scale'
 import { formatGpa } from '../engine/gpa'
 import { useGradeSettings } from '../settings'
 import { useGpaScale } from '../scale-setting'
+import { buildRecordExport, downloadText, recordCsv, recordFileName, recordJson } from '../record-export'
+import { call } from '../../../shared/call'
 
 export function useRecord(): { store: RecordStore | null; job: RecordJob | null; loaded: boolean } {
   const [s, setS] = useState<{ store: RecordStore | null; job: RecordJob | null; loaded: boolean }>({ store: null, job: null, loaded: false })
@@ -158,6 +160,8 @@ export function RecordView() {
   const settings = useGradeSettings()
   const scale = useGpaScale() ?? '10'
   const [open, setOpen] = useState<string | null>(null)
+  const [printError, setPrintError] = useState<string | null>(null)
+  const foot = useRef<HTMLDivElement>(null)
   // An interrupted job (reload, closed tab) continues when the view opens; a cancelled one waits for Resume.
   useEffect(() => { void recordEngine.resume({ auto: true }) }, [])
   // Alt+R (panel-ux R7.1).
@@ -189,6 +193,19 @@ export function RecordView() {
       {terms.map((t) => (
         <TermSection key={t.id ?? t.name} t={t} gpa={byName.get(t.name.replace(/\s+/g, '').toLowerCase())} scale={scale} busy={busy} open={open} setOpen={setOpen} />
       ))}
+      {store?.transcript && settings && (
+        <div ref={foot} className="px-3 pt-3">
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className={primary} onClick={() => {
+              setPrintError(null)
+              void call({ type: 'print.open', components: true, attendance: false }).then((r) => { if (!r.ok) setPrintError('The print window could not be opened. Reload the page and try again.') })
+            }}>Print or save as PDF</button>
+            <button type="button" className={button} onClick={() => downloadText(foot.current ?? document.body, recordFileName('csv'), recordCsv(buildRecordExport(store, settings.nonGpa)), 'text/csv;charset=utf-8')}>Export CSV</button>
+            <button type="button" className={button} onClick={() => downloadText(foot.current ?? document.body, recordFileName('json'), recordJson(buildRecordExport(store, settings.nonGpa)), 'application/json')}>Export JSON</button>
+          </div>
+          {printError && <div className="pt-2"><Message tone="error">{printError}</Message></div>}
+        </div>
+      )}
     </div>
   )
 }

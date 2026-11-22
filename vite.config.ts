@@ -45,6 +45,8 @@ export default defineConfig(({ mode }) => ({
         grant: resolve(__dirname, 'src/pages/grant/grant.html'),
         // The theme editor page carries CodeMirror and csstree, away from every FAP page (F-21).
         'theme-editor': resolve(__dirname, 'src/pages/theme-editor/editor.html'),
+        // The printable grade list (GRD-7.3), opened by the service worker like the grant window.
+        print: resolve(__dirname, 'src/pages/print/print.html'),
       },
       output: { chunkFileNames: 'assets/chunk-[hash].js' },
     },

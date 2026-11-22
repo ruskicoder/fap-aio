@@ -12,6 +12,7 @@ import { installReminders } from './reminders'
 import { installKeepAlive } from './keepalive'
 import { installDataChannel } from './data-channel'
 import { installEditorWindow } from './editor-window'
+import { installPrintWindow } from './print-window'
 import { installOverrides } from './data/overrides'
 import { installFlmProbe } from './flm-probe'
 
@@ -28,6 +29,7 @@ installReminders()
 installKeepAlive()
 installDataChannel()
 installEditorWindow()
+installPrintWindow()
 installOverrides()
 installFlmProbe()
 

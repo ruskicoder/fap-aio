@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  margin: 0;
+  background: #f5f4f2;
+  color: #1f1e1d;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color-scheme: light;
+}
+
+/* The sheet looks like an A4 page on screen and becomes one in print (grades R15.4). */
+.sheet { background: #ffffff; max-width: 210mm; margin: 0 auto 24px; padding: 14mm; box-sizing: border-box; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+.sheet table { width: 100%; border-collapse: collapse; }
+.sheet th, .sheet td { text-align: left; vertical-align: top; padding: 2px 6px 2px 0; overflow-wrap: anywhere; }
+.sheet thead th { font-weight: 600; border-bottom: 1px solid #d6d3d1; font-size: 11px; color: #57534e; }
+.sheet tbody tr.course td { border-top: 1px solid #e7e5e4; }
+.sheet tr.component td { font-size: 11px; color: #57534e; padding-top: 0; padding-bottom: 0; }
+.sheet .num { text-align: right; padding-right: 8px; white-space: nowrap; }
+
+@page { size: A4; margin: 14mm; }
+@media print {
+  html, body { background: #ffffff; font-size: 10pt; }
+  .no-print { display: none !important; }
+  .sheet { box-shadow: none; padding: 0; margin: 0; max-width: none; }
+  .term { break-inside: auto; }
+  .term h2 { break-after: avoid; }
+  .sheet tr { break-inside: avoid; }
+  .sheet thead { display: table-header-group; }
+  a { color: inherit; text-decoration: none; }
+}
