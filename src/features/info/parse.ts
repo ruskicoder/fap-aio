@@ -2,7 +2,7 @@
 // bell list from `data-notification-*` attributes, and the curriculum table by column position.
 import { z } from 'zod'
 import { LayoutChangedError } from '../../content/fap/registry'
-import type { CurriculumRow, Notice, Unread } from './types'
+import type { CurriculumRow, Notice, Unread, Capstone } from './types'
 
 const clean = (s: string | null | undefined) => (s ?? '').replace(/\s+/g, ' ').trim()
 const CODE = /\b[A-Z][A-Za-z]{1,5}\d{3}[a-z]?\b/g
@@ -68,4 +68,36 @@ export function parseCurriculum(doc: Document): CurriculumRow[] {
       detailUrl: link,
     }]
   })
+}
+
+// ---- Capstone project (info R10.1, INF-7.1) -------------------------------------------------------------
+// Found by structure, so the Vietnamese culture works: each field is a div.student-profile-field whose own
+// icon says what it holds; the value is in .student-profile-field__value. Labels are never matched.
+const CAPSTONE_ICONS = { 'ri-lightbulb-line': 'titleEn', 'ri-translate-2': 'titleVi', 'ri-edit-line': 'updatedOn' } as const
+
+const fieldValue = (field: Element) => {
+  const v = (field.querySelector('.student-profile-field__value')?.textContent ?? '').replace(/\s+/g, ' ').trim()
+  return v === '' || v === '-' ? null : v
+}
+const iconOf = (field: Element) => {
+  const i = [...field.children].find((c) => c.tagName === 'I') ?? field.querySelector('i')
+  return i ? (Object.keys(CAPSTONE_ICONS) as (keyof typeof CAPSTONE_ICONS)[]).find((k) => i.classList.contains(k)) ?? null : null
+}
+
+/** dd/MM/yyyy to yyyy-MM-dd; anything else is kept as FAP shows it. */
+const isoDay = (s: string | null) => { const m = s ? /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s) : null; return m ? `${m[3]}-${m[2]!.padStart(2, '0')}-${m[1]!.padStart(2, '0')}` : s }
+
+/** The capstone card's fields, or null when FAP shows no topic (no card, or "-" for both titles). */
+export function parseCapstone(doc: Document): Capstone | null {
+  const anchor = [...doc.querySelectorAll('div.student-profile-field')].find((f) => iconOf(f) === 'ri-lightbulb-line')
+  if (!anchor) return null
+  // The fields of the same card: the nearest container that holds the anchor's siblings.
+  const scope = anchor.closest('.card') ?? anchor.closest('.student-profile-grid') ?? anchor.parentElement ?? doc.body
+  const out: Capstone = { titleEn: null, titleVi: null, updatedOn: null }
+  for (const f of scope.querySelectorAll('div.student-profile-field')) {
+    const icon = iconOf(f)
+    if (icon && out[CAPSTONE_ICONS[icon]] === null) out[CAPSTONE_ICONS[icon]] = fieldValue(f)
+  }
+  out.updatedOn = isoDay(out.updatedOn)
+  return out.titleEn || out.titleVi ? out : null
 }

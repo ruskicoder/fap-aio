@@ -53,6 +53,8 @@ function route(url) {
   if (p === '/ExamSchedule') return [200, 'text/html', shiftDates(file('exam-schedule.html'), 28, '2026')]
   if (p === '/Notification/UnreadCount') return [200, 'application/json', file('unread-count.json')]
   if (p === '/Report/Transcript') return [200, 'text/html', file('transcript.html')]
+  // INF-7.1: the synthetic capstone card (values invented).
+  if (p === '/Account') return [200, 'text/html', `<!doctype html><html><body>${file('account-capstone.partial.html')}</body></html>`]
   if (p === '/Application/Catalog') return [200, 'text/html', file('application-catalog.html')]
   if (p === '/Application/GetFormSchema') return [200, 'application/json', file('application-form-schema.json')]
   if (p === '/Curriculum') return [200, 'text/html', file('curriculum.html')]
@@ -387,6 +389,15 @@ async function main() {
   await shadowSwitch('Classic FAP layout')
   await sleep(600)
   note('Classic off restores the page without reload', !(await ev(`!!document.querySelector('[data-fap-aio-classic]')`)), '')
+
+  // ---- INF-7.1: the capstone card in Info. ----
+  await click('button', 'Back').catch(() => {})
+  await sleep(400)
+  await click('[role="tab"]', 'Info')
+  await sleep(2500)
+  const cap = await ev(`(() => { const s = ${root$}.querySelector('section[aria-labelledby="aio-capstone"]'); return s ? { text: s.textContent, vi: s.querySelector('[lang="vi"]')?.textContent ?? '' } : null })()`)
+  note('Info shows the capstone card with both titles and the update date', !!cap && cap.text.includes('Smart campus parking assistant using computer vision') && cap.vi.startsWith('Trợ lý đỗ xe') && cap.text.includes('Updated 15 Nov 2026'), cap ? cap.text.slice(0, 90) : 'no card')
+  await shot('info-capstone')
 
   // ---- F-23: the Settings search and section buttons stay at the top, also at 320 px. ----
   await click('button', 'Settings')

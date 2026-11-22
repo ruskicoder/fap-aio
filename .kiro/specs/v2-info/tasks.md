@@ -66,7 +66,7 @@ Compacted on 2026-10-22 from 21 to 12 subtasks with no requirement dropped; the 
   - Settings: background refresh (enabled, period), notifications per kind (off by default; turning one on requests `notifications`), watch keywords with the diacritic-insensitive hint, Coursera checks and lecturer notes in `info.user`.
   - _Requirements: 4.4, 7.7, 7.8, 7.9, 8.1, 9.1, 9.2, 9.3; platform R1.3; panel-ux R8.1_
 
-- [ ] 7. [INF-7] Capstone project
-- [ ] 7.1 [INF-7.1] Read the capstone card from /Account and show it in Info
+- [x] 7. [INF-7] Capstone project
+- [x] 7.1 [INF-7.1] Read the capstone card from /Account and show it in Info
   - `info.account` source (6 h cache), `parseCapstone` by field icons and value classes, a "Capstone project" card in Info hidden without a topic or with "-" only; fixture `test/fixtures/en/account-capstone.partial.html` and a "-" variant; m4-check step.
   - _Requirements: 10.1, 10.2, 10.3_

@@ -6,6 +6,7 @@ import { dataClient } from '../../../content/data-client'
 import { peek, read } from '../../../content/fap/registry'
 import { errorText } from '../../../content/panel/errors'
 import { VirtualList } from '../../../content/panel/VirtualList'
+import { CapstoneCard } from './CapstoneCard'
 import { Message, button } from '../../scheduler/views/common'
 import type { SearchHit, SubjectEntry } from '../../../shared/data/types'
 import { FLAG_TEXT } from '../../grades/inline/GradeInline'
@@ -153,6 +154,7 @@ export function SubjectsView() {
   if (open) return <Detail code={open} curriculum={curriculum} back={() => setOpen(null)} open={setOpen} />
   return (
     <div className="flex min-h-0 flex-1 flex-col">
+      <CapstoneCard />
       {/* The search stays in reach when the panel is short (panel-ux R11.4; fix F-23). */}
       <div className="sticky top-0 z-10 bg-white px-3 pb-2 pt-2.5">
         <input type="search" aria-label="Search subjects by code or name" placeholder="Search by code or name" className={input} value={q} onChange={(e) => setQ(e.target.value)} />
