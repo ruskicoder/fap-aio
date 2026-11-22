@@ -117,3 +117,18 @@ Out of scope: a remote theme store or theme sharing service, themes for FLM or o
 3. Sticky table headers SHALL keep the header row of FAP data tables (`table.fap-sheet`, `table.student-mark-sheet`) visible while the table scrolls.
 4. Each option SHALL be a separate on or off setting, off by default, and SHALL combine with Classic layout and any theme.
 5. Changes SHALL apply without a page reload and SHALL persist across pages.
+
+### Requirement 8: Dark theme contrast
+
+Added 2026-11-22 (fix F-24, owner UAT of the M2 build: dark themes barely readable, the first-run welcome unreadable, icons washed out).
+
+**User Story:** As a student using a dark theme, I want every text and icon to stand out clearly, so that I can read the panel and FAP at a glance.
+
+#### Acceptance Criteria
+
+1. Every dark preset and Glassmorphism SHALL set body text to a near-white colour (#f2f2f2 to #fafafa) with at least 7:1 contrast against every surface it sits on, frosted glass over its worst-case backdrop colour included.
+2. Secondary and muted text SHALL have at least 4.5:1 against those surfaces.
+3. Icons, control outlines and field borders SHALL have at least 3:1 against those surfaces and SHALL be drawn at full opacity.
+4. WHEN the active theme is dark THEN the panel (first-run welcome, Today, every view, Settings and overlays) SHALL use a dark palette that meets criteria 1 to 3. Under a light theme or FAP default the panel SHALL look as before.
+5. Glassmorphism SHALL use a calm backdrop of at most two related hues at low saturation and glass dimmed so that near-white text keeps 7:1 over the worst-case backdrop; it renders FAP in dark mode. This replaces the white glass of Requirement 2 for Glassmorphism, which keeps its name and its place in the gallery.
+6. Frutiger Aero Green and Frutiger Aero Blue SHALL stay as they are.

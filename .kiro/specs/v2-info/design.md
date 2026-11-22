@@ -98,6 +98,13 @@ Overview, Subjects, Lecturers, Status, Exams and News are React components in th
 - `info.lecturerNotes`.
 - `news.seen` (ids, capped at 2,000).
 
+### Capstone project (INF-7, added 2026-11-22)
+
+- Source `info.account` on `/Account`, cache 6 hours, user priority when Info opens (no background read).
+- Parser `parseCapstone(doc)`: finds `div.student-profile-field` elements whose icon is `i.ri-lightbulb-line`, `i.ri-translate-2` or `i.ri-edit-line` and reads `.student-profile-field__value`; values of "-" or empty count as absent; the updated date `dd/MM/yyyy` becomes ISO. Returns `null` when neither title is present. Label text is kept only for display fallbacks, never used to find a field (Requirement 10.1).
+- View: a small "Capstone project" card at the top of Info, Subjects: English title, Vietnamese title (lang="vi"), "Updated <date>"; hidden when the parser returns `null` or the read fails (Requirement 10.2, 10.3).
+- Fixtures: `test/fixtures/en/account-capstone.partial.html` (synthetic) and a "-" variant built in the test.
+
 ## Data Models
 
 ```ts

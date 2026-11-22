@@ -166,3 +166,16 @@ Removed 2026-10-26 by the owner (decision D-3): no command palette, no search an
 6. A tab switch SHALL render the new view within 100 ms from cached data. Data loading SHALL show skeletons, not spinners, and SHALL keep the previous content visible until new data arrives.
 7. Lists longer than 100 items (news, subjects) SHALL be virtualized.
 8. Copy SHALL follow sentence case, verb-first buttons, and error messages that say what happened and what to do.
+
+### Requirement 11: Sticky headers in long views
+
+Added 2026-11-22 (fix F-23, owner UAT of the M2 build: the Settings section list and search box scroll away).
+
+**User Story:** As a student, I want the controls at the top of a long view to stay in reach, so that I can jump around without scrolling back up.
+
+#### Acceptance Criteria
+
+1. The Settings view SHALL stay one scrolling page and SHALL keep its search box and a row of section tabs (General, Schedule, Grades, Info and alerts, Session, Appearance, Shortcuts, Data and privacy, About; only sections with rows) visible at the top while the page scrolls.
+2. Choosing a section tab SHALL scroll to that section, and the selected tab SHALL follow the scroll position.
+3. At a panel width of 320 px the tab row SHALL wrap or scroll sideways without leaving a tab partly cut off at an edge, and every tab SHALL be reachable by keyboard.
+4. Other long views whose top controls belong in a sticky header (the Theme view, Info Subjects) SHALL keep those controls in reach in the same way.

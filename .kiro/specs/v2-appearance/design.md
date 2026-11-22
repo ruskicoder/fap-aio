@@ -159,6 +159,13 @@ Each option is a CSS fragment in the `base` layer, toggled by `html` classes `fa
 - Wide: `max-width: none` on Jidox containers (R7.2).
 - Sticky: `thead th { position: sticky; top: var(--fap-aio-sticky-top) }` on `table.fap-sheet` and `table.student-mark-sheet`. The top offset is the measured top bar height, updated on resize (R7.3).
 
+### Dark contrast (F-24, added 2026-11-22)
+
+- Panel palette: the Tailwind colours the panel uses (white, black, gray, orange, red, green, amber, blue, violet) are CSS variables with Tailwind's own values as the light default, so the light panel is unchanged. When the active theme's mode is dark, `installPanelTheme` sets `data-scheme="dark"` on the panel host and a dark set of the same variables applies: surfaces from #0f0f12 up, body text #f5f5f5 at 7:1 or more on every panel surface, secondary text at 4.5:1 or more, borders of controls and icons at 3:1 or more, coloured tints as dark fills with light text. Switch tracks use variables instead of inline hex. Requirement 8.4.
+- Presets: every dark preset uses near-white text (#f5f5f7) and is tuned so text reaches 7:1, muted text 4.5:1, and the primary, status, field-border and menu-icon colours 3:1 on every surface, frosted glass included. Requirement 8.1 to 8.3.
+- Glassmorphism: mode dark; backdrop a two-hue gradient of muted indigo to slate teal; glass rgba(14, 16, 28, 0.72) with a thin light edge; near-white text measured against the glass over each backdrop stop. Requirement 8.5.
+- Test: the preset contrast test raises its thresholds for dark presets and glass surfaces to 7:1 text, 4.5:1 muted, 3:1 controls; a panel test checks the dark palette pairs; the M4 browser check screenshots the welcome, Today and Settings in each dark preset and measures the text in the panel.
+
 ## Data Models
 
 ```ts

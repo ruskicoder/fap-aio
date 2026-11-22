@@ -193,6 +193,11 @@ The `panel.firstRun` flag. Three steps in a dialog inside the docked panel:
 
 It shows the last sync time of the current tab's main source and the progress of any running sync job (from the legacy progress bar). After a `challenge` it shows the reload banner, and while a background pause is active it shows the remaining budget.
 
+### Sticky view headers (F-23, added 2026-11-22)
+
+- Settings: a sticky header at the top of the scrolling view holds the search box (with Export, Import and Reset all) and a wrapping row of section tabs. A tab scrolls its section heading into view below the header (scroll margin equal to the header height); an IntersectionObserver over the section headings marks the tab of the section nearest the top. The row wraps, so no tab is cut off at 320 px. The sticky index column and the floating "Go to section" select of PNL-8.1 are replaced by the tab row. Requirement 11.1 to 11.3.
+- Theme view: the "In use" line, the mode chips and the preview bar form a sticky header. Info Subjects: the search box is sticky. Requirement 11.4.
+
 ## Data Models
 
 ```ts

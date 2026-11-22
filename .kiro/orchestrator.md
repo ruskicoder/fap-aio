@@ -82,7 +82,7 @@ Each milestone ends in a build the owner can load unpacked and use. The loop wor
 |---|---|---|
 | M1 Schedule | Panel on FAP pages: sync this week or the term, Week and Exams views, `.ics` calendar export, status strip with the request budget | 25 |
 | M2 Grades | GPA summary on the transcript, pass prediction and required scores under each mark sheet, Courses and GPA views, Today view and first run, alerts inbox, Settings | 24 |
-| M3 Info and background | Subjects and syllabus with the learning path, lecturers, Status, background refresh, reminders, keep-alive, docked mode, keybinds, what-if and planner, legacy cleanup, diagnostics; news, documents and attendance after G-SELECTORS | 20 |
+| M3 Info and background | Subjects and syllabus with the learning path, lecturers, Status, background refresh, reminders, keep-alive, docked mode, keybinds, what-if and planner, legacy cleanup, diagnostics; news, documents and attendance after G-SELECTORS; added 2026-11-22: dark theme contrast (APP-9), sticky view headers (PNL-10), capstone project (INF-7) | 23 |
 | M4 Appearance | Eleven themes, colour editor, CSS editor, background images, layout tweaks, Classic FAP layout (top navigation after G-SELECTORS), visual regression checks | 13 |
 | M5 Release | Signed data updates, live FLM refresh, Data and privacy and About sections, release workflow; then G-EXT-KEY, G-DATA-KEYS, G-FLM-COOKIE and G-RELEASE for v2.0.0 | 8 |
 
@@ -144,6 +144,9 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | INF-4.2 | Refresh from FLM | v2-info | M5 | PLT-9 | G-UAT-M4 | todo |
 | INF-5 | Info views and integrations | v2-info | M3 | INF-1, INF-2, INF-3, CORE-6, GRD-2, PNL-9 | G-UI-INFO, G-UAT-M2 | todo |
 | INF-6 | Alerts and settings | v2-info | M3 | INF-2, PNL-6, PNL-8.1, PLT-8 | G-UI-SETTINGS, G-UAT-M2 | done |
+| INF-7 | Capstone project | v2-info | M3 | INF-1.1, INF-4.1 | - | todo |
+| APP-9 | Dark theme contrast | v2-appearance | M3 | APP-3, APP-4 | - | todo |
+| PNL-10 | Sticky view headers | v2-panel-ux | M3 | PNL-8 | - | todo |
 | APP-1 | Style pipeline and early application | v2-appearance | M2 | PLT-3 | G-UAT-M1 | done |
 | APP-2 | Colour engine | v2-appearance | M4 | PLT-1 | G-UAT-M3 | done |
 | APP-3 | Theme model and presets | v2-appearance | M4 | APP-2 | G-UAT-M3 | done |
@@ -169,6 +172,7 @@ Output of `waves`: phases in the same wave have no dependency on each other and 
 | 6 | PNL-3, PNL-6, PNL-8, PNL-9, GRD-2, INF-2, APP-4 |
 | 7 | CORE-6, CORE-10, CORE-11, PNL-7, GRD-3, GRD-6, INF-3, INF-4, INF-6, APP-5, APP-6, APP-7 |
 | 8 | CORE-7, CORE-8, CORE-9, GRD-4, GRD-5, INF-5, APP-8 |
+| 9 | APP-9, PNL-10, INF-7 |
 
 Waves show which phases could run in parallel; the loop runs one subtask at a time in milestone order, so a later-wave phase of M1 (CORE-7) runs before an earlier-wave phase of M2.
 
@@ -200,6 +204,8 @@ Bugs, failed verifications and regressions found during the loop. Severity `bloc
 | F-20 | APP-4.1 | 2026-11-17 batch 11 M4 check | In the Theme view a control scrolled into view (keyboard focus, find) could stop under the sticky "Previewing" bar, and in the theme editor under the sticky Save bar, so it was hidden while focused (WCAG 2.4.11 focus not obscured); the M4 check's Apply click landed on the bar | normal | fixed 2026-11-17: buttons, fields and selects in both views carry scroll margins larger than the sticky bars; the M4 check applies a theme after a preview |
 | F-21 | APP-4.3 | 2026-11-18 owner review of batch 11 | CodeMirror shipped in the content script that loads on every FAP page (479,667 to 867,313 bytes), and csstree in the service worker | normal | fixed 2026-11-18: the CSS editor and theme import run in a theme editor extension page (Vite input, opened by the service worker with chrome.windows.create, no web_accessible_resources); the page previews on its FAP tab through the typed `theme.preview` message relayed by the panel, and saves through storage; csstree is imported only by that page; panel content script 484,505 bytes, service worker chunk 31,990; design and the APP-4.3 task revised (old copies in `.deprecated/2026-11-18-editor-window/`) |
 | F-22 | CORE-8.1 | 2026-11-18 batch 12 check | test/reminders.test.ts planned its install-path case from the real clock against a class fixed on 2026-11-18, so it failed from that morning on | normal | fixed 2026-11-18: that case uses a class two days after the current date |
+| F-23 | PNL-10.1 | 2026-11-22 owner UAT of the M2 build | In Settings the section list (General to About) and the search box scroll away with the page, so the student cannot reach them from further down | normal | open |
+| F-24 | APP-9.1 | 2026-11-22 owner UAT of the M2 build | Dark presets and Glassmorphism are barely readable: text sinks into the background, the first-run welcome cannot be read, Minimalist Black and similar suffer the same, icons look washed out. Cause in the panel: under a dark theme the host text turns near-white while components keep Tailwind's light colours | normal | open |
 
 ## Decision queue
 
@@ -345,3 +351,4 @@ Append-only. One line per iteration: date, task id, result, verification, commit
 - 2026-11-18 | PLT-7.3 | data-channel.ts: data.check (checkNow: ends a forced packaged state and checks at once; after Use packaged data it may restore the version already accepted, never a lower one) and data.usePackaged (usePackaged: re-index the packaged files, pause the weekly check, keep acceptedVersion); integration tests with a stubbed fetch and signed manifests: valid update, wrong key, bad signature, tampered file, lower and equal versions, high minExtensionVersion, rollback republished under a higher version, the paused weekly alarm, both handlers; the Settings buttons come with PNL-8.3 | tsc, eslint ., vitest exit 0, build with text check | committed (cloud/build)
 - 2026-11-18 | PLT-9.1 | src/content/flm/parse.ts (TypeScript port of the detail reading in flm-scraper.js and of normaliseSyllabus and compact in build-subject-list.mjs; parseFlmDetail returns schema-checked full and compact entries or why the page could not be read), flm/wire.ts (the FAP tab answers flm.parse, which now carries sylId); background/data/overrides.ts (storeOverride with fetchedAt, flm.remove, pruneOverrides inside the indexing transaction so a newer channel or packaged syllabus drops an override); background/flm-probe.ts (dev.flmProbe and fapAioFlmProbe() in the service worker console, development builds only: the probe URL is absent from the production bundles); parity: a synthetic detail page run through the reference scraper with a stubbed fetch and the reference normaliser equals the port, raw and normalised; the saved-page case in ignore/flm/ skips here; the content script grows 484,505 to 496,200 bytes for the parser, which must run in the tab | tsc, eslint ., 512 passed and 2 skipped of 514 tests, vitest exit 0, build with text check | committed (cloud/build); G-FLM-COOKIE: the owner runs the probe on a development build to decide D-1 for PLT-9.2
 - 2026-11-18 | PNL-8.3 | src/content/panel/settings/data-privacy.tsx (Data and privacy: What is stored with usage per store and the database total, Export all data as one JSON file through a blob link, Subject and news data with version, source, last check, last skip reason, Check for data updates and Use packaged data, Optional permissions through the new perm.state message, Copy diagnostics with a box when the clipboard is refused; About: version, FLM rubric date, news rules date, links to the source, FAP and FLM), ordered before Clear data and legacy cleanup; 5 vet-list lines | tsc, eslint ., vitest exit 0, build with text check, m4-check 47 of 47, a browser look at the sections | committed (cloud/build)
+- 2026-11-22 | spec | appearance R8 and design "Dark contrast" (APP-9, F-24), panel-ux R11 and design "Sticky view headers" (PNL-10, F-23), info R10 and design "Capstone project" (INF-7); registry rows for APP-9, PNL-10 and INF-7 at M3, wave 9, fix rows F-23 and F-24; old copies in each spec's .deprecated/2026-11-22-*/ | orchestrator check | committed (cloud/m3-settings)

@@ -126,3 +126,15 @@ Not possible for a student on FAP v2 and out of scope: other classes' schedules,
 1. Info notifications SHALL be off by default and enabled per kind in settings: attendance risk, watched news, Coursera before FE.
 2. WHEN the user clicks an info notification THEN the extension SHALL focus or open a FAP tab and open the panel on the related section.
 3. The extension SHALL NOT notify twice for the same item and level.
+
+### Requirement 10: Capstone project
+
+Added 2026-11-22 (INF-7): FAP's /Account page now shows a "Capstone project" card.
+
+**User Story:** As a final-year student, I want my capstone topic in the Info section, so that I can check its titles without opening FAP's account page.
+
+#### Acceptance Criteria
+
+1. The extension SHALL read FAP's `/Account` page as a source cached for 6 hours and SHALL parse its capstone card by structure, not by label text: each field is a `div.student-profile-field` with an icon `i.ri-lightbulb-line` (English title), `i.ri-translate-2` (Vietnamese title) or `i.ri-edit-line` (updated on), and its text in `.student-profile-field__label` and `.student-profile-field__value`, so the Vietnamese culture works.
+2. The Info section SHALL show a small "Capstone project" card with the English title, the Vietnamese title and the last updated date.
+3. WHEN FAP shows no capstone fields, or only "-" for both titles, THEN the card SHALL NOT be shown.
