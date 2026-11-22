@@ -4,7 +4,7 @@ import globals from 'globals'
 
 export default tseslint.config(
   { ignores: [
-      'dist/', 'node_modules/', '.deprecated/', 'ignore/', 'coverage/', '*.zip',
+      'dist/', '.gitnexus/', 'node_modules/', '.deprecated/', 'ignore/', 'coverage/', '*.zip',
       // Browser console scripts kept byte-for-byte as validated reference tools.
       'tools/flm-scraper/flm-scraper.js', 'tools/news/news-scraper.js',
     ] },

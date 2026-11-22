@@ -185,3 +185,64 @@ Stores: `grades.cache` (transcript, term courses, mark sheets with `fetchedAt`),
 ## Platform amendments
 
 Added 2026-10-11: `.kiro/specs/v2-platform/design.md`, section "Amendments to approved designs", changes parts of this design (exports, data access, settings broadcast, permissions). Where they differ, the platform design applies; the text above is kept as approved.
+
+## Additions of 2026-11-22 (phase GRD-7, R13 to R16)
+
+Owner request after testing the M2 build. Nothing above changes; the previous copy is `.deprecated/2026-11-22-design.md`. Every open choice took the recommended default and is listed in `.kiro/reports/vet-list.md`.
+
+### GPA scale switch (R13, GRD-7.1)
+
+`engine/scale.ts` holds the only letter-grade table:
+
+| Letter | 10-point course grade | 4-point value |
+|---|---|---|
+| A | 8.5 to 10.0 | 4.0 |
+| B | 7.0 to 8.4 | 3.0 |
+| C | 5.5 to 6.9 | 2.0 |
+| D | 4.0 to 5.4 | 1.0 |
+| F | below 4.0 | 0.0 |
+
+Source: Vietnam's Circular 08/2021/TT-BGDĐT, Regulation on undergraduate education (Quy chế đào tạo trình độ đại học), the articles on course grading and on term and cumulative results, where the five letters A to F and their conversion A = 4, B = 3, C = 2, D = 1, F = 0 apply to credit-based training. The official text (vbpl.vn, moet.gov.vn, thuvienphapluat.vn) could not be opened from the build environment on 2026-11-22; the bands above are the common five-band table, which secondary legal summaries (for example luatvietnam.vn, "Cách quy đổi điểm hệ 10 sang hệ 4") state for this circular. The circular lets institutions add finer levels (A+, B+ and similar); FAP-AIO keeps the five base levels. A check against the official text is on the vet list.
+
+- A grade is compared after rounding to one decimal half up, the precision FAP shows, so 8.45 counts as 8.5 (A).
+- `computeGpaOn(scale, input)`: on the 10-point scale it is `computeGpa`; on the 4-point scale it maps each row's grade to its points and runs `computeGpa` on the mapped rows, so counting, exclusions and semester order stay those of `GpaEngine` (R13.3).
+- Setting `grades.gpaScale` (`'10'` or `'4'`, default `'10'`) in the Grades settings section; the GPA view shows the same choice as two chips above the figures (R13.1, R13.5).
+- The GPA goal, What-if and Planner stay on the 10-point scale, the scale FAP grades on; on the 4-point scale the goal box says so.
+- Letters show next to final course averages in Courses, in Record, on the printable list and in the record export (R13.6).
+
+### Full academic record (R14, GRD-7.2)
+
+Stores (catalog, version 1):
+- `grades.record`: `{ terms: Record<termId, { id, name, readAt, courses: CourseRef[], fingerprint }>, termOrder: string[], sheets: Record<courseId, { termId, sheet: MarkSheet, fetchedAt }>, attendance: Record<courseId, AttendanceSheet & { termId, fetchedAt }>, student: { name, roll } | null, curriculum: string | null, updatedAt }`. Permanent; it holds a few hundred KB at most (about 2 KB per sheet). Past terms are kept on purpose, unlike the 30-day registry cache.
+- `grades.record.job`: the job plan `{ steps, next, failed, total, startedAt, runner, beatAt, paused }`, deleted when the job ends.
+
+Plan (`record.ts`, `planSteps`):
+1. `transcript`: the registry source `grades.transcript` (cache first; forced on "Read everything again"). The student name and roll number come from the FAP top bar of the page the panel runs on (`.fap-topbar-user h5` and `h6`), the curriculum from the transcript title (`Grade report for transcript <code>`).
+2. `terms`: `grades.termCourses` without a term gives FAP's term list.
+3. For each term, newest first: a `term` step reads `/Report/Grade?termId=<id>` (the term's course list). It is planned when the term is new, when the term's transcript fingerprint (sorted `code:grade:status` of its rows) differs from the stored one, when one of its rows is in progress, or on a forced read.
+4. After a `term` step, a `sheet` step per course is appended for courses with no stored sheet, courses whose transcript row changed or is not passed, or every course on a forced read.
+
+Steps run one at a time through `registry.read` (the paced queue and the shared budget, user priority, GET only). After each step the result is merged into `grades.record` and the job is written, so the Record view, which follows the store, shows partial results (R14.5), and a reload resumes at `next` (R14.4). The runner lease and heartbeat follow `SyncEngine` (core R6.6): a job held by a live tab is not resumed elsewhere. Cancel sets `paused` and stops after the current request; a paused job resumes only from the Resume button, an interrupted one also when the Record view opens. Errors: `challenge`, `session-expired`, `feedback-required` and `forbidden` stop the job and keep it (R14.7); other errors add the step to `failed` and go on.
+
+Request count: on the owner's fixture record (10 terms, 48 courses) a first read is about 60 GETs, about 10 minutes under the 30 per 5 minutes budget; later updates read the current term and changed terms only.
+
+View `RecordView` (sub-view "Record" after Planner):
+- Header: last update time, "Update record", "Read everything again", and while running a progress bar "Reading 12 of 58" with Cancel; a stored job not running shows Resume. The failed steps are listed with "Try again".
+- Terms newest first, each a section with its name, term GPA on the chosen scale and "Read this term again". Courses are cards in the Courses style: code, name, credits, grade with letter, status tag, absence percentage when read (R16.6), and Details, which shows the component table (category, item, weight, value), the average and status from the sheet, and "Read this course again". A transcript row with no sheet shows "No mark sheet on FAP" and its transcript grade (R14.8). Grade-page courses with no transcript row are listed after the transcript rows of their term.
+- Footer: "Print or save as PDF", "Export CSV", "Export JSON".
+
+### Printable grade list (R15, GRD-7.3)
+
+- `src/pages/print/print.html`, a Vite input like `grant.html`. The panel sends `print.open { components, attendance }`; the service worker opens `print.html?components=1&attendance=0` with `chrome.windows.create({ type: 'popup', width: 900, height: 900 })`. The page sends no messages: it reads `grades.record`, the transcript cache and the settings from `chrome.storage.local`, which extension pages may read.
+- Layout: title "Academic grade list", student name, roll number, curriculum, scale, generated date and the note "Generated by FAP-AIO from FAP data; not an official transcript". Terms oldest first, as on a transcript; per term a table (code, subject, credits, grade, letter, status) with optional component rows, then the term GPA and the cumulative GPA through that term. The overall cumulative GPA and counted credits close the list. An optional attendance section lists per term each course's attended, absent, not yet, exempt and absence percentage.
+- Controls (hidden in print): "Include components", "Include attendance", the scale, and "Print or save as PDF" (`window.print()`). `@page { size: A4; margin: 14mm }`, tables avoid breaking inside a row, term headings stay with their table.
+- Record export (`record-export.ts`): CSV with a BOM (header block with student, curriculum, scale, export date and the note; one row per course with term, code, name, credits, grade, letter, 4-point value, status, sheet average and status, absence percentage; then one row per component) and JSON (`formatVersion: 1`, the same content structured). Downloaded through a blob link like the GPA export.
+
+### Attendance in Grades (R16, GRD-7.4)
+
+- Parser `parse/attendance.ts` (`parseAttendance`): the term and course options of `#attendance-report-term` and `#attendance-report-course`, the `.fap-result-card` header, the session rows of `table.attendance-session-sheet` (index, date chip, slot chip, room, lecturer, group, status from `attendance-status--present|absent|pending|exempt`, comment), and the summary line of `.attendance-summary`. Raw fallback: a row whose status class is unknown keeps the status text as `{ raw }` and counts as neither attended nor absent; when the table is missing, the counts come from the summary line ("Absent 0% (0/10 ...), 0 ... not taken."). The live selectors wait on gate G-SELECTORS; a live check is on the vet list.
+- Sources: `grades.attendanceTerm` (`/Report/Attendance?termId=`, page, 6 h) and `grades.attendance` (`/Report/Attendance?termId&courseId`, partial, 30 min).
+- Counts: attended (present), absent, not yet (pending), exempt and total (every row). Absence percentage = absent / total, as FAP's own summary computes it. Risk: `attendanceRisk({ total, absent, notYet }, rule)` from INF-2.1 with the FLM requirement (80 % by default, so a 20 % limit), coloured green for safe, amber for warning, orange for last chance and red for failed.
+- View `AttendanceView` (sub-view "Attendance" after Record): a term select (current term first), Refresh, and per course a card with the counts, "Absent X % of Y % allowed", the absences left and the level colour; Export CSV for the term. Courses are read one at a time.
+- Courses and Record cards show "Absent X %" with the same colour, from the attendance cache (`grades.attendance`) and from `grades.record.attendance`; the record job reads the attendance term list once (`/Report/Attendance`, which lists fewer terms than the grade page: three in the fixtures) and adds an `attendance` step per course of each term it reads that this list holds. Attendance and grade pages share term and course ids.
+- The printable list's optional attendance section and the record CSV carry the same figures.

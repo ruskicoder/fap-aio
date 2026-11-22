@@ -136,6 +136,7 @@ One row per phase, plus a row for any subtask with extra dependencies, gates or 
 | GRD-5 | Panel views | v2-grades | M2 | GRD-2, GRD-3, PNL-6, PNL-9 | G-UI-GRADES, G-UAT-M1 | done |
 | GRD-5.3 | What-if and Planner views | v2-grades | M3 | INF-1.1 | G-UAT-M2 | todo |
 | GRD-6 | Export and rubric guard | v2-grades | M2 | GRD-2 | G-UI-GRADES, G-UAT-M1 | done |
+| GRD-7 | Scale switch, full record, printable list and attendance | v2-grades | M3 | GRD-5, GRD-6 | G-UAT-M2 | doing |
 | INF-1 | Info sources and parsers | v2-info | M3 | CORE-3 | G-UAT-M2 | doing |
 | INF-1.2 | News, document and attendance sources | v2-info | M3 | - | G-SELECTORS, G-UAT-M2 | todo |
 | INF-2 | Analyzers and lecturer directory | v2-info | M3 | INF-1.1, CORE-5, PLT-6 | G-UAT-M2 | done |

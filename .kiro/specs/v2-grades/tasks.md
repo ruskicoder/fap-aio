@@ -64,3 +64,21 @@ Compacted on 2026-10-22 from 16 to 13 subtasks with no requirement dropped; the 
   - CSV (UTF-8 with BOM) and JSON with transcript rows, per-semester and cumulative GPA, the non-GPA list used and the export date, downloaded through a blob link.
   - Reject a `subject-rules` file whose schema major is not 1 unless a migration exists; show the rubric scrape date and the active data version.
   - _Requirements: 11.1, 11.2, 11.3, 12.1, 12.3; platform R5.4; platform amendment (no `downloads`)_
+
+- [ ] 7. [GRD-7] Scale switch, full record, printable list and attendance (owner request 2026-11-22; previous copy of this file in `.deprecated/2026-11-22-tasks.md`)
+- [ ] 7.1 [GRD-7.1] GPA scale switch
+  - `engine/scale.ts` with the one letter-grade table and its source, `computeGpaOn(scale)` over `GpaEngine`; setting `grades.gpaScale` (default 10-point); the chips in the GPA view; letters next to final averages in Courses.
+  - Tests: bands and their edges, the 4-point GPA counts the same rows, the switch persists and recomputes.
+  - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6_
+- [ ] 7.2 [GRD-7.2] Full academic record
+  - `grades.record` and `grades.record.job` stores; the resumable plan (transcript, term list, term course lists, mark sheets) through the registry, one request at a time, with lease, Cancel, Resume and the stop-on-fatal rule; the Record view with terms newest first, expandable courses, progress and partial results, update, read everything again, per-term and per-course reads.
+  - Tests: the plan on the fixture record, skip of unchanged terms, resume after a reload, cancel, fatal stop, partial results in the view.
+  - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7, 14.8_
+- [ ] 7.3 [GRD-7.3] Printable grade list and record export
+  - `src/pages/print/` Vite input opened by the service worker (`print.open`, `chrome.windows.create`); the A4 print stylesheet; Record CSV (with BOM) and JSON through a blob link.
+  - Tests: the message and window, the page content (identity, terms, GPAs, note, options), the CSV and JSON.
+  - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 13.6_
+- [ ] 7.4 [GRD-7.4] Attendance in Grades
+  - `parse/attendance.ts` by the documented classes with the raw fallback; sources `grades.attendanceTerm` and `grades.attendance`; the Attendance view with the term select, counts, percentage and risk colour (INF-2.1); the percentage on Courses and Record cards; attendance steps in the record job; attendance CSV; the optional print section.
+  - Tests: the fixtures (exempt, present and not yet), a synthetic sheet with absences and an unknown status, the summary fallback, the view and the export.
+  - _Requirements: 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 16.7; live selectors after G-SELECTORS (vet list)_
