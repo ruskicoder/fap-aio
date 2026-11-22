@@ -72,7 +72,7 @@ function Control({ def, value, set, labelId }: { def: SettingDef; value: unknown
     return (
       <button type="button" role="switch" aria-checked={on} aria-labelledby={labelId} onClick={() => set(!on)}
         className="inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
-        style={{ background: on ? '#ea580c' : '#d1d5db' }}>
+        style={{ background: on ? 'rgb(var(--c-orange-600))' : 'rgb(var(--c-gray-300))' }}>
         <span aria-hidden="true" className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-5' : ''}`} />
       </button>
     )

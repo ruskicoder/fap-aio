@@ -73,8 +73,8 @@ Compacted on 2026-10-22 from 20 to 14 subtasks with no requirement dropped; the 
   - Serve the anonymized page fixtures locally with FAP's stylesheets, copied for the test run into the git-ignored `ignore/fap-styles/` and never committed; screenshot each preset and the Classic layout; skip with a notice when the stylesheets are absent; a review step in the release checklist.
   - _Requirements: 2.3, 2.4, 6.2; platform R7.6_
 
-- [ ] 9. [APP-9] Dark theme contrast
-- [ ] 9.1 [APP-9.1] Raise dark preset and panel contrast (fix F-24)
+- [x] 9. [APP-9] Dark theme contrast
+- [x] 9.1 [APP-9.1] Raise dark preset and panel contrast (fix F-24)
   - Panel colours as variables with a dark set chosen by the active theme's mode; switch tracks through variables; dark presets and Glassmorphism retuned to 7:1 text, 4.5:1 muted, 3:1 icons and outlines at full opacity; Frutiger Aero unchanged.
   - Preset contrast test at the new thresholds for dark presets and glass surfaces; m4-check screenshots and text contrast of the welcome, Today and Settings in each dark preset.
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6; panel-ux R10.2_

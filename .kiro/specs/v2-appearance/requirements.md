@@ -130,5 +130,5 @@ Added 2026-11-22 (fix F-24, owner UAT of the M2 build: dark themes barely readab
 2. Secondary and muted text SHALL have at least 4.5:1 against those surfaces.
 3. Icons, control outlines and field borders SHALL have at least 3:1 against those surfaces and SHALL be drawn at full opacity.
 4. WHEN the active theme is dark THEN the panel (first-run welcome, Today, every view, Settings and overlays) SHALL use a dark palette that meets criteria 1 to 3. Under a light theme or FAP default the panel SHALL look as before.
-5. Glassmorphism SHALL use a calm backdrop of at most two related hues at low saturation and glass dimmed so that near-white text keeps 7:1 over the worst-case backdrop; it renders FAP in dark mode. This replaces the white glass of Requirement 2 for Glassmorphism, which keeps its name and its place in the gallery.
+5. Glassmorphism SHALL use a calm backdrop of at most two related hues at low saturation and glass dimmed so that near-white text keeps 7:1 over the worst-case backdrop; it renders FAP in dark mode and is listed with the dark themes. This replaces the white glass of Requirement 2 for Glassmorphism, which keeps its name.
 6. Frutiger Aero Green and Frutiger Aero Blue SHALL stay as they are.

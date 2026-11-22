@@ -4,6 +4,8 @@
 // compact, wide and sticky switches, and the Classic layout on the home and grade pages. The Classic top
 // navigation (APP-7.4) waits on G-SELECTORS and is not checked; the timetable cards need FAP's own partial
 // loader, which the fixture server does not run, so the unit tests cover them.
+// Added 2026-11-22: each dark preset (fix F-24) with screenshots and text contrast of the welcome, Today and
+// Settings; the sticky Settings tabs at 320 px (fix F-23); the capstone card in Info (INF-7.1).
 // A headless Chrome loads dist/ through
 // CDP Extensions.loadUnpacked and every request to https://fap.fpt.edu.vn is answered from the
 // anonymized fixtures in test/fixtures/en (week partials and exams shifted to the current dates).
@@ -197,7 +199,7 @@ async function main() {
   await click('[role="tab"]', 'Today')
   await sleep(800)
   const today = await shadowText()
-  note('Today shows the next class or the calm line', /Next class|Nothing needs your attention today/.test(today), today.match(/(Next class|Nothing needs[^.]*)/)?.[0] ?? '')
+  note('Today shows the next class, what needs attention, or the calm line', /Next class|Courses at risk|Nothing needs your attention today/.test(today), today.match(/(Next class|Courses at risk|Nothing needs[^.]*)/)?.[0] ?? '')
   await shot('today')
   const truncated = await ev(`${root$}.querySelectorAll('.truncate').length`)
   note('no truncated text', truncated === 0, `${truncated} elements with .truncate`)
@@ -306,13 +308,14 @@ async function main() {
   await click('button', 'Preview Glassmorphism Dark')
   await sleep(600)
   note('a preview themes this page without saving', (await ev('document.documentElement.getAttribute("data-bs-theme")')) === 'dark', '')
-  await click('button', 'Apply Glassmorphism')
+  // Glassmorphism is a dark theme since F-24; Liquid Glass checks a light theme with glass here.
+  await click('button', 'Apply Liquid Glass')
   await sleep(800)
   const applied = await sheetsText()
-  note('Apply puts the theme on the page', (await ev('document.documentElement.getAttribute("data-bs-theme")')) === 'light' && applied.includes('blur(14px)'), '')
+  note('Apply puts the theme on the page', (await ev('document.documentElement.getAttribute("data-bs-theme")')) === 'light' && applied.includes('blur(20px)'), '')
   await send('Page.navigate', { url: 'https://fap.fpt.edu.vn/Report/Transcript' }, S)
   await sleep(3000)
-  note('the applied theme stays on the next page', (await sheetsText()).includes('blur(14px)'), '')
+  note('the applied theme stays on the next page', (await sheetsText()).includes('blur(20px)'), '')
   await shot('theme-on-transcript')
   await click('button', 'Settings')
   await sleep(600)
@@ -384,6 +387,76 @@ async function main() {
   await shadowSwitch('Classic FAP layout')
   await sleep(600)
   note('Classic off restores the page without reload', !(await ev(`!!document.querySelector('[data-fap-aio-classic]')`)), '')
+
+  // ---- F-24: dark presets. Every visible text in the panel is measured against the background it sits on. ----
+  const measure = () => ev(`(() => {
+    const root = document.getElementById('fap-aio-root').shadowRoot
+    const parse = (c) => { const m = c.match(/[\\d.]+/g); return m ? m.map(Number) : [0, 0, 0, 0] }
+    const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }
+    const lum = ([r, g, b]) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+    const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05) }
+    const blend = (top, under) => { const a = top[3] ?? 1; return [0, 1, 2].map((i) => top[i] * a + under[i] * (1 - a)) }
+    const bgOf = (el) => {
+      const layers = []
+      for (let e = el; e; e = e.parentElement || (e.getRootNode() instanceof ShadowRoot ? e.getRootNode().host : null)) {
+        const c = parse(getComputedStyle(e).backgroundColor); const a = c[3] ?? 1
+        if (a > 0) { layers.push([c[0], c[1], c[2], a]); if (a >= 1) break }
+      }
+      return layers.reverse().reduce((under, top) => blend(top, under), [255, 255, 255])
+    }
+    const dimmed = (el) => { for (let e = el; e && e !== root.host; e = e.parentElement) { if (e.disabled || e.getAttribute?.('aria-disabled') === 'true' || Number(getComputedStyle(e).opacity) < 1) return true } return false }
+    const out = []; const icons = []
+    for (const el of root.querySelectorAll('*')) {
+      const r = el.getBoundingClientRect(); if (!r.width || !r.height || dimmed(el)) continue
+      if (el.tagName === 'svg') { const col = parse(getComputedStyle(el).color); icons.push(ratio(col, bgOf(el))); continue }
+      if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue
+      if (getComputedStyle(el).visibility === 'hidden') continue
+      const col = parse(getComputedStyle(el).color)
+      out.push({ t: el.textContent.trim().slice(0, 30), r: ratio(blend(col, bgOf(el)), bgOf(el)) })
+    }
+    const low = out.filter((o) => o.r < 4.5)
+    return { n: out.length, min: Math.min(...out.map((o) => o.r)).toFixed(2), seven: Math.round(100 * out.filter((o) => o.r >= 7).length / Math.max(1, out.length)), low: low.slice(0, 4).map((o) => o.t + ' ' + o.r.toFixed(2)), lowCount: low.length, iconMin: icons.length ? Math.min(...icons).toFixed(2) : 'none' }
+  })()`)
+  for (const theme of ['Glassmorphism', 'Glassmorphism Dark', 'Minimalist Black', 'Liquid Glass Dark', 'Claymorphism Vibrant Dark']) {
+    const slug = theme.toLowerCase().replace(/ /g, '-')
+    await click('button', 'Settings')
+    await sleep(600)
+    await click('button', 'Choose a theme')
+    await sleep(600)
+    await click('button', `Apply ${theme}`)
+    await sleep(800)
+    const scheme = await ev(`document.getElementById('fap-aio-root').getAttribute('data-scheme')`)
+    await click('button', 'Back')
+    await sleep(600)
+    await ev(`${root$}.querySelector('[aria-label="Search settings"]')?.closest('div')?.scrollIntoView()`)
+    await shot(`dark-${slug}-settings`)
+    const mSet = await measure()
+    await click('button', 'Show the welcome')
+    await sleep(800)
+    await shot(`dark-${slug}-welcome`)
+    const mWel = await measure()
+    await click('button', 'Skip').catch(() => {})
+    await sleep(400)
+    await click('button', 'Back').catch(() => {})
+    await sleep(400)
+    await click('[role="tab"]', 'Today')
+    await sleep(800)
+    await shot(`dark-${slug}-today`)
+    const mToday = await measure()
+    const all = [mSet, mWel, mToday]
+    note(`${theme}: dark panel, no text under 4.5:1, icons at 3:1 or more`, scheme === 'dark' && all.every((m) => m.lowCount === 0 && (m.iconMin === 'none' || Number(m.iconMin) >= 3)),
+      all.map((m, i) => `${['settings', 'welcome', 'today'][i]} ${m.n} texts min ${m.min} (${m.seven}% at 7:1) icons min ${m.iconMin}${m.lowCount ? ' LOW ' + m.low.join(', ') : ''}`).join('; '))
+  }
+  await click('button', 'Settings')
+  await sleep(600)
+  await click('button', 'Choose a theme')
+  await sleep(600)
+  await click('button', 'Use FAP default')
+  await sleep(600)
+  await click('button', 'Back').catch(() => {})
+  await sleep(400)
+  await click('button', 'Back').catch(() => {})
+  await sleep(400)
   note('no request left the fixture origin', true, `${blocked.length} other-host requests blocked: ${[...new Set(blocked.map((u) => new URL(u).host))].join(', ') || 'none'}`)
 }
 

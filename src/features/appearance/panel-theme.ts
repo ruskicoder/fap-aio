@@ -1,7 +1,7 @@
 // Derived `panel-theme` sheet adopted by the panel's shadow root (R1.7; panel-ux design "Visual system"):
-// the active theme's roles as `--aio-*` variables. Under FAP default the sheet is empty. No panel rule
-// reads these variables yet (PNL-3), and `color-scheme` is not set because it would change the panel's
-// native controls; the agreed look of ui/shell.html stays until the G-UI-APPEARANCE audit decides.
+// the active theme's roles as `--aio-*` variables, and the panel's scheme (R8.4, fix F-24): a dark theme
+// sets data-scheme="dark" on the panel host, which swaps in the measured dark palette of panel.css (with
+// color-scheme dark for native controls). Light themes and FAP default keep the light panel.
 import { read, subscribe } from '../../shared/storage/catalog'
 import { parseActive, resolveStyle, type ActiveStyle, type PanelRole } from './state'
 
@@ -34,7 +34,12 @@ export function installPanelTheme(shadow: ShadowRoot, win: Window = window): () 
   shadow.adoptedStyleSheets = [...shadow.adoptedStyleSheets, sheet]
   const media = win.matchMedia?.('(prefers-color-scheme: dark)')
   let state = parseActive(null)
-  const render = () => sheet.replaceSync(panelThemeCss(resolveStyle(state, media?.matches ?? false)))
+  const render = () => {
+    const style = resolveStyle(state, media?.matches ?? false)
+    sheet.replaceSync(panelThemeCss(style))
+    if (style?.mode === 'dark') shadow.host.setAttribute('data-scheme', 'dark')
+    else shadow.host.removeAttribute('data-scheme')
+  }
   const onMedia = () => render()
   media?.addEventListener?.('change', onMedia)
   void read('appearance.active').then((v) => { state = parseActive(v); render() })

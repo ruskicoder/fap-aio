@@ -190,7 +190,7 @@ async function main() {
   await click('[role="tab"]', 'Today')
   await sleep(800)
   const today = await shadowText()
-  note('Today shows the next class or the calm line', /Next class|Nothing needs your attention today/.test(today), today.match(/(Next class|Nothing needs[^.]*)/)?.[0] ?? '')
+  note('Today shows the next class, what needs attention, or the calm line', /Next class|Courses at risk|Nothing needs your attention today/.test(today), today.match(/(Next class|Courses at risk|Nothing needs[^.]*)/)?.[0] ?? '')
   await shot('today')
   const truncated = await ev(`${root$}.querySelectorAll('.truncate').length`)
   note('no truncated text', truncated === 0, `${truncated} elements with .truncate`)

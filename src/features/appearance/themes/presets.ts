@@ -17,22 +17,27 @@ const DARK_STATUS = { success: '#4ade80', warning: '#fbbf24', danger: '#f87171',
 
 function preset(id: string, name: string, mode: 'light' | 'dark', roles: Omit<Roles, keyof typeof LIGHT_STATUS> & Partial<Roles>, tokens: Theme['tokens'], look: Look, backdrop: Preset['backdrop']): Preset {
   const status = mode === 'light' ? LIGHT_STATUS : DARK_STATUS
+  const effects = effectsCss(look) + (mode === 'dark' ? `\n${DARK_ICONS}` : '')
   return {
-    theme: { formatVersion: 1, id, name, mode, roles: { ...status, ...roles } as Roles, vars: {}, tokens, effects: effectsCss(look), background: null, css: '', preset: id },
+    theme: { formatVersion: 1, id, name, mode, roles: { ...status, ...roles } as Roles, vars: {}, tokens, effects, background: null, css: '', preset: id },
     backdrop,
     look,
   }
 }
 
+// Dark presets draw FAP's icons at full strength in the text colour of their item (appearance R8.3, F-24).
+const DARK_ICONS = 'html[data-bs-theme] :is(i[class^="ri-"], i[class*=" ri-"], .menu-icon, .side-nav-link i, .topbar-menu i) { opacity: 1 !important; }'
+
 const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
 
 export const PRESETS: readonly Preset[] = [
-  preset('glassmorphism', 'Glassmorphism', 'light',
-    { primary: '#6d28d9', secondary: '#0e7490', accent: '#be185d', surface: '#ffffff', surfaceAlt: '#f5f3ff', text: '#1e1b2e', textMuted: '#4a4560', border: '#e4defa' },
-    { radius: 16, shadow: 'soft', blur: 14, surfaceOpacity: 0.55, fontFamily: FONT },
-    { body: 'linear-gradient(135deg, #a78bfa 0%, #67e8f9 50%, #f9a8d4 100%)', surface: 'rgba(255, 255, 255, 0.55)', edge: '1px solid rgba(255, 255, 255, 0.5)',
-      shadow: '0 8px 32px rgba(31, 27, 46, 0.12)', radius: 16, blur: 14, saturate: 160, chrome: 'rgba(255, 255, 255, 0.45)', inputBorder: '#655c82' },
-    { colors: ['#a78bfa', '#67e8f9', '#f9a8d4'], tint: '#ffffff', alpha: 0.55 }),
+  // F-24: dimmed glass with near-white text over a calm, low-saturation two-hue backdrop (R8.5).
+  preset('glassmorphism', 'Glassmorphism', 'dark',
+    { primary: '#a5b4fc', secondary: '#7dd3fc', accent: '#c4b5fd', surface: '#12141f', surfaceAlt: '#1a1d2b', text: '#f5f5f7', textMuted: '#bcc0cf', border: '#3a3f55' },
+    { radius: 16, shadow: 'soft', blur: 14, surfaceOpacity: 0.72, fontFamily: FONT },
+    { body: 'linear-gradient(135deg, #2b2f52 0%, #1d3b44 100%)', surface: 'rgba(14, 16, 28, 0.72)', edge: '1px solid rgba(255, 255, 255, 0.14)',
+      shadow: '0 8px 32px rgba(0, 0, 0, 0.45)', radius: 16, blur: 14, saturate: 120, chrome: 'rgba(14, 16, 28, 0.62)', inputBorder: '#8f95ad' },
+    { colors: ['#2b2f52', '#1d3b44'], tint: '#0e101c', alpha: 0.72 }),
   preset('neumorphism', 'Neumorphism', 'light',
     { primary: '#3b5bdb', secondary: '#5f6b7a', accent: '#c2255c', surface: '#e8ecf1', surfaceAlt: '#e8ecf1', text: '#232a35', textMuted: '#4b5563', border: '#d5dbe3' },
     { radius: 16, shadow: 'dual', blur: 0, surfaceOpacity: 1, fontFamily: FONT },
@@ -76,20 +81,20 @@ export const PRESETS: readonly Preset[] = [
       pressed: 'inset 4px 4px 8px rgba(0, 0, 0, 0.15), inset -4px -4px 8px rgba(255, 255, 255, 0.6)' },
     null),
   preset('glassmorphism-dark', 'Glassmorphism Dark', 'dark',
-    { primary: '#a78bfa', secondary: '#67e8f9', accent: '#f9a8d4', surface: '#000000', surfaceAlt: '#0f0f12', text: '#f4f4f6', textMuted: '#a7a7b3', border: '#26262c' },
+    { primary: '#a78bfa', secondary: '#67e8f9', accent: '#f9a8d4', surface: '#000000', surfaceAlt: '#0f0f12', text: '#f5f5f7', textMuted: '#bdbdc9', border: '#3a3a44' },
     { radius: 16, shadow: 'soft', blur: 14, surfaceOpacity: 0.06, fontFamily: FONT },
     { body: '#000000', surface: 'rgba(255, 255, 255, 0.06)', edge: '1px solid rgba(255, 255, 255, 0.12)', shadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
       radius: 16, blur: 14, saturate: 140, chrome: 'rgba(255, 255, 255, 0.04)', inputBorder: '#8b8b99',
       extra: 'html[data-bs-theme] body { background-image: radial-gradient(circle at 20% 10%, rgba(167, 139, 250, 0.18), transparent 40%), radial-gradient(circle at 85% 80%, rgba(103, 232, 249, 0.12), transparent 40%); }' },
     { colors: ['#000000', '#1e1930', '#0d2226'], tint: '#ffffff', alpha: 0.06 }),
   preset('minimalist-black', 'Minimalist Black', 'dark',
-    { primary: '#60a5fa', secondary: '#a3a3a3', accent: '#60a5fa', surface: '#000000', surfaceAlt: '#0a0a0a', text: '#ededed', textMuted: '#a3a3a3', border: '#1f1f1f' },
+    { primary: '#60a5fa', secondary: '#b5b5b5', accent: '#60a5fa', surface: '#000000', surfaceAlt: '#0a0a0a', text: '#f5f5f5', textMuted: '#b8b8b8', border: '#333333' },
     { radius: 6, shadow: 'none', blur: 0, surfaceOpacity: 1, fontFamily: FONT },
-    { body: '#000000', surface: '#000000', edge: '1px solid #1f1f1f', shadow: 'none', radius: 6, chrome: '#000000', inputBorder: '#6e6e6e',
+    { body: '#000000', surface: '#000000', edge: '1px solid #1f1f1f', shadow: 'none', radius: 6, chrome: '#000000', inputBorder: '#7a7a7a',
       extra: 'html[data-bs-theme] .card-body { padding: 1.5rem; }' },
     null),
   preset('liquid-glass-dark', 'Liquid Glass Dark', 'dark',
-    { primary: '#818cf8', secondary: '#5eead4', accent: '#f472b6', surface: '#000000', surfaceAlt: '#111114', text: '#f5f5f7', textMuted: '#a8a8b8', border: '#2a2a30' },
+    { primary: '#a5b4fc', secondary: '#5eead4', accent: '#f472b6', surface: '#000000', surfaceAlt: '#111114', text: '#f5f5f7', textMuted: '#bfbfcd', border: '#3a3a44' },
     { radius: 20, shadow: 'soft', blur: 20, surfaceOpacity: 0.08, fontFamily: FONT },
     { body: '#000000', surface: 'rgba(255, 255, 255, 0.08)', edge: '1px solid rgba(255, 255, 255, 0.14)',
       shadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -8px 16px rgba(129, 140, 248, 0.08), 0 10px 30px rgba(0, 0, 0, 0.7)',
@@ -97,7 +102,7 @@ export const PRESETS: readonly Preset[] = [
       extra: 'html[data-bs-theme] body { background-image: radial-gradient(circle at 70% 15%, rgba(129, 140, 248, 0.16), transparent 45%); }' },
     { colors: ['#000000', '#15162a'], tint: '#ffffff', alpha: 0.08 }),
   preset('claymorphism-vibrant-dark', 'Claymorphism Vibrant Dark', 'dark',
-    { primary: '#f472b6', secondary: '#a78bfa', accent: '#facc15', surface: '#000000', surfaceAlt: '#1a0f24', text: '#fdf4ff', textMuted: '#c9b6d6', border: '#2e1c3d' },
+    { primary: '#f472b6', secondary: '#a78bfa', accent: '#facc15', surface: '#000000', surfaceAlt: '#1a0f24', text: '#f6f4f7', textMuted: '#cdbcd9', border: '#4a3260' },
     { radius: 24, shadow: 'clay', blur: 0, surfaceOpacity: 1, fontFamily: FONT },
     { body: '#000000', surface: '#1a0f24', edge: '0 solid transparent',
       shadow: 'inset -6px -6px 12px rgba(0, 0, 0, 0.45), inset 6px 6px 12px rgba(244, 114, 182, 0.12), 10px 14px 24px rgba(0, 0, 0, 0.6)', radius: 24, chrome: '#12091a', inputBorder: '#8a6f9c',

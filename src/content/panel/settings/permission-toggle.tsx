@@ -19,7 +19,7 @@ export function PermissionToggle({ settingKey, reason }: { settingKey: string; r
     <div className="flex flex-col items-end gap-1">
       <button type="button" role="switch" aria-checked={on} aria-label={def.label} onClick={() => void flip()}
         className="inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
-        style={{ background: on ? '#ea580c' : '#d1d5db' }}>
+        style={{ background: on ? 'rgb(var(--c-orange-600))' : 'rgb(var(--c-gray-300))' }}>
         <span aria-hidden="true" className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-5' : ''}`} />
       </button>
       {why && <p role="alert" className="text-xs text-red-700">{why}</p>}

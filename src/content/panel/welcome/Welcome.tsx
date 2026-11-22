@@ -77,7 +77,7 @@ function FeatureRow({ settingKey }: { settingKey: string }) {
         <span className="block text-xs text-gray-600">{def.description}</span>
       </span>
       <button type="button" role="switch" aria-checked={on} aria-label={def.label} onClick={() => void writeSetting(def, !on)}
-        className="inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1" style={{ background: on ? '#ea580c' : '#d1d5db' }}>
+        className="inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1" style={{ background: on ? 'rgb(var(--c-orange-600))' : 'rgb(var(--c-gray-300))' }}>
         <span aria-hidden="true" className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-5' : ''}`} />
       </button>
     </li>

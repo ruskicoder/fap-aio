@@ -56,9 +56,10 @@ describe('preview on this page', () => {
     const a = startAppearance(document, window)
     await a.ready
     expect(document.documentElement.getAttribute('data-bs-theme')).toBe('dark')
-    sendPreview({ kind: 'style', style: toActiveStyle(glass) })
+    // A light glass preset (Glassmorphism is dark since F-24).
+    sendPreview({ kind: 'style', style: toActiveStyle(presetById('liquid-glass')!.theme) })
     expect(document.documentElement.getAttribute('data-bs-theme')).toBe('light')
-    expect(a.pipeline.get('effects')).toContain('backdrop-filter: blur(14px)')
+    expect(a.pipeline.get('effects')).toContain('backdrop-filter: blur(20px)')
     sendPreview({ kind: 'fap-default' })
     expect(a.pipeline.get('vars')).toBeNull()
     sendPreview(null)
@@ -98,7 +99,7 @@ describe('Theme view', () => {
     expect(el.textContent).toContain('In use: FAP default')
     const names = (label: string) => [...el.querySelectorAll(`section[aria-label="${label}"] li p`)].map((p) => p.textContent)
     expect(names('Light themes')).toEqual(PRESETS.filter((p) => p.theme.mode === 'light').map((p) => p.theme.name))
-    expect(names('Dark themes')).toHaveLength(4)
+    expect(names('Dark themes')).toHaveLength(5)
     await click(btn(el, 'Preview', 'Neumorphism'))
     expect(previews).toEqual(['style'])
     expect(el.querySelector('[role="status"]')!.textContent).toContain('Previewing Neumorphism on this page')
